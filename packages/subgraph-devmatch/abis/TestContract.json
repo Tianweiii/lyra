@@ -1,0 +1,376 @@
+[
+  {
+    "type": "constructor",
+    "inputs": [
+      { "name": "_owner", "type": "address", "internalType": "address" }
+    ],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "name": "PostCreated",
+    "type": "event",
+    "inputs": [
+      {
+        "name": "postId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "author",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "content",
+        "type": "string",
+        "indexed": false,
+        "internalType": "string"
+      },
+      {
+        "name": "timestamp",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "name": "PostLiked",
+    "type": "event",
+    "inputs": [
+      {
+        "name": "postId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "liker",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "author",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "timestamp",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "name": "PostUnliked",
+    "type": "event",
+    "inputs": [
+      {
+        "name": "postId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "unliker",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "author",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "timestamp",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "name": "UserFollowed",
+    "type": "event",
+    "inputs": [
+      {
+        "name": "follower",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "following",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "timestamp",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "name": "UserRegistered",
+    "type": "event",
+    "inputs": [
+      {
+        "name": "userAddress",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "username",
+        "type": "string",
+        "indexed": false,
+        "internalType": "string"
+      },
+      {
+        "name": "timestamp",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "name": "UserUnfollowed",
+    "type": "event",
+    "inputs": [
+      {
+        "name": "follower",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "following",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "timestamp",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "name": "createPost",
+    "type": "function",
+    "inputs": [
+      { "name": "_content", "type": "string", "internalType": "string" }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "name": "followUser",
+    "type": "function",
+    "inputs": [
+      { "name": "_userToFollow", "type": "address", "internalType": "address" }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "name": "getPost",
+    "type": "function",
+    "inputs": [
+      { "name": "_postId", "type": "uint256", "internalType": "uint256" }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple",
+        "components": [
+          { "name": "id", "type": "uint256", "internalType": "uint256" },
+          { "name": "author", "type": "address", "internalType": "address" },
+          { "name": "content", "type": "string", "internalType": "string" },
+          { "name": "timestamp", "type": "uint256", "internalType": "uint256" },
+          { "name": "likes", "type": "uint256", "internalType": "uint256" },
+          { "name": "exists", "type": "bool", "internalType": "bool" }
+        ],
+        "internalType": "struct TestContract.Post"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "name": "getUser",
+    "type": "function",
+    "inputs": [
+      { "name": "_userAddress", "type": "address", "internalType": "address" }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple",
+        "components": [
+          {
+            "name": "userAddress",
+            "type": "address",
+            "internalType": "address"
+          },
+          { "name": "username", "type": "string", "internalType": "string" },
+          { "name": "postCount", "type": "uint256", "internalType": "uint256" },
+          {
+            "name": "followerCount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          { "name": "exists", "type": "bool", "internalType": "bool" }
+        ],
+        "internalType": "struct TestContract.User"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "name": "hasUserLikedPost",
+    "type": "function",
+    "inputs": [
+      { "name": "_user", "type": "address", "internalType": "address" },
+      { "name": "_postId", "type": "uint256", "internalType": "uint256" }
+    ],
+    "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
+    "stateMutability": "view"
+  },
+  {
+    "name": "isUserFollowing",
+    "type": "function",
+    "inputs": [
+      { "name": "_follower", "type": "address", "internalType": "address" },
+      { "name": "_following", "type": "address", "internalType": "address" }
+    ],
+    "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
+    "stateMutability": "view"
+  },
+  {
+    "name": "likePost",
+    "type": "function",
+    "inputs": [
+      { "name": "_postId", "type": "uint256", "internalType": "uint256" }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "name": "owner",
+    "type": "function",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "address", "internalType": "address" }],
+    "stateMutability": "view"
+  },
+  {
+    "name": "postCounter",
+    "type": "function",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "name": "posts",
+    "type": "function",
+    "inputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "outputs": [
+      { "name": "id", "type": "uint256", "internalType": "uint256" },
+      { "name": "author", "type": "address", "internalType": "address" },
+      { "name": "content", "type": "string", "internalType": "string" },
+      { "name": "timestamp", "type": "uint256", "internalType": "uint256" },
+      { "name": "likes", "type": "uint256", "internalType": "uint256" },
+      { "name": "exists", "type": "bool", "internalType": "bool" }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "name": "registerUser",
+    "type": "function",
+    "inputs": [
+      { "name": "_username", "type": "string", "internalType": "string" }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "name": "unfollowUser",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "_userToUnfollow",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "name": "unlikePost",
+    "type": "function",
+    "inputs": [
+      { "name": "_postId", "type": "uint256", "internalType": "uint256" }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "name": "userCounter",
+    "type": "function",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "name": "userFollows",
+    "type": "function",
+    "inputs": [
+      { "name": "", "type": "address", "internalType": "address" },
+      { "name": "", "type": "address", "internalType": "address" }
+    ],
+    "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
+    "stateMutability": "view"
+  },
+  {
+    "name": "userLikes",
+    "type": "function",
+    "inputs": [
+      { "name": "", "type": "address", "internalType": "address" },
+      { "name": "", "type": "uint256", "internalType": "uint256" }
+    ],
+    "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
+    "stateMutability": "view"
+  },
+  {
+    "name": "users",
+    "type": "function",
+    "inputs": [{ "name": "", "type": "address", "internalType": "address" }],
+    "outputs": [
+      { "name": "userAddress", "type": "address", "internalType": "address" },
+      { "name": "username", "type": "string", "internalType": "string" },
+      { "name": "postCount", "type": "uint256", "internalType": "uint256" },
+      { "name": "followerCount", "type": "uint256", "internalType": "uint256" },
+      { "name": "exists", "type": "bool", "internalType": "bool" }
+    ],
+    "stateMutability": "view"
+  }
+]

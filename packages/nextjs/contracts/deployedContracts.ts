@@ -4,6 +4,588 @@
  */
 import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 
-const deployedContracts = {} as const;
+const deployedContracts = {
+  534351: {
+    TestContract: {
+      address: "0xd0bf6b78cb7d23cd10134f5073b47f5da7a2398f",
+      abi: [
+        {
+          type: "constructor",
+          inputs: [
+            {
+              name: "_owner",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "createPost",
+          inputs: [
+            {
+              name: "_content",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "followUser",
+          inputs: [
+            {
+              name: "_userToFollow",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "getPost",
+          inputs: [
+            {
+              name: "_postId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "tuple",
+              internalType: "struct TestContract.Post",
+              components: [
+                {
+                  name: "id",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "author",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "content",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "timestamp",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "likes",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "exists",
+                  type: "bool",
+                  internalType: "bool",
+                },
+              ],
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getUser",
+          inputs: [
+            {
+              name: "_userAddress",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "tuple",
+              internalType: "struct TestContract.User",
+              components: [
+                {
+                  name: "userAddress",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "username",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "postCount",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "followerCount",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "exists",
+                  type: "bool",
+                  internalType: "bool",
+                },
+              ],
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "hasUserLikedPost",
+          inputs: [
+            {
+              name: "_user",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_postId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "isUserFollowing",
+          inputs: [
+            {
+              name: "_follower",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "_following",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "likePost",
+          inputs: [
+            {
+              name: "_postId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "owner",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "postCounter",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "posts",
+          inputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "id",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "author",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "content",
+              type: "string",
+              internalType: "string",
+            },
+            {
+              name: "timestamp",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "likes",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "exists",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "registerUser",
+          inputs: [
+            {
+              name: "_username",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "unfollowUser",
+          inputs: [
+            {
+              name: "_userToUnfollow",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "unlikePost",
+          inputs: [
+            {
+              name: "_postId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "userCounter",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "userFollows",
+          inputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "userLikes",
+          inputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "users",
+          inputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "userAddress",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "username",
+              type: "string",
+              internalType: "string",
+            },
+            {
+              name: "postCount",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "followerCount",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "exists",
+              type: "bool",
+              internalType: "bool",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "event",
+          name: "PostCreated",
+          inputs: [
+            {
+              name: "postId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+            {
+              name: "author",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "content",
+              type: "string",
+              indexed: false,
+              internalType: "string",
+            },
+            {
+              name: "timestamp",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "PostLiked",
+          inputs: [
+            {
+              name: "postId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+            {
+              name: "liker",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "author",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "timestamp",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "PostUnliked",
+          inputs: [
+            {
+              name: "postId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+            {
+              name: "unliker",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "author",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "timestamp",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "UserFollowed",
+          inputs: [
+            {
+              name: "follower",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "following",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "timestamp",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "UserRegistered",
+          inputs: [
+            {
+              name: "userAddress",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "username",
+              type: "string",
+              indexed: false,
+              internalType: "string",
+            },
+            {
+              name: "timestamp",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "UserUnfollowed",
+          inputs: [
+            {
+              name: "follower",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "following",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "timestamp",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+          ],
+          anonymous: false,
+        },
+      ],
+      inheritedFunctions: {},
+      deployedOnBlock: 11353088,
+    },
+  },
+} as const;
 
 export default deployedContracts satisfies GenericContractsDeclaration;

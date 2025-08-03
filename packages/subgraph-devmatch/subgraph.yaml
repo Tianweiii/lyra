@@ -1,0 +1,41 @@
+specVersion: 1.2.0
+indexerHints:
+  prune: auto
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: TestContract
+    network: scroll-sepolia
+    source:
+      address: "0xd0bf6B78cb7d23Cd10134f5073B47F5da7A2398F"
+      abi: TestContract
+      startBlock: 11353088
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      entities:
+        - PostCreated
+        - PostLiked
+        - PostUnliked
+        - UserFollowed
+        - UserRegistered
+        - UserUnfollowed
+      abis:
+        - name: TestContract
+          file: ./abis/TestContract.json
+      eventHandlers:
+        - event: PostCreated(indexed uint256,indexed address,string,uint256)
+          handler: handlePostCreated
+        - event: PostLiked(indexed uint256,indexed address,indexed address,uint256)
+          handler: handlePostLiked
+        - event: PostUnliked(indexed uint256,indexed address,indexed address,uint256)
+          handler: handlePostUnliked
+        - event: UserFollowed(indexed address,indexed address,uint256)
+          handler: handleUserFollowed
+        - event: UserRegistered(indexed address,string,uint256)
+          handler: handleUserRegistered
+        - event: UserUnfollowed(indexed address,indexed address,uint256)
+          handler: handleUserUnfollowed
+      file: ./src/test-contract.ts
