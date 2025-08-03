@@ -14414,9 +14414,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"subgraph-devmatch@workspace:packages/subgraph-devmatch":
+"subgraph-lyra@workspace:packages/subgraph-lyra":
   version: 0.0.0-use.local
-  resolution: "subgraph-devmatch@workspace:packages/subgraph-devmatch"
+  resolution: "subgraph-lyra@workspace:packages/subgraph-lyra"
   dependencies:
     "@graphprotocol/graph-cli": 0.96.0
     "@graphprotocol/graph-ts": 0.37.0
