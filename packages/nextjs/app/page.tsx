@@ -1,17 +1,19 @@
 "use client";
 
-import Link from "next/link";
+// import Link from "next/link";
+import { Button, Stack, Typography } from "@mui/material";
 import type { NextPage } from "next";
-import { useAccount } from "wagmi";
-import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { Address } from "~~/components/scaffold-eth";
+// import { useAccount } from "wagmi";
+// import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+// import { Address } from "~~/components/scaffold-eth";
+import { AuroraBackground } from "~~/components/ui/aurora-background";
 
 const Home: NextPage = () => {
-  const { address: connectedAddress } = useAccount();
+  // const { address: connectedAddress } = useAccount();
 
   return (
     <>
-      <div className="flex items-center flex-col grow pt-10">
+      {/* <div className="flex items-center flex-col grow pt-10">
         <div className="px-5">
           <h1 className="text-center">
             <span className="block text-2xl mb-2">Welcome to</span>
@@ -62,9 +64,22 @@ const Home: NextPage = () => {
                 tab.
               </p>
             </div>
+
+            <div>
+              asd
+            </div>
           </div>
         </div>
-      </div>
+      </div> */}
+      <AuroraBackground className="border-white-100 border-1">
+        <Stack>
+          <Typography>Lyra</Typography>
+          <Button>
+            <Typography>Get Started</Typography>
+          </Button>
+        </Stack>
+      </AuroraBackground>
+      <div className="h-[1000px] border-red-500 border-3 bg-black"></div>
     </>
   );
 };
