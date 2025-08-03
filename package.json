@@ -50,6 +50,7 @@
     "verify": "yarn foundry:verify"
   },
   "devDependencies": {
+    "@types/three": "latest",
     "husky": "~9.1.6",
     "lint-staged": "~13.2.2"
   },
@@ -62,13 +63,19 @@
     "@emotion/styled": "^11.14.1",
     "@fontsource/roboto": "^5.2.6",
     "@mui/material": "^7.2.0",
+    "@react-three/drei": "latest",
+    "@react-three/fiber": "latest",
     "@tailwindcss/cli": "^4.1.11",
     "@tailwindcss/postcss": "^4.1.11",
     "autoprefixer": "^10.4.21",
     "clsx": "^2.1.1",
+    "dotted-map": "^2.2.3",
+    "framer-motion": "^12.23.12",
     "motion": "^12.23.12",
     "postcss": "^8.5.6",
     "tailwind-merge": "^3.3.1",
-    "tailwindcss": "^4.1.11"
+    "tailwindcss": "^4.1.11",
+    "three": "latest",
+    "three-globe": "^2.44.0"
   }
 }
