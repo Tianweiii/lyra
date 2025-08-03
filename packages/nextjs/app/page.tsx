@@ -466,7 +466,7 @@ const Home: NextPage = () => {
       <AuroraBackground className="pb-20">
         <div className="flex flex-col items-center justify-center h-full px-12 gap-2">
           <Typography color="white" fontSize={60} fontWeight={700}>
-            Financing, Enhanced
+            Financing - Enhanced
           </Typography>
           <Typography color="white" fontSize={24} fontWeight={400} textAlign={"center"} maxWidth={"60%"}>
             Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corrupti, ab quasi! Nesciunt omnis molestias
@@ -509,25 +509,115 @@ const Home: NextPage = () => {
         </Stack>
       </Stack>
 
-      <LampContainer>
-        <Stack className="w-screen" flexDirection={"row"} justifyContent={"space-around"}>
-          <Card title="Some stuff here" icon={<BoltIcon />}>
-            <CanvasRevealEffect animationSpeed={5.1} containerClassName="bg-emerald-900" />
-          </Card>
-          <Card title="More stuff here" icon={<CubeTransparentIcon />}>
-            <CanvasRevealEffect
-              animationSpeed={3}
-              containerClassName="bg-pink-300"
-              colors={[
-                [236, 72, 153],
-                [232, 121, 249],
-              ]}
-            />
-            <div className="absolute inset-0 [mask-image:radial-gradient(400px_at_center,white,transparent)] bg-black/50 dark:bg-black/90" />
-          </Card>
-          <Card title="I dont know at this point" icon={<ChartBarSquareIcon />}>
-            <CanvasRevealEffect animationSpeed={3} containerClassName="bg-sky-600" colors={[[125, 211, 252]]} />
-          </Card>
+      {/* bento grid */}
+      <Stack className="h-[90vh] gap-8 px-[200px]">
+        <Stack direction={"row"} className="h-[400px] gap-8">
+          <motion.div
+            className="border-white/[0.2] border w-[60%] rounded-2xl"
+            initial={{ opacity: 0, x: -100 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0 }}
+          />
+
+          <motion.div
+            className="border-white/[0.2] border-1 flex-1 rounded-2xl"
+            initial={{ opacity: 0, x: 100 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+          />
+        </Stack>
+
+        <Stack direction={"row"} className="flex-row h-[400px] gap-8">
+          <motion.div
+            className="border-white/[0.2] border-1 flex-1 rounded-2xl"
+            initial={{ opacity: 0, x: -100 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+          />
+
+          <motion.div
+            className="border-white/[0.2] border-1 w-[60%] rounded-2xl"
+            initial={{ opacity: 0, x: 100 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.9 }}
+          />
+        </Stack>
+      </Stack>
+
+      {/* carousel */}
+      <Stack className="h-screen border-1">
+
+      </Stack>
+
+      <LampContainer className="px-[200px]">
+        <Stack className="w-screen px-[200px]" flexDirection={"row"} justifyContent={"space-between"}>
+          <motion.div
+            className="w-full"
+            initial={{
+              opacity: 0,
+              y: 30,
+            }}
+            whileInView={{
+              opacity: 1,
+              y: 0,
+            }}
+            transition={{
+              duration: 1,
+              delay: 0.3,
+            }}
+          >
+            <Card title="Some stuff here" icon={<BoltIcon />}>
+              <CanvasRevealEffect animationSpeed={5.1} containerClassName="bg-emerald-900" />
+            </Card>
+          </motion.div>
+
+          <motion.div
+            className="w-full"
+            initial={{
+              opacity: 0,
+              y: 30,
+            }}
+            whileInView={{
+              opacity: 1,
+              y: 0,
+            }}
+            transition={{
+              duration: 1,
+              delay: 0.6,
+            }}
+          >
+            <Card title="More stuff here" icon={<CubeTransparentIcon />}>
+              <CanvasRevealEffect
+                animationSpeed={3}
+                containerClassName="bg-pink-300"
+                colors={[
+                  [236, 72, 153],
+                  [232, 121, 249],
+                ]}
+              />
+              <div className="absolute inset-0 [mask-image:radial-gradient(400px_at_center,white,transparent)] bg-black/50 dark:bg-black/90" />
+            </Card>
+          </motion.div>
+
+          <motion.div
+            className="w-full"
+            initial={{
+              opacity: 0,
+              y: 30,
+            }}
+            whileInView={{
+              opacity: 1,
+              y: 0,
+            }}
+            transition={{
+              duration: 1,
+              delay: 0.9,
+            }}
+          >
+            <Card title="I dont know at this point" icon={<ChartBarSquareIcon />}>
+              <CanvasRevealEffect animationSpeed={3} containerClassName="bg-sky-600" colors={[[125, 211, 252]]} />
+            </Card>
+          </motion.div>
         </Stack>
         {/* <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-black z-20"></div> */}
       </LampContainer>
@@ -552,11 +642,12 @@ const Home: NextPage = () => {
               Seamlessly transfer assets across the globe
             </h2>
             <p className="text-center text-base md:text-lg font-normal text-neutral-700 dark:text-neutral-200 max-w-md mt-2 mx-auto">
-              Experience the future of global finance with our innovative platform, enabling fast and secure asset transfers across continents.
+              Experience the future of global finance with our innovative platform, enabling fast and secure asset
+              transfers across continents.
             </p>
           </motion.div>
           <div className="absolute w-full bottom-0 inset-x-0 h-40 bg-gradient-to-b pointer-events-none select-none from-transparent dark:to-black to-white z-40" />
-          <div className="absolute w-full -bottom-20 h-72 md:h-full z-10">
+          <div className="absolute w-full -bottom-20 h-72 md:h-full z-10 mt-10">
             <World data={sampleArcs} globeConfig={globeConfig} />
           </div>
         </div>
