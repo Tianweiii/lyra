@@ -2,6 +2,7 @@
 
 // import Link from "next/link";
 // import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { Stack } from "@mui/material";
 // import { useAccount } from "wagmi";
@@ -10,6 +11,7 @@ import { Stack } from "@mui/material";
 import { motion } from "motion/react";
 import type { NextPage } from "next";
 import { BoltIcon, ChartBarSquareIcon, CubeTransparentIcon } from "@heroicons/react/24/outline";
+import BentoGrids from "~~/components/ui/bento-grids";
 // import { AuroraBackground } from "~~/components/ui/aurora-background";
 import { CanvasRevealEffect } from "~~/components/ui/canvas-reveal";
 import { Card } from "~~/components/ui/card";
@@ -18,9 +20,36 @@ import CustomScrollContainer from "~~/components/ui/custom-scroll-container";
 import Gallery from "~~/components/ui/gallery";
 import Island from "~~/components/ui/island";
 import { LampContainer } from "~~/components/ui/lamp";
-import BentoGrids from "~~/components/ui/bento-grids";
 
 const Home: NextPage = () => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [fadeOut, setFadeOut] = useState(false);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const handleTimeUpdate = () => {
+      if (video.duration - video.currentTime < 1 && !fadeOut) {
+        setFadeOut(true);
+      }
+    };
+
+    const handleEnded = () => {
+      setFadeOut(false);
+      video.currentTime = 0;
+      video.play();
+    };
+
+    video.addEventListener("timeupdate", handleTimeUpdate);
+    video.addEventListener("ended", handleEnded);
+
+    return () => {
+      video.removeEventListener("timeupdate", handleTimeUpdate);
+      video.removeEventListener("ended", handleEnded);
+    };
+  }, [fadeOut]);
+
   return (
     <>
       <Island />
@@ -56,7 +85,15 @@ const Home: NextPage = () => {
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-black z-20"></div>
       </AuroraBackground> */}
       <div className="h-screen w-screen relative">
-        <video autoPlay loop muted playsInline className="absolute top-0 left-0 w-full h-full object-cover z-0">
+        <video
+          ref={videoRef}
+          autoPlay
+          loop={false}
+          muted
+          playsInline
+          className={`absolute top-0 left-0 w-full h-full object-cover z-0 transition-opacity duration-1000 ${fadeOut ? "opacity-0" : "opacity-100"
+            }`}
+        >
           <source src="/videos/bgvideo.mp4" type="video/mp4" />
         </video>
 
@@ -65,7 +102,7 @@ const Home: NextPage = () => {
         <div className="relative z-20 flex h-full px-12 gap-2 items-end pb-36">
           <div>
             <p className="text-[60px] text-white">Financing - Enhanced</p>
-            <p className="text-[24px] max-w-[40vw]">
+            <p className="text-[24px] max-w-[40vw] text-white">
               Lorem ipsum dolor sit amet, <br /> consectetur adipisicing elit. Placeat explicabo soluta quaerat.
             </p>
           </div>
@@ -97,7 +134,7 @@ const Home: NextPage = () => {
               y: 0,
             }}
             transition={{
-              duration: 1,
+              duration: 0.5,
               delay: 0.3,
             }}
             viewport={{ once: true }}
@@ -118,7 +155,7 @@ const Home: NextPage = () => {
               y: 0,
             }}
             transition={{
-              duration: 1,
+              duration: 0.5,
               delay: 0.6,
             }}
             viewport={{ once: true }}
@@ -147,7 +184,7 @@ const Home: NextPage = () => {
               y: 0,
             }}
             transition={{
-              duration: 1,
+              duration: 0.5,
               delay: 0.9,
             }}
             viewport={{ once: true }}

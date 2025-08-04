@@ -1,11 +1,14 @@
 "use client";
 
 import React, { memo, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
 
 export const IslandView = () => {
   const [hover, setHover] = useState(false);
   const [showButtons, setShowButtons] = useState(false);
+
+  const router = useRouter();
 
   return (
     <motion.div
@@ -34,6 +37,7 @@ export const IslandView = () => {
               exit={{ opacity: 0 }}
               transition={{ delay: 0.05 }}
               className="absolute left-0 top-1/2 -translate-y-1/2 ml-2 h-[80%] px-10 rounded-full border border-white/50 flex justify-center items-center text-white"
+              onClick={() => router.push("/dashboard/123")}
             >
               <p className="text-sm">Something</p>
             </motion.button>
@@ -43,6 +47,9 @@ export const IslandView = () => {
               exit={{ opacity: 0 }}
               transition={{ delay: 0.1 }}
               className="absolute right-0 top-1/2 -translate-y-1/2 mr-2 h-[80%] px-10 rounded-full border border-white/50 flex justify-center items-center text-white"
+              onClick={() => {
+                router.push("/login");
+              }}
             >
               <p className="text-sm">Login</p>
             </motion.button>

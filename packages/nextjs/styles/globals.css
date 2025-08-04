@@ -8,6 +8,7 @@
   --shadow-center: 0 0 12px -2px rgb(0 0 0 / 0.05);
   --animate-pulse-fast: pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   --animate-aurora: aurora 20s linear infinite;
+  --animate-meteor-effect: meteor 5s linear infinite;
 }
 
 @plugin "daisyui" {
@@ -133,6 +134,20 @@
     background-position:
       350% 50%,
       350% 50%;
+  }
+}
+
+@keyframes meteor {
+  0% {
+    transform: rotate(215deg) translateX(0);
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(215deg) translateX(-500px);
+    opacity: 0;
   }
 }
 

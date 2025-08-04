@@ -1,46 +1,53 @@
-import { Stack } from '@mui/material';
-import { motion } from 'motion/react';
-import React, { memo } from 'react'
+import React, { memo } from "react";
+import { Meteors } from "./meteors";
+import { motion } from "motion/react";
 
 export const BentoGridsView = () => {
   return (
-    <Stack className="h-[90vh] gap-8 px-[200px]">
-      <Stack direction={"row"} className="h-[400px] gap-8">
+    <div className="grid px-[200px] gap-8 h-[90vh]">
+      <div className="grid grid-cols-1 xl:grid-cols-[60%_40%] gap-8">
         <motion.div
-          className="border-white/[0.4] border w-[60%] rounded-2xl"
+          className="border-white/40 border rounded-2xl h-full"
           initial={{ opacity: 0, x: -100 }}
           whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0 }}
           viewport={{ once: true }}
-        />
+        >
+          <p>User Authentication with Sui&apos;s zkLogin, made for better security and privacy.</p>
+        </motion.div>
 
         <motion.div
-          className="border-white/[0.4] border-1 flex-1 rounded-2xl"
+          className="border-white/40 border rounded-2xl relative flex flex-col justify-end p-10 overflow-hidden h-full"
           initial={{ opacity: 0, x: 100 }}
           whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
           viewport={{ once: true }}
-        />
-      </Stack>
+        >
+          <p>Send, receive and convert both fiat currencies and stablecoins from anywhere, anytime</p>
+          <Meteors number={20} />
+        </motion.div>
+      </div>
 
-      <Stack direction={"row"} className="flex-row h-[400px] gap-8">
+      <div className="grid grid-cols-1 xl:grid-cols-[40%_60%] gap-8">
         <motion.div
-          className="border-white/[0.4] border-1 flex-1 rounded-2xl"
+          className="border-white/40 border rounded-2xl h-full"
           initial={{ opacity: 0, x: -100 }}
           whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
           viewport={{ once: true }}
-        />
+        >
+          <p>Always receive the latest transaction rates with real-time market update support</p>
+        </motion.div>
 
         <motion.div
-          className="border-white/[0.4] border-1 w-[60%] rounded-2xl"
+          className="border-white/40 border rounded-2xl h-full"
           initial={{ opacity: 0, x: 100 }}
           whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
           viewport={{ once: true }}
         />
-      </Stack>
-    </Stack>
+      </div>
+    </div>
   );
 };
 
