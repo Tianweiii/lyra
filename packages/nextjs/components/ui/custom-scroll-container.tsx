@@ -55,18 +55,7 @@ export const CustomScrollContainerView: React.FC<CustomScrollContainerProps> = (
             {Array.from({ length: 3 }).map((_, i) => (
               <div
                 key={i}
-                style={{
-                  minWidth: "25vw",
-                  minHeight: "100vh",
-                  background: i % 2 === 0 ? "#aaf" : "#faa",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "4rem",
-                  fontWeight: "bold",
-                  flexDirection: "column",
-                  padding: "0px 100px",
-                }}
+                className="min-w-[25vw] min-h-screen border border-white flex flex-col items-center justify-center text-4xl font-bold px-[100px]"
               >
                 <Typography fontSize={32} fontWeight={700} mb={3}>
                   Some title here
