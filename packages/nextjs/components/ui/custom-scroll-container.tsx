@@ -43,6 +43,7 @@ export const CustomScrollContainerView: React.FC<CustomScrollContainerProps> = (
   }, []);
 
   return (
+    // <TracingBeam>
     <div ref={wrapperRef} style={{ height: `calc(100vh + ${scrollDistance}px)` }} className={cn(className)}>
       <div ref={containerRef} className="sticky top-0 h-screen w-screen bg-black overflow-hidden">
         <div className="flex justify-center h-screen items-center gap-10">
@@ -81,6 +82,7 @@ export const CustomScrollContainerView: React.FC<CustomScrollContainerProps> = (
         </div>
       </div>
     </div>
+    // </TracingBeam>
   );
 };
 

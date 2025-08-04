@@ -7,7 +7,7 @@ import { Stack } from "@mui/material";
 // import { useAccount } from "wagmi";
 // import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 // import { Address } from "~~/components/scaffold-eth";
-import { motion } from "motion/react";
+import { motion, useInView } from "motion/react";
 import type { NextPage } from "next";
 import { BoltIcon, ChartBarSquareIcon, CubeTransparentIcon } from "@heroicons/react/24/outline";
 // import { AuroraBackground } from "~~/components/ui/aurora-background";
@@ -15,11 +15,64 @@ import { CanvasRevealEffect } from "~~/components/ui/canvas-reveal";
 import { Card } from "~~/components/ui/card";
 import Carousel from "~~/components/ui/carousel";
 import CustomScrollContainer from "~~/components/ui/custom-scroll-container";
+import { DraggableCardBody, DraggableCardContainer } from "~~/components/ui/dragable-card";
 import { LampContainer } from "~~/components/ui/lamp";
+import { useRef } from "react";
+import Island from "~~/components/ui/island";
 
 const Home: NextPage = () => {
+  const containerRef = useRef(null);
+  const isInView = useInView(containerRef)
+
+  const items = [
+    {
+      title: "Tyler Durden",
+      image:
+        "https://images.unsplash.com/photo-1732310216648-603c0255c000?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      className: "absolute top-[148px] left-[25%] rotate-[-5deg]",
+    },
+    {
+      title: "The Narrator",
+      image:
+        "https://images.unsplash.com/photo-1697909623564-3dae17f6c20b?q=80&w=2667&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      className: "absolute top-[384px] left-[30%] rotate-[13deg]",
+    },
+    {
+      title: "Iceland",
+      image:
+        "https://images.unsplash.com/photo-1501854140801-50d01698950b?q=80&w=2600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      className: "absolute top-[148px] left-[45%] rotate-[8deg]",
+    },
+    {
+      title: "Japan",
+      image:
+        "https://images.unsplash.com/photo-1518173946687-a4c8892bbd9f?q=80&w=3648&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      className: "absolute top-[244px] left-[60%] rotate-[10deg]",
+    },
+    {
+      title: "Norway",
+      image:
+        "https://images.unsplash.com/photo-1421789665209-c9b2a435e3dc?q=80&w=3542&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      className: "absolute top-[212px] right-[30%] rotate-[2deg]",
+      // used to be right 30
+    },
+    {
+      title: "New Zealand",
+      image:
+        "https://images.unsplash.com/photo-1505142468610-359e7d316be0?q=80&w=3070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      className: "absolute top-[376px] left-[50%] rotate-[-7deg]",
+    },
+    {
+      title: "Canada",
+      image:
+        "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2560&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      className: "absolute top-[164px] left-[35%] rotate-[4deg]",
+    },
+  ];
+
   return (
-    <div className="relative">
+    <>
+      <Island />
       {/* <AuroraBackground className="pb-20">
         <div className="flex flex-col items-center justify-center h-full px-12 gap-2">
           <Typography color="white" fontSize={60} fontWeight={700}>
@@ -70,6 +123,47 @@ const Home: NextPage = () => {
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-black z-20"></div>
       </div>
 
+      <DraggableCardContainer className="relative flex min-h-screen min-w-screen items-center justify-center overflow-clip border-1 mt-[200px]">
+        <p className="absolute top-1/2 mx-auto max-w-sm -translate-y-3/4 text-center text-2xl font-black text-neutral-400 md:text-4xl">
+          Transfer money from anywhere, anytime
+        </p>
+        {items.map(item => (
+          <DraggableCardBody className={item.className} key={item.title}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={item.image}
+              alt={item.title}
+              className="pointer-events-none relative z-10 h-80 w-80 object-cover"
+            />
+            <h3 className="mt-4 text-center text-2xl font-bold text-neutral-700 dark:text-neutral-300">{item.title}</h3>
+          </DraggableCardBody>
+          // <motion.div
+          //   key={item.title}
+          //   whileInView={{
+          //     top: item.className.match(/top-([^\s]+)/)?.[1] ?? "50%",
+          //     left: item.className.match(/left-([^\s]+)/)?.[1],
+          //     rotate: parseFloat(item.className.match(/rotate-\[?(-?\d+)deg\]?/)?.[1] || "0"),
+          //   }}
+          //   transition={{
+          //     type: "spring",
+          //     stiffness: 300,
+          //     damping: 20,
+          //     duration: 0.3,
+          //   }}
+          // >
+          //   <DraggableCardBody className={item.className} key={item.title}>
+          //     {/* eslint-disable-next-line @next/next/no-img-element */}
+          //     <img
+          //       src={item.image}
+          //       alt={item.title}
+          //       className="pointer-events-none relative z-10 h-80 w-80 object-cover"
+          //     />
+          //     <h3 className="mt-4 text-center text-2xl font-bold text-neutral-700 dark:text-neutral-300">{item.title}</h3>
+          //   </DraggableCardBody>
+          // </motion.div>
+        ))}
+      </DraggableCardContainer>
+
       <CustomScrollContainer className="my-[200px]" />
 
       {/* bento grid */}
@@ -87,7 +181,7 @@ const Home: NextPage = () => {
             className="border-white/[0.4] border-1 flex-1 rounded-2xl"
             initial={{ opacity: 0, x: 100 }}
             whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
             viewport={{ once: true }}
           />
         </Stack>
@@ -97,7 +191,7 @@ const Home: NextPage = () => {
             className="border-white/[0.4] border-1 flex-1 rounded-2xl"
             initial={{ opacity: 0, x: -100 }}
             whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
             viewport={{ once: true }}
           />
 
@@ -105,7 +199,7 @@ const Home: NextPage = () => {
             className="border-white/[0.4] border-1 w-[60%] rounded-2xl"
             initial={{ opacity: 0, x: 100 }}
             whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.9 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
             viewport={{ once: true }}
           />
         </Stack>
@@ -190,7 +284,7 @@ const Home: NextPage = () => {
         {/* <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-black z-20"></div> */}
       </LampContainer>
 
-      <div className="flex flex-row items-center justify-center py-20 h-screen md:h-auto dark:bg-black bg-white relative w-full">
+      <div className="flex flex-row items-center justify-center pb-20 h-screen md:h-auto dark:bg-black bg-white relative w-full mb-[100px]">
         <div className="max-w-7xl mx-auto w-full relative overflow-hidden h-full md:h-[40rem] px-4">
           <motion.div
             initial={{
@@ -220,7 +314,9 @@ const Home: NextPage = () => {
           </div>
         </div>
       </div>
-    </div>
+
+      <div className="h-96 border-1">footer</div>
+    </>
   );
 };
 
