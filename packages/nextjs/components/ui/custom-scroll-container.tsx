@@ -1,6 +1,8 @@
 import React, { memo, useEffect, useRef, useState } from "react";
 import { cn } from "./utils";
 import { Typography } from "@mui/material";
+// import { ShootingStars } from "./shooting-stars";
+// import { StarsBackground } from "./stars-background";
 
 type CustomScrollContainerProps = {
   className?: string;
@@ -70,6 +72,8 @@ export const CustomScrollContainerView: React.FC<CustomScrollContainerProps> = (
           </div>
         </div>
       </div>
+      {/* <ShootingStars /> */}
+      {/* <StarsBackground /> */}
     </div>
     // </TracingBeam>
   );
