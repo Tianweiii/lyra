@@ -1,62 +1,26 @@
 "use client";
 
 // import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+// import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
-import { Button, Stack, Typography } from "@mui/material";
+import { Stack } from "@mui/material";
 // import { useAccount } from "wagmi";
 // import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 // import { Address } from "~~/components/scaffold-eth";
 import { motion } from "motion/react";
 import type { NextPage } from "next";
 import { BoltIcon, ChartBarSquareIcon, CubeTransparentIcon } from "@heroicons/react/24/outline";
-import { AuroraBackground } from "~~/components/ui/aurora-background";
+// import { AuroraBackground } from "~~/components/ui/aurora-background";
 import { CanvasRevealEffect } from "~~/components/ui/canvas-reveal";
 import { Card } from "~~/components/ui/card";
 import Carousel from "~~/components/ui/carousel";
+import CustomScrollContainer from "~~/components/ui/custom-scroll-container";
 import { LampContainer } from "~~/components/ui/lamp";
 
 const Home: NextPage = () => {
-  // const { address: connectedAddress } = useAccount();
-  const carouselRef = useRef<HTMLDivElement>(null);
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [, setScrollDistance] = useState<number>(0);
-
-  useEffect(() => {
-    const updateMargin = () => {
-      if (!carouselRef.current || !containerRef.current) return;
-
-      const scrollableWidth = carouselRef.current.scrollWidth - carouselRef.current.clientWidth;
-      setScrollDistance(scrollableWidth);
-    };
-
-    updateMargin();
-    window.addEventListener("resize", updateMargin);
-    return () => window.removeEventListener("resize", updateMargin);
-  }, []);
-
-  useEffect(() => {
-    const onScroll = () => {
-      if (!carouselRef.current || !wrapperRef.current) return;
-
-      const wrapperTop = wrapperRef.current.getBoundingClientRect().top;
-      const scrollYInSection = -wrapperTop; // how deep we’ve scrolled into the sticky section
-
-      // Clamp scroll to avoid overscrolling
-      const maxScroll = carouselRef.current.scrollWidth - carouselRef.current.clientWidth;
-      const clampedScroll = Math.min(Math.max(scrollYInSection, 0), maxScroll);
-
-      carouselRef.current.scrollLeft = clampedScroll;
-    };
-
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   return (
-    <div ref={containerRef}>
-      <AuroraBackground className="pb-20">
+    <div className="relative">
+      {/* <AuroraBackground className="pb-20">
         <div className="flex flex-col items-center justify-center h-full px-12 gap-2">
           <Typography color="white" fontSize={60} fontWeight={700}>
             Financing - Enhanced
@@ -86,23 +50,27 @@ const Home: NextPage = () => {
           </Stack>
         </div>
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-black z-20"></div>
-      </AuroraBackground>
+      </AuroraBackground> */}
+      <div className="h-screen w-screen relative">
+        <video autoPlay loop muted playsInline className="absolute top-0 left-0 w-full h-full object-cover z-0">
+          <source src="/videos/bgvideo.mp4" type="video/mp4" />
+        </video>
 
-      <Stack direction="row" className="h-[90vh] items-center justify-center gap-[100px]">
-        <Stack className="min-w-[20%] max-w-[35%] h-[40%] border-white border-1 items-center justify-center">
-          Some image here
-        </Stack>
-        <Stack className="max-w-sm">
-          <Typography fontSize={32} fontWeight={700} mb={3}>
-            Some title here
-          </Typography>
-          <Typography>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae doloribus et repudiandae obcaecati, error
-            delectus? Animi, quaerat nulla aliquam nobis velit in? Vitae aspernatur nesciunt aperiam molestias, libero
-            quam consequatur!
-          </Typography>
-        </Stack>
-      </Stack>
+        <div className="absolute inset-0 bg-black/40 z-0" />
+
+        <div className="relative z-20 flex h-full px-12 gap-2 items-end pb-36">
+          <div>
+            <p className="text-[60px] text-white">Financing - Enhanced</p>
+            <p className="text-[24px] max-w-[40vw]">
+              Lorem ipsum dolor sit amet, <br /> consectetur adipisicing elit. Placeat explicabo soluta quaerat.
+            </p>
+          </div>
+        </div>
+
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-black z-20"></div>
+      </div>
+
+      <CustomScrollContainer className="my-[200px]" />
 
       {/* bento grid */}
       <Stack className="h-[90vh] gap-8 px-[200px]">
@@ -162,6 +130,7 @@ const Home: NextPage = () => {
               duration: 1,
               delay: 0.3,
             }}
+            viewport={{ once: true }}
           >
             <Card title="Some stuff here" icon={<BoltIcon />}>
               <CanvasRevealEffect animationSpeed={5.1} containerClassName="bg-emerald-900" />
@@ -182,6 +151,7 @@ const Home: NextPage = () => {
               duration: 1,
               delay: 0.6,
             }}
+            viewport={{ once: true }}
           >
             <Card title="More stuff here" icon={<CubeTransparentIcon />}>
               <CanvasRevealEffect
@@ -210,6 +180,7 @@ const Home: NextPage = () => {
               duration: 1,
               delay: 0.9,
             }}
+            viewport={{ once: true }}
           >
             <Card title="I dont know at this point" icon={<ChartBarSquareIcon />}>
               <CanvasRevealEffect animationSpeed={3} containerClassName="bg-sky-600" colors={[[125, 211, 252]]} />

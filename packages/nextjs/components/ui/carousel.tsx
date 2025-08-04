@@ -44,9 +44,12 @@ export const CarouselView: React.FC<CarouselProps> = () => {
   }, []);
 
   return (
-    <div ref={wrapperRef} style={{ height: `calc(100vh + ${scrollDistance}px)` }}>
+    <div ref={wrapperRef} style={{ height: `calc(100vh + ${scrollDistance}px)` }} className="mr-[1000px]">
       <div ref={containerRef} className="sticky top-0 h-screen w-screen bg-black overflow-hidden">
-        <div ref={carouselRef} className="flex overflow-x-auto h-full w-full items-center gap-10 px-10 hide-scrollbar">
+        <div
+          ref={carouselRef}
+          className="flex overflow-x-auto h-full w-full items-center gap-10 px-10 hide-scrollbar pointer-events-none"
+        >
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
