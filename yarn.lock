@@ -3347,6 +3347,7 @@ __metadata:
     "@tanstack/react-query": ~5.59.15
     "@trivago/prettier-plugin-sort-imports": ~4.3.0
     "@types/node": ~18.19.50
+    "@types/qrcode": ^1.5.5
     "@types/react": ~19.0.7
     "@uniswap/sdk-core": ~5.8.2
     "@uniswap/v2-sdk": ~4.6.1
@@ -3366,6 +3367,7 @@ __metadata:
     next-themes: ~0.3.0
     postcss: ~8.4.45
     prettier: ~3.5.3
+    qrcode: ^1.5.4
     qrcode.react: ~4.0.1
     react: ~19.0.0
     react-dom: ~19.0.0
@@ -3882,6 +3884,15 @@ __metadata:
   version: 4.0.2
   resolution: "@types/parse-json@npm:4.0.2"
   checksum: 5bf62eec37c332ad10059252fc0dab7e7da730764869c980b0714777ad3d065e490627be9f40fc52f238ffa3ac4199b19de4127196910576c2fe34dd47c7a470
+  languageName: node
+  linkType: hard
+
+"@types/qrcode@npm:^1.5.5":
+  version: 1.5.5
+  resolution: "@types/qrcode@npm:1.5.5"
+  dependencies:
+    "@types/node": "*"
+  checksum: d92c1d3e77406bf13a03ec521b2ffb1ac99b2e6ea3a17cad670f2610f62e1293554c57e4074bb2fd4e9369f475f863b69e0ae8c543cb049c4a3c1b0c2d92522a
   languageName: node
   linkType: hard
 
@@ -11009,6 +11020,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lyra-graph@workspace:packages/lyra-graph":
+  version: 0.0.0-use.local
+  resolution: "lyra-graph@workspace:packages/lyra-graph"
+  dependencies:
+    "@graphprotocol/graph-cli": 0.96.0
+    "@graphprotocol/graph-ts": 0.37.0
+    matchstick-as: 0.6.0
+  languageName: unknown
+  linkType: soft
+
 "main-event@npm:^1.0.1":
   version: 1.0.1
   resolution: "main-event@npm:1.0.1"
@@ -13029,7 +13050,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qrcode@npm:~1.5.3":
+"qrcode@npm:^1.5.4, qrcode@npm:~1.5.3":
   version: 1.5.4
   resolution: "qrcode@npm:1.5.4"
   dependencies:
@@ -14413,16 +14434,6 @@ __metadata:
   checksum: 879ad68e3e81adcf4373038aaafe55f968294955593660e173fbf679204aff158c59966716a60b29af72dc88795cfb2c479b6d2c3c87b2b2d282f3e27cc66461
   languageName: node
   linkType: hard
-
-"subgraph-lyra@workspace:packages/subgraph-lyra":
-  version: 0.0.0-use.local
-  resolution: "subgraph-lyra@workspace:packages/subgraph-lyra"
-  dependencies:
-    "@graphprotocol/graph-cli": 0.96.0
-    "@graphprotocol/graph-ts": 0.37.0
-    matchstick-as: 0.6.0
-  languageName: unknown
-  linkType: soft
 
 "superstruct@npm:^1.0.3":
   version: 1.0.4

@@ -1,0 +1,38 @@
+specVersion: 1.2.0
+indexerHints:
+  prune: auto
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: LyraRamp
+    network: scroll-sepolia
+    source:
+      address: "0xf750E0b6d4F6A1c0b0B3707CB2191B8b521C2797"
+      abi: LyraRamp
+      startBlock: 11356437
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      entities:
+        - FeeCollected
+        - OwnershipTransferred
+        - RampRequestCompleted
+        - RampRequestCreated
+        - RateUpdated
+      abis:
+        - name: LyraRamp
+          file: ./abis/LyraRamp.json
+      eventHandlers:
+        - event: FeeCollected(indexed uint256,uint256,address,uint256)
+          handler: handleFeeCollected
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: RampRequestCompleted(indexed uint256,indexed address,indexed address,uint256,string,uint256,string,uint256)
+          handler: handleRampRequestCompleted
+        - event: RampRequestCreated(indexed uint256,indexed address,string,string,uint256,uint256,string,uint256)
+          handler: handleRampRequestCreated
+        - event: RateUpdated(string,uint256,uint256,uint256)
+          handler: handleRateUpdated
+      file: ./src/lyra-ramp.ts
