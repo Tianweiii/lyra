@@ -50,6 +50,15 @@ const Home: NextPage = () => {
     };
   }, [fadeOut]);
 
+  // async function getPrices() {
+  //   const options: RequestInit = { method: "GET", headers: { accepted: "application.json" } };
+  //   // const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd');
+  //   const res = await fetch("https://api.coingecko.com/api/v3/simple/exchanges", options);
+  //   const data = await res.json();
+  //   console.log(data);
+  // }
+  // getPrices();
+
   return (
     <>
       <Island />
