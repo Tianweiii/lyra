@@ -4,6 +4,7 @@
 // import { useEffect, useRef, useState } from "react";
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 import { Stack } from "@mui/material";
 // import { useAccount } from "wagmi";
 // import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
@@ -24,6 +25,8 @@ import { LampContainer } from "~~/components/ui/lamp";
 const Home: NextPage = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [fadeOut, setFadeOut] = useState(false);
+
+  const router = useRouter();
 
   useEffect(() => {
     const video = videoRef.current;
@@ -61,38 +64,7 @@ const Home: NextPage = () => {
 
   return (
     <>
-      <Island />
-      {/* <AuroraBackground className="pb-20">
-        <div className="flex flex-col items-center justify-center h-full px-12 gap-2">
-          <Typography color="white" fontSize={60} fontWeight={700}>
-            Financing - Enhanced
-          </Typography>
-          <Typography color="white" fontSize={24} fontWeight={400} textAlign={"center"} maxWidth={"60%"}>
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corrupti, ab quasi! Nesciunt omnis molestias
-            blanditiis quos commodi officia modi possimus?
-          </Typography>
-          <Stack direction="row" gap={2} mt={3}>
-            <Button
-              variant="contained"
-              color="primary"
-              size="medium"
-              sx={{ paddingY: 2, paddingX: 4, textTransform: "none", borderRadius: 8 }}
-            >
-              <Typography color="white">Learn More {">"}</Typography>
-            </Button>
-            <Button
-              variant="outlined"
-              color="primary"
-              size="medium"
-              // borderRadius={8}
-              sx={{ paddingY: 2, paddingX: 4, textTransform: "none", borderRadius: 8, borderColor: "white" }}
-            >
-              <Typography color="white">Get Started</Typography>
-            </Button>
-          </Stack>
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-black z-20"></div>
-      </AuroraBackground> */}
+      <Island leftOnPress={() => router.push("/dashboard/123")} />
       <div className="h-screen w-screen relative">
         <video
           ref={videoRef}

@@ -73,6 +73,7 @@
     "framer-motion": "^12.23.12",
     "motion": "^12.23.12",
     "postcss": "^8.5.6",
+    "shadcn": "latest",
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^4.1.11",
     "three": "latest",
