@@ -98,10 +98,10 @@ export const CarouselView: React.FC<CarouselProps> = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{
                 duration: 0.5,
-                delay: 0.1 * i,
+                delay: 0.05 * i,
                 ease: "easeOut",
               }}
-              viewport={{ once: true }}
+              // viewport={{ once: true }}
               style={{ willChange: "transform, opacity" }}
             >
               {/* Image Background */}
