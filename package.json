@@ -73,10 +73,15 @@
     "framer-motion": "^12.23.12",
     "motion": "^12.23.12",
     "postcss": "^8.5.6",
+    "recharts": "^3.1.2",
     "shadcn": "latest",
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^4.1.11",
     "three": "latest",
     "three-globe": "^2.44.0"
+  },
+  "resolutions": {
+    "@types/react": "18.2.21",
+    "@types/react-dom": "18.2.7"
   }
 }
