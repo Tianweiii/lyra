@@ -1,0 +1,58 @@
+
+•
+ù
+type FeeCollected @entity(immutable: true) {
+  id: Bytes!
+  paymentId: BigInt! # uint256
+  feeAmount: BigInt! # uint256
+  token: Bytes! # address
+  timestamp: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type OwnershipTransferred @entity(immutable: true) {
+  id: Bytes!
+  previousOwner: Bytes! # address
+  newOwner: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type PaymentCompleted @entity(immutable: true) {
+  id: Bytes!
+  paymentId: BigInt! # uint256
+  sender: Bytes! # address
+  recipient: Bytes! # address
+  amount: BigInt! # uint256
+  currency: String! # string
+  stablecoinAmount: BigInt! # uint256
+  sourceChain: String! # string
+  targetChain: String! # string
+  stablecoinToken: Bytes! # address
+  timestamp: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type StablecoinAdded @entity(immutable: true) {
+  id: Bytes!
+  token: Bytes! # address
+  timestamp: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type StablecoinRemoved @entity(immutable: true) {
+  id: Bytes!
+  token: Bytes! # address
+  timestamp: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+ù
