@@ -1,14 +1,15 @@
-import { Rubik } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import "@rainbow-me/rainbowkit/styles.css";
 import { ScaffoldEthAppWithProviders } from "~~/components/ScaffoldEthAppWithProviders";
 import { ThemeProvider } from "~~/components/ThemeProvider";
 import "~~/styles/globals.css";
 import { getMetadata } from "~~/utils/scaffold-eth/getMetadata";
 
-const rubik = Rubik({
+const montserrat = Montserrat({
   subsets: ["latin"],
+  variable: "--font-montserrat",
+  display: "swap",
   weight: ["400", "500", "700"],
-  variable: "--font-rubik",
 });
 
 export const metadata = getMetadata({
@@ -17,7 +18,7 @@ export const metadata = getMetadata({
 });
 
 const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => (
-  <html suppressHydrationWarning className={rubik.className}>
+  <html suppressHydrationWarning className={montserrat.className}>
     <body style={{ backgroundColor: "black" }}>
       <ThemeProvider enableSystem>
         <ScaffoldEthAppWithProviders>{children}</ScaffoldEthAppWithProviders>

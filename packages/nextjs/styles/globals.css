@@ -159,3 +159,11 @@
 .hide-scrollbar::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Opera */
 }
+
+p {
+  margin: 0;
+}
+
+.recharts-wrapper *:focus {
+  outline: none;
+}

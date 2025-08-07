@@ -14,7 +14,6 @@ export const IslandView: React.FC<IslandProps> = ({ rightOnPress }) => {
   const [hover, setHover] = useState(false);
   const [showButtons, setShowButtons] = useState(false);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
-  // const [scope, animate] = useAnimate();
 
   const onPressButton = (e: any) => {
     e.stopPropagation();
@@ -32,7 +31,7 @@ export const IslandView: React.FC<IslandProps> = ({ rightOnPress }) => {
         `}
         whileHover={{ width: "40vw" }}
         transition={{
-          duration: 0.5,
+          duration: 0.3,
           ease: "easeInOut",
         }}
         onHoverStart={() => setHover(true)}
@@ -81,7 +80,7 @@ export const IslandView: React.FC<IslandProps> = ({ rightOnPress }) => {
         key="container2"
         className={`
           bg-white/10 backdrop-blur-md fixed transform flex justify-center items-center flex-col gap-10 z-50
-          ${isExpanded ? "inset-0 w-screen h-screen top-0 left-0 bottom-0 -translate-x-0 -translate-y-0" : "w-10 h-10 top-[100px] left-1/2 -translate-x-1/2 -translate-y-1/2"}
+          ${isExpanded ? "inset-0 w-screen h-screen top-0 left-0 bottom-0 -translate-x-0 -translate-y-0" : "w-10 h-10 top-[100px] left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-4xl"}
         `}
         transition={{
           type: "spring",
