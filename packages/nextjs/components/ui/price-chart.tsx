@@ -1,94 +1,50 @@
-import React, { memo } from "react";
-import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip } from "recharts";
+import React from "react";
+import { Bar, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
-export const PriceChartView = () => {
-  const data = [
-    {
-      name: "Page A",
-      uv: 4000,
-      pv: 2400,
-      amt: 2400,
-    },
-    {
-      name: "Page B",
-      uv: 3000,
-      pv: 1398,
-      amt: 2210,
-    },
-    {
-      name: "Page C",
-      uv: 2000,
-      pv: 9800,
-      amt: 2290,
-    },
-    {
-      name: "Page D",
-      uv: 2780,
-      pv: 3908,
-      amt: 2000,
-    },
-    {
-      name: "Page E",
-      uv: 1890,
-      pv: 4800,
-      amt: 2181,
-    },
-    {
-      name: "Page F",
-      uv: 2390,
-      pv: 3800,
-      amt: 2500,
-    },
-    {
-      name: "Page G",
-      uv: 3490,
-      pv: 4300,
-      amt: 2100,
-    },
-  ];
+// simulated wallet balance + volume data
+export const generateWalletData = () => {
+  const data = [];
+  let amount = 1000;
 
-  // const CustomizedLabel = ({ x, y, stroke, value }) => {
-  //   return (
-  //     <text x={x} y={y} dy={-4} fill={stroke} fontSize={10} textAnchor="middle">
-  //       {value}
-  //     </text>
-  //   );
-  // };
+  for (let i = 0; i < 100; i++) {
+    const date = new Date(2024, 0, 1 + i);
+    amount += (Math.random() - 0.5) * 100;
+    data.push({
+      date: date.toISOString().split("T")[0],
+      amount: Math.round(amount * 100) / 100,
+    });
+  }
 
-  // const CustomizedAxisTick = ({ x, y, stroke, payload }) => {
-  //   return (
-  //     <g transform={`translate(${x},${y})`}>
-  //       <text x={0} y={0} dy={16} textAnchor="end" fill="#666" transform="rotate(-35)">
-  //         {payload.value}
-  //       </text>
-  //     </g>
-  //   );
-  // };
+  return data;
+};
 
+const WalletBalanceChart = () => {
   return (
-    <ResponsiveContainer width="100%" height="100%">
-      <LineChart
-        width={500}
-        height={300}
-        data={data}
-        margin={{
-          top: 20,
-          right: 30,
-          left: 20,
-          bottom: 10,
-        }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        {/* <XAxis dataKey="name" height={60} tick={<CustomizedAxisTick />} />
-        <YAxis /> */}
-        <Tooltip />
-        {/* <Legend /> */}
-        {/* <Line type="monotone" dataKey="pv" stroke="#8884d8" label={<CustomizedLabel />} /> */}
-        <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
-      </LineChart>
-    </ResponsiveContainer>
+    <div style={{ width: "100%", height: "100%", padding: "1rem", borderRadius: "8px" }}>
+      <ResponsiveContainer width="100%" height="100%" className={"focus:outline-0"}>
+        <ComposedChart data={generateWalletData()}>
+          <XAxis dataKey="date" tick={{ fill: "#aaa", fontSize: 12 }} axisLine={false} tickLine={false} />
+
+          <YAxis
+            tickFormatter={v => `$${v / 1000}k`}
+            tick={{ fill: "#aaa", fontSize: 12 }}
+            axisLine={false}
+            tickLine={false}
+          />
+
+          <Tooltip
+            contentStyle={{ backgroundColor: "#1e1e1e", border: "none" }}
+            labelStyle={{ color: "#ccc" }}
+            formatter={(value, name) => [`$${value}`, name === "amount" ? "Balance" : "Volume"]}
+          />
+
+          <Bar dataKey="volume" barSize={4} fill="#444" radius={[2, 2, 0, 0]} />
+
+          <Line type="monotone" dataKey="amount" stroke="#ffffff" strokeWidth={2} dot={false} />
+        </ComposedChart>
+      </ResponsiveContainer>
+    </div>
   );
 };
 
-export const PriceChart = memo(PriceChartView);
-export default PriceChart;
+export default WalletBalanceChart;

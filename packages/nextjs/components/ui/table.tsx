@@ -1,20 +1,10 @@
 import React, { useState } from "react";
 import Image, { ImageProps } from "next/image";
 import CustomStatusChip from "./chip";
-import {
-  Box,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TablePagination,
-  TableRow,
-} from "@mui/material";
+import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
-export type TableProps = {
+export type CoinDataProps = {
   data: {
     id: string;
     date: Date;
@@ -29,221 +19,12 @@ export type TableProps = {
   };
 };
 
-export const exampleTableData: TableProps[] = [
-  {
-    data: {
-      id: "1",
-      date: new Date("2025-08-01T10:00:00Z"),
-      coin: {
-        name: "USDC",
-        icon: { src: "", alt: "USDC icon", width: 24, height: 24 },
-      },
-      merchant: "Coinbase",
-      amount: 120.5,
-      type: "pay",
-      status: "completed",
-    },
-  },
-  {
-    data: {
-      id: "2",
-      date: new Date("2025-08-02T11:15:00Z"),
-      coin: {
-        name: "USDC",
-        icon: { src: "", alt: "USDC icon", width: 24, height: 24 },
-      },
-      merchant: "Binance",
-      amount: 45.0,
-      type: "pay",
-      status: "pending",
-    },
-  },
-  {
-    data: {
-      id: "3",
-      date: new Date("2025-08-03T08:30:00Z"),
-      coin: {
-        name: "USDC",
-        icon: { src: "", alt: "USDC icon", width: 24, height: 24 },
-      },
-      merchant: "Kraken",
-      amount: 300.75,
-      type: "pay",
-      status: "completed",
-    },
-  },
-  {
-    data: {
-      id: "4",
-      date: new Date("2025-08-04T09:00:00Z"),
-      coin: {
-        name: "USDC",
-        icon: { src: "", alt: "USDC icon", width: 24, height: 24 },
-      },
-      merchant: "OKX",
-      amount: 87.9,
-      type: "pay",
-      status: "failed",
-    },
-  },
-  {
-    data: {
-      id: "5",
-      date: new Date("2025-08-05T12:00:00Z"),
-      coin: {
-        name: "USDC",
-        icon: { src: "", alt: "USDC icon", width: 24, height: 24 },
-      },
-      merchant: "Gemini",
-      amount: 210.0,
-      type: "pay",
-      status: "completed",
-    },
-  },
-  {
-    data: {
-      id: "6",
-      date: new Date("2025-08-06T14:00:00Z"),
-      coin: {
-        name: "USDC",
-        icon: { src: "", alt: "USDC icon", width: 24, height: 24 },
-      },
-      merchant: "Bybit",
-      amount: 160.25,
-      type: "pay",
-      status: "pending",
-    },
-  },
-  {
-    data: {
-      id: "7",
-      date: new Date("2025-08-07T16:00:00Z"),
-      coin: {
-        name: "USDC",
-        icon: { src: "", alt: "USDC icon", width: 24, height: 24 },
-      },
-      merchant: "KuCoin",
-      amount: 74.4,
-      type: "pay",
-      status: "completed",
-    },
-  },
-  {
-    data: {
-      id: "8",
-      date: new Date("2025-08-08T13:30:00Z"),
-      coin: {
-        name: "USDC",
-        icon: { src: "", alt: "USDC icon", width: 24, height: 24 },
-      },
-      merchant: "Bitfinex",
-      amount: 95.0,
-      type: "pay",
-      status: "failed",
-    },
-  },
-  {
-    data: {
-      id: "9",
-      date: new Date("2025-08-09T15:20:00Z"),
-      coin: {
-        name: "USDC",
-        icon: { src: "", alt: "USDC icon", width: 24, height: 24 },
-      },
-      merchant: "Crypto.com",
-      amount: 180.33,
-      type: "pay",
-      status: "completed",
-    },
-  },
-  {
-    data: {
-      id: "10",
-      date: new Date("2025-08-10T09:45:00Z"),
-      coin: {
-        name: "USDC",
-        icon: { src: "", alt: "USDC icon", width: 24, height: 24 },
-      },
-      merchant: "MoonPay",
-      amount: 33.1,
-      type: "pay",
-      status: "completed",
-    },
-  },
-  {
-    data: {
-      id: "11",
-      date: new Date("2025-08-11T10:05:00Z"),
-      coin: {
-        name: "USDC",
-        icon: { src: "", alt: "USDC icon", width: 24, height: 24 },
-      },
-      merchant: "Simplex",
-      amount: 250.0,
-      type: "pay",
-      status: "pending",
-    },
-  },
-  {
-    data: {
-      id: "12",
-      date: new Date("2025-08-12T11:25:00Z"),
-      coin: {
-        name: "USDC",
-        icon: { src: "", alt: "USDC icon", width: 24, height: 24 },
-      },
-      merchant: "Ramp",
-      amount: 410.2,
-      type: "pay",
-      status: "completed",
-    },
-  },
-  {
-    data: {
-      id: "13",
-      date: new Date("2025-08-13T12:15:00Z"),
-      coin: {
-        name: "USDC",
-        icon: { src: "", alt: "USDC icon", width: 24, height: 24 },
-      },
-      merchant: "Transak",
-      amount: 12.99,
-      type: "pay",
-      status: "failed",
-    },
-  },
-  {
-    data: {
-      id: "14",
-      date: new Date("2025-08-14T14:50:00Z"),
-      coin: {
-        name: "USDC",
-        icon: { src: "", alt: "USDC icon", width: 24, height: 24 },
-      },
-      merchant: "Binance US",
-      amount: 99.99,
-      type: "pay",
-      status: "completed",
-    },
-  },
-  {
-    data: {
-      id: "15",
-      date: new Date("2025-08-15T17:30:00Z"),
-      coin: {
-        name: "USDC",
-        icon: { src: "", alt: "USDC icon", width: 24, height: 24 },
-      },
-      merchant: "Robinhood",
-      amount: 135.0,
-      type: "pay",
-      status: "completed",
-    },
-  },
-];
+export type TableProps = {
+  data: CoinDataProps[];
+};
 
 const DarkTableContainer = styled(TableContainer)(() => ({
-  backgroundColor: "#141414",
+  backgroundColor: "#1c1c1c",
   borderRadius: 12,
 }));
 
@@ -255,7 +36,7 @@ const CustomTableCell = styled(TableCell)(() => ({
   // borderRight: "1px solid #333",
 }));
 
-const CoinTable = () => {
+export const CoinTable: React.FC<TableProps> = ({ data }) => {
   const [page, setPage] = useState<number>(0);
   const rowCount = 10;
 
@@ -263,11 +44,11 @@ const CoinTable = () => {
     setPage(newPage);
   };
 
-  const paginatedData = exampleTableData.slice(page * rowCount, page * rowCount + rowCount);
+  const paginatedData = data.slice(page * rowCount, page * rowCount + rowCount);
 
   return (
-    <DarkTableContainer component={Paper} sx={{ padding: 2, minWidth: 700 }}>
-      <p className="p-4 font-bold text-2xl">Payment History</p>
+    <DarkTableContainer sx={{ padding: 2, minWidth: 700 }}>
+      <p className="p-4 font-bold text-2xl text-white">Payment History</p>
       <Table>
         <TableHead>
           <TableRow>
@@ -311,7 +92,7 @@ const CoinTable = () => {
       <TablePagination
         rowsPerPageOptions={[10]}
         component="div"
-        count={exampleTableData.length}
+        count={data.length}
         rowsPerPage={rowCount}
         page={page}
         onPageChange={handleChangePage}

@@ -163,3 +163,7 @@
 p {
   margin: 0;
 }
+
+.recharts-wrapper *:focus {
+  outline: none;
+}

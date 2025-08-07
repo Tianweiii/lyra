@@ -1,30 +1,20 @@
 "use client";
 
 import * as React from "react";
-import { CssBaseline, ThemeProvider as MuiThemeProvider } from "@mui/material";
-import { createTheme } from "@mui/material/styles";
+import { ThemeProvider as MuiThemeProvider, createTheme } from "@mui/material/styles";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
+import { ThemeProviderProps } from "next-themes/dist/types";
 
-export const muiTheme = createTheme({
+const theme = createTheme({
   typography: {
-    fontFamily: '"Rubik", sans-serif',
-  },
-  palette: {
-    mode: "dark",
-    background: {
-      default: "#141414",
-      paper: "#1e1e1e",
-    },
+    fontFamily: "var(--font-montserrat)",
   },
 });
 
-export const ThemeProvider = ({ children, ...props }: any) => {
+export const ThemeProvider = ({ children, ...props }: ThemeProviderProps) => {
   return (
     <NextThemesProvider {...props}>
-      <MuiThemeProvider theme={muiTheme}>
-        <CssBaseline />
-        {children}
-      </MuiThemeProvider>
+      <MuiThemeProvider theme={theme}>{children}</MuiThemeProvider>
     </NextThemesProvider>
   );
 };
