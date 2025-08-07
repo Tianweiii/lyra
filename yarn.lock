@@ -7762,6 +7762,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"css-mediaquery@npm:^0.1.2":
+  version: 0.1.2
+  resolution: "css-mediaquery@npm:0.1.2"
+  checksum: 8e26ae52d8aaaa71893f82fc485363ff0fab494b7d3b3464572aaed50714b8b538d33dbdaa69f0c02cf7f80d1f4d9a77519306c0492223ce91b3987475031a69
+  languageName: node
+  linkType: hard
+
 "css-what@npm:^6.1.0":
   version: 6.2.2
   resolution: "css-what@npm:6.2.2"
@@ -8778,7 +8785,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"es-toolkit@npm:^1.39.3":
+"es-toolkit@npm:^1.39.3, es-toolkit@npm:^1.39.8":
   version: 1.39.8
   resolution: "es-toolkit@npm:1.39.8"
   dependenciesMeta:
@@ -10657,6 +10664,13 @@ __metadata:
   bin:
     husky: bin.js
   checksum: c2412753f15695db369634ba70f50f5c0b7e5cb13b673d0826c411ec1bd9ddef08c1dad89ea154f57da2521d2605bd64308af748749b27d08c5f563bcd89975f
+  languageName: node
+  linkType: hard
+
+"hyphenate-style-name@npm:^1.0.0":
+  version: 1.1.0
+  resolution: "hyphenate-style-name@npm:1.1.0"
+  checksum: b9ed74e29181d96bd58a2d0e62fc4a19879db591dba268275829ff0ae595fcdf11faafaeaa63330a45c3004664d7db1f0fc7cdb372af8ee4615ed8260302c207
   languageName: node
   linkType: hard
 
@@ -12645,6 +12659,15 @@ __metadata:
     promise-retry: ^2.0.1
     ssri: ^12.0.0
   checksum: 6fb2fee6da3d98f1953b03d315826b5c5a4ea1f908481afc113782d8027e19f080c85ae998454de4e5f27a681d3ec58d57278f0868d4e0b736f51d396b661691
+  languageName: node
+  linkType: hard
+
+"matchmediaquery@npm:^0.4.2":
+  version: 0.4.2
+  resolution: "matchmediaquery@npm:0.4.2"
+  dependencies:
+    css-mediaquery: ^0.1.2
+  checksum: 0d495dd20a4bdd4c6485c43fe9363d41de6c8cbe3bb4c259f39b885f1d2627f102ac21a759b6108a313d0dbd3445edb9847b734cff2f06b5b19fed62dbb7856f
   languageName: node
   linkType: hard
 
@@ -14742,7 +14765,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prop-types@npm:^15.6.2, prop-types@npm:^15.8.1":
+"prop-types@npm:^15.6.1, prop-types@npm:^15.6.2, prop-types@npm:^15.8.1":
   version: 15.8.1
   resolution: "prop-types@npm:15.8.1"
   dependencies:
@@ -15095,6 +15118,20 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 310e6e6d2f28226a1751dc5084a2dce49167f0b69e3d78d6510f329f423ee313d4f6477f5e1adccb68baef40a7af75541e980a8c398cb82ea0d3573e514e8124
+  languageName: node
+  linkType: hard
+
+"react-responsive@npm:^10.0.1":
+  version: 10.0.1
+  resolution: "react-responsive@npm:10.0.1"
+  dependencies:
+    hyphenate-style-name: ^1.0.0
+    matchmediaquery: ^0.4.2
+    prop-types: ^15.6.1
+    shallow-equal: ^3.1.0
+  peerDependencies:
+    react: ">=16.8.0"
+  checksum: 76fb5da155b40b22df2901b5b49edf3038e6f85cbe1a6d64bf2b7a8bec142b7cb38ce1f559c02c21a6d5813c29903448d1a5352ac5d358a758d7f35091858b4c
   languageName: node
   linkType: hard
 
@@ -15643,11 +15680,13 @@ __metadata:
     autoprefixer: ^10.4.21
     clsx: ^2.1.1
     dotted-map: ^2.2.3
+    es-toolkit: ^1.39.8
     framer-motion: ^12.23.12
     husky: ~9.1.6
     lint-staged: ~13.2.2
     motion: ^12.23.12
     postcss: ^8.5.6
+    react-responsive: ^10.0.1
     recharts: ^3.1.2
     shadcn: latest
     tailwind-merge: ^3.3.1
@@ -15822,6 +15861,13 @@ __metadata:
   bin:
     shadcn: dist/index.js
   checksum: ccce06b9a90e074487eb9194653366e3dc43617a8c7c83b153c05bb372ee4118fba60bf9e6e893d6ec4a111e5450ceb50a7f1fe8d8c8bd79a77ee19b53d49f7f
+  languageName: node
+  linkType: hard
+
+"shallow-equal@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "shallow-equal@npm:3.1.0"
+  checksum: 7eab4ae9fbd79c8913a88d6af873548b6ce619baab2e9e0a2f11696881cdaae289d51423837f6aca38de874581609c8e5e2fa052d8b79c10b55ac9fe7bd2f2f2
   languageName: node
   linkType: hard
 

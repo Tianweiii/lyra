@@ -2,6 +2,7 @@
 
 import React from "react";
 import { NextPage } from "next";
+import { BackgroundBeams } from "~~/components/ui/background-beams";
 import Island from "~~/components/ui/island";
 import PriceChart from "~~/components/ui/price-chart";
 import CoinTable, { CoinDataProps } from "~~/components/ui/table";
@@ -12,7 +13,9 @@ const DashboardPage: NextPage = () => {
   // const secondary: string = "#8c8c8c";
   const walletAmount: number = 91255.38;
   const coinType: string = "USDC";
+  // TODO: usdc amount
   const currencyType: string = "USD";
+  // const isAdmin: boolean = false;
 
   // TODO: Query subgraph here
   const tableData: CoinDataProps[] = [
@@ -229,16 +232,16 @@ const DashboardPage: NextPage = () => {
   ];
 
   return (
-    <div className="flex flex-col px-24 py-12 gap-2 mt-10">
+    <div className="flex flex-col md:px-24 px-5 py-12 gap-2 mt-10 relative antialiased">
       <Island />
-      <div className="flex flex-row h-[45vh] gap-2">
+      <div className="flex md:flex-row flex-col h-[45vh] gap-2 z-[10]">
         {/* box 1 */}
-        <div className="flex-2 h-[45vh] rounded-lg px-8 py-6 flex flex-col gap-5 bg-[#1e1e1e]">
-          <p className="text-xl font-normal">Total Balance</p>
-          <div className="flex flex-col gap-3">
+        <div className="flex-2 h-[45vh] rounded-lg md:px-8 py-8 flex flex-col gap-5 bg-[#1e1e1e]">
+          <p className="text-sm md:text-xl font-normal px-4">Total Balance</p>
+          <div className="flex flex-col gap-3 px-4">
             <div className="flex items-end gap-1">
-              <p className="text-4xl">${splitDecimal(walletAmount, "full")}</p>
-              <p className="text-gray-500 text-3xl">.{splitDecimal(walletAmount, "decimal")}</p>
+              <p className="text-2xl md:text-4xl">${splitDecimal(walletAmount, "full")}</p>
+              <p className="text-gray-500 text-xl  md:text-3xl">.{splitDecimal(walletAmount, "decimal")}</p>
             </div>
             <p className="text-gray-500 font-semibold">
               {coinType}s &middot; {currencyType}
@@ -247,13 +250,13 @@ const DashboardPage: NextPage = () => {
           <PriceChart />
         </div>
         {/* box 2 */}
-        <div className="bg-[#1e1e1e] flex-1 h-[45vh] rounded-lg">make payment</div>
+        <div className="bg-[#1e1e1e] flex-1 md:h-[45vh] rounded-lg">
+          <p>Make Payment</p>
+        </div>
       </div>
 
-      {/* <div className="border-1 h-[45vh] rounded-md">
-        payment history
-      </div> */}
       <CoinTable data={tableData} />
+      <BackgroundBeams className="z-0" />
     </div>
   );
 };

@@ -4,11 +4,12 @@ import { alpha } from "@mui/material/styles";
 
 export type StatusChipProps = {
   stackProps?: StackProps;
+  isMobile?: boolean;
   status: "completed" | "pending" | "failed";
 };
 
 export const CustomStatusChip: React.FC<StatusChipProps> = props => {
-  const { status, stackProps } = props;
+  const { status, isMobile, stackProps } = props;
 
   const statusMap = {
     completed: {
@@ -38,7 +39,12 @@ export const CustomStatusChip: React.FC<StatusChipProps> = props => {
       }}
       {...stackProps}
     >
-      <Typography fontWeight={600} fontSize={"12px"} padding={"0px !important"} color={statusMap[status]?.color}>
+      <Typography
+        fontWeight={600}
+        fontSize={isMobile ? "8px" : "12px"}
+        padding={"0px !important"}
+        color={statusMap[status]?.color}
+      >
         {statusMap[status]?.label}
       </Typography>
     </Stack>
