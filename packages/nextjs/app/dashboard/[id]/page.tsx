@@ -1,21 +1,27 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { NextPage } from "next";
-import { BackgroundBeams } from "~~/components/ui/background-beams";
+// import { BackgroundBeams } from "~~/components/ui/background-beams";
+// import CandleChart from "~~/components/ui/candlestick-chart";
 import Island from "~~/components/ui/island";
+import MerchantContainer from "~~/components/ui/merchant";
+import { BackgroundGradient } from "~~/components/ui/neon-div";
+// import NeonButton from "~~/components/ui/neon-button";
+import Example from "~~/components/ui/pie-chart";
 import PriceChart from "~~/components/ui/price-chart";
 import CoinTable, { CoinDataProps } from "~~/components/ui/table";
 import { splitDecimal } from "~~/utils/helper";
 
 const DashboardPage: NextPage = () => {
-  // const [type, setType] = useState<"history" | "price">("history");
-  // const secondary: string = "#8c8c8c";
+  const router = useRouter();
+
   const walletAmount: number = 91255.38;
   const coinType: string = "USDC";
-  // TODO: usdc amount
+  const coinAmount: number = 100;
   const currencyType: string = "USD";
-  // const isAdmin: boolean = false;
 
   // TODO: Query subgraph here
   const tableData: CoinDataProps[] = [
@@ -236,7 +242,7 @@ const DashboardPage: NextPage = () => {
       <Island />
       <div className="flex md:flex-row flex-col h-[45vh] gap-2 z-[10]">
         {/* box 1 */}
-        <div className="flex-2 h-[45vh] rounded-lg md:px-8 py-8 flex flex-col gap-5 bg-[#1e1e1e]">
+        <div className="flex-3 h-[45vh] rounded-lg md:px-8 py-8 flex flex-col gap-5 bg-[#1e1e1e]">
           <p className="text-sm md:text-xl font-normal px-4">Total Balance</p>
           <div className="flex flex-col gap-3 px-4">
             <div className="flex items-end gap-1">
@@ -244,19 +250,39 @@ const DashboardPage: NextPage = () => {
               <p className="text-gray-500 text-xl  md:text-3xl">.{splitDecimal(walletAmount, "decimal")}</p>
             </div>
             <p className="text-gray-500 font-semibold">
-              {coinType}s &middot; {currencyType}
+              {coinAmount} {coinType}s &middot; {currencyType}
             </p>
           </div>
           <PriceChart />
         </div>
         {/* box 2 */}
-        <div className="bg-[#1e1e1e] flex-1 md:h-[45vh] rounded-lg">
-          <p>Make Payment</p>
+        <div className="flex-2 md:h-[45vh] flex flex-col gap-2">
+          <div className="w-full flex-1 flex gap-2">
+            {/* spent this month here */}
+            <div className="bg-[#1e1e1e] rounded-lg flex-1">
+              <Example />
+            </div>
+            {/* make payment here */}
+            <BackgroundGradient
+              containerClassName="rounded-lg flex-1"
+              className="w-full h-full bg-[#1e1e1e] p-4 flex flex-col justify-between rounded-lg hover:cursor-pointer"
+              onClick={() => router.push("")}
+            >
+              <div className="self-end p-4 bg-[#757575] rounded-full">
+                <Image src={"/icons/qr-scan.svg"} width={30} height={30} alt="Qr Scan Icon" />
+              </div>
+              <p className="text-xl">Make Payment</p>
+            </BackgroundGradient>
+          </div>
+          <div className="w-full flex-1 bg-[#1e1e1e] rounded-lg flex justify-center items-center">
+            <p>Merchants</p>
+            <MerchantContainer />
+          </div>
         </div>
       </div>
 
       <CoinTable data={tableData} />
-      <BackgroundBeams className="z-0" />
+      {/* <BackgroundBeams className="z-0" /> */}
     </div>
   );
 };

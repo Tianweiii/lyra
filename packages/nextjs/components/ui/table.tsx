@@ -33,12 +33,12 @@ const DarkTableContainer = styled(TableContainer)(() => ({
   borderRadius: 12,
 }));
 
-const CustomTableCell = styled(TableCell)<CustomCellProps>(props => ({
+const CustomTableCell = styled(TableCell, {
+  shouldForwardProp: prop => prop !== "isMobile",
+})<CustomCellProps>(props => ({
   color: "#8c8c8c",
   borderBottom: "1px solid #333",
   fontSize: props.isMobile ? 12 : 18,
-  // borderLeft: "1px solid #333",
-  // borderRight: "1px solid #333",
 }));
 
 export const CoinTable: React.FC<TableProps> = ({ data }) => {
