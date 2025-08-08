@@ -2935,8 +2935,8 @@ __metadata:
   linkType: hard
 
 "@modelcontextprotocol/sdk@npm:^1.10.2":
-  version: 1.17.1
-  resolution: "@modelcontextprotocol/sdk@npm:1.17.1"
+  version: 1.17.2
+  resolution: "@modelcontextprotocol/sdk@npm:1.17.2"
   dependencies:
     ajv: ^6.12.6
     content-type: ^1.0.5
@@ -2950,7 +2950,7 @@ __metadata:
     raw-body: ^3.0.0
     zod: ^3.23.8
     zod-to-json-schema: ^3.24.1
-  checksum: 633fed071246665b2da5794ef2343e6b4fc05966bcf7a7603054aa14f59c9051c1507e3f4ced123e2f3f33695bfeb5eac97bc3bdbab12b7fb5c37e4def5c0146
+  checksum: c7aa8ea233226814cabb3c5cb3a311d3ec75a80fe32f31f7f280c9160d41ada68aa98605aa5c1a913bf267f989f6d5559df17776d23609f605ef8a10559a165a
   languageName: node
   linkType: hard
 
@@ -4752,9 +4752,9 @@ __metadata:
   linkType: hard
 
 "@sentry/core@npm:^9.11.0":
-  version: 9.44.2
-  resolution: "@sentry/core@npm:9.44.2"
-  checksum: c5eae6e7bc3a541cd00fd6235a57beec851f3baa86705d11ffd611115d3e0e219d7ae0c9d798cf0d2e8e27994ce1a30a9f39a9300e05f32d97d1761648e97f2d
+  version: 9.45.0
+  resolution: "@sentry/core@npm:9.45.0"
+  checksum: 71f194a71fc0233017df20e186d0828940a86d593b759994d9af8d3e4fd99f8882bbaf1e60ea3151132b2aebf6471b7689fc7d3638ccbe3eb567ae6e7a8d7154
   languageName: node
   linkType: hard
 
@@ -6094,11 +6094,11 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*, @types/node@npm:>=13.7.0":
-  version: 24.2.0
-  resolution: "@types/node@npm:24.2.0"
+  version: 24.2.1
+  resolution: "@types/node@npm:24.2.1"
   dependencies:
     undici-types: ~7.10.0
-  checksum: f5abd0c74312e758711a51ab26858426a2fc6de4576d930759aa645b530db354116049497d0a20ed504ddfc6c3b85dee9253b9bae42be19f1a788c18393123e6
+  checksum: d7a12a35bcb6ade13787bd9b40d8f59b96170f228dfbd19326170b4df2a66ae86cf21eec6867e92f979405235431e580a9668b167aa3ce8e89531c00792551d3
   languageName: node
   linkType: hard
 
@@ -6133,20 +6133,20 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:^20.10.7":
-  version: 20.19.9
-  resolution: "@types/node@npm:20.19.9"
+  version: 20.19.10
+  resolution: "@types/node@npm:20.19.10"
   dependencies:
     undici-types: ~6.21.0
-  checksum: 3e3948ee0507ad079c20a335c492e6a1638bc362534fd7083e1d54237e72cbd422a4f24f170669a998b66d17214c8a03ea52d4dc02ba61fc0aed252f667b270e
+  checksum: e294ec0d37ce5a1ae9e4c255ef837b584d793a4d2f89472d580024a4c008de0d5df595c919e96e95fcdf56bf55d567213f90c0c5874b369a30526bedfaa3f418
   languageName: node
   linkType: hard
 
 "@types/node@npm:~18.19.50":
-  version: 18.19.121
-  resolution: "@types/node@npm:18.19.121"
+  version: 18.19.122
+  resolution: "@types/node@npm:18.19.122"
   dependencies:
     undici-types: ~5.26.4
-  checksum: 700fd19a909e11a7e7d06bf4fc2ee2e255566f723bf15b8dc436d32f5654da8ad7669fe6b28f8c71f1e2cebeb8be61636d70363e97809dd052dde0ea0e8c8193
+  checksum: 08f30c349d9719c6953789641da385e01af776107da4dd07820a5036c4ecbc24fd04036e7cc7d7036f275d6ae27bd0949c3423f7e1c0b8e512b728efa70951ea
   languageName: node
   linkType: hard
 
@@ -9232,9 +9232,9 @@ __metadata:
   linkType: hard
 
 "caniuse-lite@npm:^1.0.30001579, caniuse-lite@npm:^1.0.30001702, caniuse-lite@npm:^1.0.30001726":
-  version: 1.0.30001731
-  resolution: "caniuse-lite@npm:1.0.30001731"
-  checksum: ecd2ad779f31011bef657c0104a08a780d9bb38ff8ad7aeeeaf196151be22c492de87f4a9c89a30ea4aa9575c5a39c85bf6bd56e89a4bf8259f54a4fbfc24a0d
+  version: 1.0.30001733
+  resolution: "caniuse-lite@npm:1.0.30001733"
+  checksum: cf9d0701ef5617231072be7db74a077ac7a453c8672fe0f17df14aee73f8f253b42cd0d95e1f150ff73453edb115b7131e98b416070b798c8f41b25606f15292
   languageName: node
   linkType: hard
 
@@ -10751,9 +10751,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.5.173":
-  version: 1.5.198
-  resolution: "electron-to-chromium@npm:1.5.198"
-  checksum: 3b486d2259749de9820e8d3ad7f3ec8eaa8ef03f0ce2d8024a72e5a28cbb558faea3cf7128c9b7b2d367b747030b26f401ed7ad53d307c06e3c5f28336f60240
+  version: 1.5.199
+  resolution: "electron-to-chromium@npm:1.5.199"
+  checksum: e34ec35366a083b54dd489a23d2e7d7bf21f2971cf52a9f47bc63a64fdbc53adda1c4e15bd7bb33648f045e9f251fc9585e47651f760fdc11b4e9fb793b419ce
   languageName: node
   linkType: hard
 
@@ -13061,9 +13061,9 @@ __metadata:
   linkType: hard
 
 "hls.js@npm:^1.5.17":
-  version: 1.6.8
-  resolution: "hls.js@npm:1.6.8"
-  checksum: a495f6ee59ec2a3cbc43468d6c89a1d986e38e9aae4d3c017aaca0a1ba8d487a4681ea445705508261e999fc2ac113ca7a7bef852d2d7d192027fc6413962e1c
+  version: 1.6.9
+  resolution: "hls.js@npm:1.6.9"
+  checksum: 378b366e7c580b14a21f4941e25321b2560c814cb8beed0ad220dca86d27c605442c6e18810c67dd348fde166313520fc2e2360a9e73ed2fc46938dbe19407d2
   languageName: node
   linkType: hard
 
@@ -21512,28 +21512,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"viem@npm:>=2.29.0, viem@npm:^2.1.1":
-  version: 2.33.2
-  resolution: "viem@npm:2.33.2"
-  dependencies:
-    "@noble/curves": 1.9.2
-    "@noble/hashes": 1.8.0
-    "@scure/bip32": 1.7.0
-    "@scure/bip39": 1.6.0
-    abitype: 1.0.8
-    isows: 1.0.7
-    ox: 0.8.6
-    ws: 8.18.2
-  peerDependencies:
-    typescript: ">=5.0.4"
-  peerDependenciesMeta:
-    typescript:
-      optional: true
-  checksum: 31ac997bb4601af82008ce34ae593dc849f4e468b1fd56e03c997bfc2138dc294a1011e5b4ad3b527935d055c1b2dcd1ec5f1614dd6875b7ec161da8836b6ea1
-  languageName: node
-  linkType: hard
-
-"viem@npm:^2.23.2":
+"viem@npm:>=2.29.0, viem@npm:^2.1.1, viem@npm:^2.23.2":
   version: 2.33.3
   resolution: "viem@npm:2.33.3"
   dependencies:
