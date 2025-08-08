@@ -1,0 +1,39 @@
+specVersion: 1.3.0
+indexerHints:
+  prune: auto
+schema:
+  file: schema.graphql
+dataSources:
+  - kind: ethereum
+    name: LyraToken
+    network: matic
+    source:
+      address: "0xc11bd7B043736423Dbc2d70AE5A0f642f9959257"
+      abi: LyraToken
+      startBlock: 74956096
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      entities:
+        - Approval
+        - GovernmentUpdated
+        - MerchantUpdated
+        - OwnershipTransferred
+        - Transfer
+        - Account
+      abis:
+        - name: LyraToken
+          file: LyraToken\LyraToken.json
+      eventHandlers:
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleApproval
+        - event: GovernmentUpdated(indexed address,bool)
+          handler: handleGovernmentUpdated
+        - event: MerchantUpdated(indexed address,bool)
+          handler: handleMerchantUpdated
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: LyraToken\LyraToken.wasm
