@@ -266,7 +266,7 @@ const DashboardPage: NextPage = () => {
             <BackgroundGradient
               containerClassName="rounded-lg flex-1"
               className="w-full h-full bg-[#1e1e1e] p-4 flex flex-col justify-between rounded-lg hover:cursor-pointer"
-              onClick={() => router.push("")}
+              onClick={() => router.push("/payment/user")}
             >
               <div className="self-end p-4 bg-[#757575] rounded-full">
                 <Image src={"/icons/qr-scan.svg"} width={30} height={30} alt="Qr Scan Icon" />
