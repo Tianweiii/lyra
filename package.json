@@ -74,6 +74,7 @@
     "clsx": "^2.1.1",
     "dotted-map": "^2.2.3",
     "es-toolkit": "^1.39.8",
+    "ethers": "^6.15.0",
     "framer-motion": "^12.23.12",
     "graphql": "^16.11.0",
     "motion": "^12.23.12",
