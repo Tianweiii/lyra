@@ -17,3 +17,9 @@ type Transfer @entity(immutable: true) {
   blockTimestamp: BigInt!
   transactionHash: Bytes!
 }
+
+type Account @entity(immutable: false) {
+  id: Bytes!           # address
+  balance: BigInt!     # latest token balance
+}
+

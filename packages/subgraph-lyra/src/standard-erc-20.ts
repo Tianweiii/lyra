@@ -1,8 +1,20 @@
+import { BigInt, Bytes } from "@graphprotocol/graph-ts"
 import {
   Approval as ApprovalEvent,
   Transfer as TransferEvent
 } from "../generated/StandardERC20/StandardERC20"
-import { Approval, Transfer } from "../generated/schema"
+import { Approval, Transfer, Account } from "../generated/schema"
+
+function getOrCreateAccount(address: Bytes): Account {
+  let account = Account.load(address)
+  if (account == null) {
+    account = new Account(address) // now it's Bytes, not string
+    account.balance = BigInt.zero()
+    account.save()
+  }
+  return account
+}
+
 
 export function handleApproval(event: ApprovalEvent): void {
   let entity = new Approval(
@@ -32,4 +44,19 @@ export function handleTransfer(event: TransferEvent): void {
   entity.transactionHash = event.transaction.hash
 
   entity.save()
+
+    // Update balances
+  let fromAccount = getOrCreateAccount(event.params.from)
+  let toAccount = getOrCreateAccount(event.params.to)
+
+  if (event.params.from.toHexString() != "0x0000000000000000000000000000000000000000") {
+    fromAccount.balance = fromAccount.balance.minus(event.params.value)
+  }
+
+  if (event.params.to.toHexString() != "0x0000000000000000000000000000000000000000") {
+    toAccount.balance = toAccount.balance.plus(event.params.value)
+  }
+
+  fromAccount.save()
+  toAccount.save()
 }
