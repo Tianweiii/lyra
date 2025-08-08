@@ -2,26 +2,69 @@
 
 import React from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { NextPage } from "next";
+import { useMediaQuery } from "react-responsive";
 // import { BackgroundBeams } from "~~/components/ui/background-beams";
 // import CandleChart from "~~/components/ui/candlestick-chart";
 import Island from "~~/components/ui/island";
-import MerchantContainer from "~~/components/ui/merchant";
 import { BackgroundGradient } from "~~/components/ui/neon-div";
 // import NeonButton from "~~/components/ui/neon-button";
 import Example from "~~/components/ui/pie-chart";
 import PriceChart from "~~/components/ui/price-chart";
 import CoinTable, { CoinDataProps } from "~~/components/ui/table";
-import { splitDecimal } from "~~/utils/helper";
+import UserTable, { UserDataProps } from "~~/components/ui/usertable";
+import { generateUserList, splitDecimal } from "~~/utils/helper";
+
+type RenderMapProps = {
+  [key: string]: {
+    title: string;
+    onClick: () => void;
+    iconPath: string;
+  };
+};
+
+const getRole = (id: string | number | undefined) => {
+  switch (id?.toString()) {
+    case "123":
+      return "merchant";
+    case "124":
+      return "admin";
+    default:
+      return "user";
+  }
+};
 
 const DashboardPage: NextPage = () => {
   const router = useRouter();
+  const { id } = useParams();
+  const isMobile = useMediaQuery({ maxWidth: 768 });
 
   const walletAmount: number = 91255.38;
   const coinType: string = "USDC";
   const coinAmount: number = 100;
   const currencyType: string = "USD";
+
+  // 123 == merchant, 124 == admin, else user
+  const role = getRole(id?.toString());
+
+  const renderMap: RenderMapProps = {
+    user: {
+      title: "Make Payment",
+      onClick: () => router.push(""),
+      iconPath: "/icons/qr-scan.svg",
+    },
+    merchant: {
+      title: "Generate QR",
+      onClick: () => router.push(""),
+      iconPath: "/icons/qr-scan.svg",
+    },
+    admin: {
+      title: "Send Coins",
+      onClick: () => router.push("/sendcoins"),
+      iconPath: "/icons/send.svg",
+    },
+  };
 
   // TODO: Query subgraph here
   const tableData: CoinDataProps[] = [
@@ -237,6 +280,8 @@ const DashboardPage: NextPage = () => {
     },
   ];
 
+  const userData: UserDataProps[] = generateUserList();
+
   return (
     <div className="flex flex-col md:px-24 px-5 py-12 gap-2 mt-10 relative antialiased">
       <Island />
@@ -266,22 +311,27 @@ const DashboardPage: NextPage = () => {
             <BackgroundGradient
               containerClassName="rounded-lg flex-1"
               className="w-full h-full bg-[#1e1e1e] p-4 flex flex-col justify-between rounded-lg hover:cursor-pointer"
-              onClick={() => router.push("")}
+              onClick={renderMap[role].onClick}
             >
-              <div className="self-end p-4 bg-[#757575] rounded-full">
-                <Image src={"/icons/qr-scan.svg"} width={30} height={30} alt="Qr Scan Icon" />
-              </div>
-              <p className="text-xl">Make Payment</p>
+              <>
+                <div className="self-end md:p-4 p-2 bg-[#757575] rounded-full">
+                  <Image
+                    src={renderMap[role].iconPath}
+                    width={isMobile ? 20 : 30}
+                    height={isMobile ? 20 : 30}
+                    alt="Qr Scan Icon"
+                  />
+                </div>
+                <p className="text-xl">{renderMap[role].title}</p>
+              </>
             </BackgroundGradient>
-          </div>
-          <div className="w-full flex-1 bg-[#1e1e1e] rounded-lg flex justify-center items-center">
-            <p>Merchants</p>
-            <MerchantContainer />
           </div>
         </div>
       </div>
 
       <CoinTable data={tableData} />
+
+      {role === "admin" && <UserTable data={userData} />}
       {/* <BackgroundBeams className="z-0" /> */}
     </div>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
 // Define some light/white theme colors
 const COLORS = [
@@ -52,7 +52,7 @@ const DonutChart = () => {
   const data = transformWalletDataByMonth(rawData);
 
   return (
-    <div style={{ width: "100%", height: 320, backgroundColor: "#1c1c1c", padding: 20, borderRadius: 12 }}>
+    <div style={{ width: "100%", height: "95%", backgroundColor: "#1c1c1c", padding: 20, borderRadius: 12 }}>
       <h2 style={{ color: "white", marginBottom: 10, fontSize: 16 }}>Monthly Wallet Summary</h2>
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
@@ -71,7 +71,7 @@ const DonutChart = () => {
             ))}
           </Pie>
           <Tooltip contentStyle={{ backgroundColor: "grey", color: "white", border: "none", borderRadius: 4 }} />
-          {/* <Legend verticalAlign="bottom" wrapperStyle={{ color: "white" }} /> */}
+          <Legend verticalAlign="bottom" wrapperStyle={{ color: "white", fontSize: 14, verticalAlign: "bottom" }} />
         </PieChart>
       </ResponsiveContainer>
     </div>
