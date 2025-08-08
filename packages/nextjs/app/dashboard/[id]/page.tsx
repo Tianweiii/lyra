@@ -40,10 +40,12 @@ const DashboardPage: NextPage = () => {
   const { id } = useParams();
   const isMobile = useMediaQuery({ maxWidth: 768 });
 
+  // converted wallet amount
   const walletAmount: number = 91255.38;
-  const coinType: string = "USDC";
-  const coinAmount: number = 100;
   const currencyType: string = "USD";
+  // lyra coin  balance
+  const coinAmount: number = 100;
+  const coinType: string = "LYRA";
 
   // 123 == merchant, 124 == admin, else user
   const role = getRole(id?.toString());
