@@ -1,9 +1,21 @@
+import * as xlsx from "xlsx";
 import { UserDataProps } from "~~/components/ui/usertable";
 
 export const splitDecimal = (amount: number, type: "full" | "decimal") => {
   const [full, decimal] = amount.toString().split(".");
 
   return type === "full" ? full.replace(/\B(?=(\d{3})+(?!\d))/g, ",") : decimal;
+};
+
+export const flatten2D = (data: string[][]) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_, ...rest] = data;
+  const idk: UserDataProps[] = rest.map(([walletAddress, status]) => ({
+    walletAddress,
+    status: status as "active" | "inactive",
+  }));
+
+  return idk;
 };
 
 export const generateUserList = () => {
@@ -41,4 +53,27 @@ export const saveUserData = (data: UserDataProps[]) => {
 
 export const clearUserData = () => {
   localStorage.clear();
+};
+
+// excel sheet stuff
+export const convertToJSON = (file: File): Promise<any[]> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = e => {
+      try {
+        const data = e.target?.result;
+        const workbook = xlsx.read(data, { type: "binary" });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const jsonData = xlsx.utils.sheet_to_json(worksheet, { header: 1 });
+        resolve(jsonData); // resolve with parsed data
+      } catch (error) {
+        reject(error);
+      }
+    };
+
+    reader.onerror = reject;
+    reader.readAsBinaryString(file); // start reading the file
+  });
 };

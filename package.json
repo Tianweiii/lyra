@@ -85,7 +85,8 @@
     "three": "latest",
     "three-globe": "^2.44.0",
     "viem": "2.23.9",
-    "wagmi": "2.14.15"
+    "wagmi": "2.14.15",
+    "xlsx": "^0.18.5"
   },
   "resolutions": {
     "@types/react": "18.2.21",

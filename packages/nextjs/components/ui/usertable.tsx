@@ -75,6 +75,12 @@ export const UserTable: React.FC<TableProps> = ({ data: initialData }) => {
     setData(updatedData);
   };
 
+  const handleGroupSubmit = (newUsers: UserDataProps[]) => {
+    const updatedData = [...data, ...newUsers];
+    saveUserData(updatedData);
+    setData(updatedData);
+  };
+
   const handleDeleteConfirm = () => {
     if (deleteIndex !== null) {
       const updatedData = [...data];
@@ -163,6 +169,7 @@ export const UserTable: React.FC<TableProps> = ({ data: initialData }) => {
         open={formOpen}
         onClose={() => setFormOpen(false)}
         onSubmit={handleFormSubmit}
+        groupSubmit={handleGroupSubmit}
         initialData={selectedUser}
       />
       <ConfirmDeleteModal

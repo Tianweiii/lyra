@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useMediaQuery } from "react-responsive";
 import Island from "~~/components/ui/island";
 import MultiSelectView from "~~/components/ui/multiselect";
+import { Vortex } from "~~/components/ui/vortex";
 import { loadUserData } from "~~/utils/helper";
 
 const steps = ["Select Recipient & Amount", "Processing Payment", "Complete Payment"];
@@ -13,6 +14,7 @@ const SendCoinPage = () => {
   const [sendAmount, setSendAmount] = useState("");
   const [step, setStep] = useState(0);
   const [direction, setDirection] = useState(1);
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
 
   // Memoize expensive computations
   const data = useMemo(() => loadUserData(), []);
@@ -25,11 +27,12 @@ const SendCoinPage = () => {
   const parsedAmount = useMemo(() => parseInt(sendAmount) || 0, [sendAmount]);
 
   const handleNext = useCallback(() => {
+    console.log(selectedUsers);
     if (step < steps.length - 1) {
       setDirection(1);
       setStep(prev => prev + 1);
     }
-  }, [step]);
+  }, [selectedUsers, step]);
 
   const handleBack = useCallback(() => {
     if (step > 0) {
@@ -69,7 +72,7 @@ const SendCoinPage = () => {
       // Step 1: Select Recipient & Amount
       <motion.div
         key="step1"
-        className="flex flex-col h-full gap-6"
+        className="flex flex-col gap-6"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
@@ -124,7 +127,7 @@ const SendCoinPage = () => {
         >
           <div className="flex flex-col gap-2">
             <p className="text-[#8c8c8c] text-[12px]">Recipients</p>
-            <MultiSelectView data={activeUsers} />
+            <MultiSelectView data={activeUsers} callback={setSelectedUsers} />
           </div>
         </motion.div>
 
@@ -232,125 +235,134 @@ const SendCoinPage = () => {
   }, [stepComponents, step]);
 
   return (
-    <div className="w-full h-screen bg-black flex items-center justify-center p-4">
-      <Island />
-      <motion.div
-        className="bg-gradient-to-br from-gray-900 to-gray-800 md:w-[70vw] w-[90vw] max-h-[90vh] rounded-2xl p-8 flex flex-col gap-6 border border-gray-700"
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+    <div className="w-[calc(100%-4rem)] mx-auto rounded-md overflow-hidden flex justify-center items-center min-h-screen">
+      <Vortex
+        backgroundColor="black"
+        className="flex items-center flex-col justify-center px-2 md:px-10 py-4 w-full h-full"
       >
-        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
-          <h1 className="text-2xl font-bold text-white">Send Funds</h1>
-          <div className="h-px bg-gradient-to-r from-blue-500 to-purple-500 mt-2"></div>
-        </motion.div>
-
-        <div className="flex md:flex-row flex-col h-full gap-8">
-          {/* Stepper */}
+        <div className="w-full flex items-center justify-center p-4">
+          <Island />
           <motion.div
-            className={`${isMobile ? "flex justify-between mb-6" : "flex flex-col gap-6"} flex-1`}
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.3 }}
+            className="bg-gradient-to-br from-gray-900 to-gray-800 md:w-[70vw] w-[90vw] rounded-2xl p-8 flex flex-col gap-6 border border-gray-700"
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
           >
-            {steps.map((stepLabel, index) => (
-              <motion.div
-                key={stepLabel}
-                className="flex items-center gap-3"
-                whileHover={{ scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 400 }}
-              >
-                <motion.div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 ${
-                    index <= step
-                      ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg"
-                      : "bg-gray-700 text-gray-400 border border-gray-600"
-                  }`}
-                  animate={index === step ? { scale: [1, 1.1, 1] } : {}}
-                  transition={{ duration: 0.3 }}
-                >
-                  {index + 1}
-                </motion.div>
-                <span
-                  className={`${isMobile ? "text-xs" : "text-sm"} font-medium transition-colors duration-300 ${
-                    index <= step ? "text-white" : "text-gray-400"
-                  }`}
-                >
-                  {stepLabel}
-                </span>
-                {!isMobile && index < steps.length - 1 && (
-                  <motion.div
-                    className={`w-px h-8 ml-5 transition-colors duration-300 ${
-                      index < step ? "bg-gradient-to-b from-blue-500 to-purple-600" : "bg-gray-600"
-                    }`}
-                    initial={{ scaleY: 0 }}
-                    animate={{ scaleY: index < step ? 1 : 0.3 }}
-                    transition={{ duration: 0.3 }}
-                  />
-                )}
-              </motion.div>
-            ))}
-          </motion.div>
-
-          {/* Content Area */}
-          <div className="flex-2 flex flex-col">
-            <div className="bg-gray-800/30 rounded-xl p-6 backdrop-blur-sm border border-gray-700/50 flex-1 overflow-hidden">
-              <AnimatePresence mode="wait" custom={direction}>
-                <motion.div
-                  key={step}
-                  custom={direction}
-                  variants={slideVariants}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  transition={{
-                    x: { type: "spring", stiffness: 300, damping: 30 },
-                    opacity: { duration: 0.2 },
-                  }}
-                  className="h-full"
-                >
-                  {StepContent}
-                </motion.div>
-              </AnimatePresence>
-            </div>
-
-            {/* Navigation Buttons */}
-            <motion.div
-              className="flex gap-4 mt-6"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-            >
-              <motion.button
-                disabled={step === 0}
-                onClick={handleBack}
-                className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all duration-300 ${
-                  step === 0
-                    ? "bg-gray-800 text-gray-500 cursor-not-allowed"
-                    : "bg-gray-700 hover:bg-gray-600 text-white border border-gray-600"
-                }`}
-                whileHover={step !== 0 ? { scale: 1.02 } : {}}
-                whileTap={step !== 0 ? { scale: 0.98 } : {}}
-              >
-                Back
-              </motion.button>
-              <motion.button
-                disabled={step === steps.length - 1}
-                onClick={handleNext}
-                className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all duration-300 ${
-                  step === steps.length - 1
-                    ? "bg-gray-800 text-gray-500 cursor-not-allowed"
-                    : "bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg"
-                }`}
-                whileHover={step !== steps.length - 1 ? { scale: 1.02, y: -2 } : {}}
-                whileTap={step !== steps.length - 1 ? { scale: 0.98 } : {}}
-              >
-                {step === steps.length - 1 ? "Complete" : "Next"}
-              </motion.button>
+            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
+              <h1 className="text-2xl font-bold text-white mb-2">Send Funds</h1>
+              <div className="h-px bg-gradient-to-r from-blue-500 to-purple-500 mt-2"></div>
             </motion.div>
-          </div>
+
+            <div className="flex md:flex-row flex-col h-full gap-8">
+              {/* Stepper */}
+              <motion.div
+                className={`${isMobile ? "flex justify-between mb-6" : "flex flex-col"} flex-1`}
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                {steps.map((stepLabel, index) => (
+                  <motion.div
+                    key={stepLabel}
+                    className="flex flex-col"
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ type: "spring", stiffness: 400 }}
+                  >
+                    <div className="flex gap-3 items-center">
+                      <motion.div
+                        className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 ${
+                          index <= step
+                            ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg"
+                            : "bg-gray-700 text-gray-400 border border-gray-600"
+                        }`}
+                        animate={index === step ? { scale: [1, 1.1, 1] } : {}}
+                        transition={{ duration: 0.3 }}
+                      >
+                        {index + 1}
+                      </motion.div>
+                      <span
+                        className={`${isMobile ? "text-xs" : "text-sm"} font-medium transition-colors duration-300 ${
+                          index <= step ? "text-white" : "text-gray-400"
+                        }`}
+                      >
+                        {stepLabel}
+                      </span>
+                    </div>
+                    {!isMobile && index < steps.length - 1 && (
+                      <motion.div
+                        className={`w-px h-14 ml-5 transition-colors duration-300 ${
+                          index < step ? "bg-gradient-to-b from-blue-500 to-purple-600" : "bg-gray-600"
+                        }`}
+                        initial={{ scaleY: 0 }}
+                        animate={{ scaleY: index < step ? 1 : 0.3 }}
+                        transition={{ duration: 0.3 }}
+                      />
+                    )}
+                  </motion.div>
+                ))}
+              </motion.div>
+
+              {/* Content Area */}
+              <div className="flex-2 flex flex-col">
+                <div className="bg-gray-800/30 rounded-xl p-6 backdrop-blur-sm border border-gray-700/50 flex-1 overflow-hidden">
+                  <AnimatePresence mode="wait" custom={direction}>
+                    <motion.div
+                      key={step}
+                      custom={direction}
+                      variants={slideVariants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      transition={{
+                        x: { type: "spring", stiffness: 300, damping: 30 },
+                        opacity: { duration: 0.2 },
+                      }}
+                      className="h-full"
+                    >
+                      {StepContent}
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+
+                {/* Navigation Buttons */}
+                <motion.div
+                  className="flex gap-4 mt-6"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 }}
+                >
+                  <motion.button
+                    disabled={step === 0}
+                    onClick={handleBack}
+                    className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all duration-300 ${
+                      step === 0
+                        ? "bg-gray-800 text-gray-500 cursor-not-allowed"
+                        : "bg-gray-700 hover:bg-gray-600 text-white border border-gray-600"
+                    }`}
+                    whileHover={step !== 0 ? { scale: 1.02 } : {}}
+                    whileTap={step !== 0 ? { scale: 0.98 } : {}}
+                  >
+                    Back
+                  </motion.button>
+                  <motion.button
+                    disabled={step === steps.length - 1}
+                    onClick={handleNext}
+                    className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all duration-300 ${
+                      step === steps.length - 1
+                        ? "bg-gray-800 text-gray-500 cursor-not-allowed"
+                        : "bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg"
+                    }`}
+                    whileHover={step !== steps.length - 1 ? { scale: 1.02, y: -2 } : {}}
+                    whileTap={step !== steps.length - 1 ? { scale: 0.98 } : {}}
+                  >
+                    {step === steps.length - 1 ? "Complete" : "Next"}
+                  </motion.button>
+                </motion.div>
+              </div>
+            </div>
+          </motion.div>
         </div>
-      </motion.div>
+      </Vortex>
     </div>
   );
 };

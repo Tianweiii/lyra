@@ -16,19 +16,22 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 
 export type MultiSelectViewProps = {
   data: string[];
+  callback?: (data: string[]) => void;
 };
 
-export const MultiSelectView: React.FC<MultiSelectViewProps> = props => {
+export const MultiSelectView: React.FC<MultiSelectViewProps> = ({ data, callback }) => {
   const [selected, setSelected] = useState<string[]>([]);
 
   const handleChange = (event: SelectChangeEvent<typeof selected>) => {
     const {
       target: { value },
     } = event;
+    callback?.(typeof value === "string" ? value.split(",") : value);
     setSelected(typeof value === "string" ? value.split(",") : value);
   };
 
   const handleDelete = (id: string) => {
+    setSelected?.(prev => prev.filter(i => i !== id));
     setSelected(prev => prev.filter(i => i !== id));
   };
 
@@ -66,7 +69,7 @@ export const MultiSelectView: React.FC<MultiSelectViewProps> = props => {
             },
           }}
         >
-          {props.data.map(address => (
+          {data.map(address => (
             <MenuItem key={address} value={address}>
               <Checkbox checked={selected.includes(address)} />
               <ListItemText primary={address} />

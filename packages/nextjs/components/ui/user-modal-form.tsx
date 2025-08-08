@@ -1,15 +1,30 @@
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { UserDataProps } from "./usertable";
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, TextField } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, TextField, styled } from "@mui/material";
+import { CloudArrowUpIcon } from "@heroicons/react/24/outline";
+import { convertToJSON, flatten2D } from "~~/utils/helper";
+
+const VisuallyHiddenInput = styled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  height: 1,
+  overflow: "hidden",
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  whiteSpace: "nowrap",
+  width: 1,
+});
 
 type Props = {
   open: boolean;
   onClose: () => void;
   onSubmit: (data: UserDataProps) => void;
+  groupSubmit: (data: UserDataProps[]) => void;
   initialData?: UserDataProps | null;
 };
 
-const UserFormModal: React.FC<Props> = ({ open, onClose, onSubmit, initialData }) => {
+const UserFormModal: React.FC<Props> = ({ open, onClose, onSubmit, groupSubmit, initialData }) => {
   const [walletAddress, setWalletAddress] = useState("");
   const [status, setStatus] = useState<"active" | "inactive">("active");
 
@@ -26,6 +41,16 @@ const UserFormModal: React.FC<Props> = ({ open, onClose, onSubmit, initialData }
   const handleSubmit = () => {
     if (!walletAddress) return;
     onSubmit({ walletAddress, status });
+    onClose();
+  };
+
+  const handleSubmitExcel = async (data: ChangeEvent<HTMLInputElement>) => {
+    const file = data.target.files?.[0];
+    if (!file) return;
+    // 2d array
+    const excelJSON = await convertToJSON(file);
+
+    groupSubmit(flatten2D(excelJSON));
     onClose();
   };
 
@@ -77,7 +102,24 @@ const UserFormModal: React.FC<Props> = ({ open, onClose, onSubmit, initialData }
         </TextField>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
+        <Button
+          startIcon={<CloudArrowUpIcon width={20} height={20} />}
+          component="label"
+          role={undefined}
+          variant="contained"
+          tabIndex={-1}
+        >
+          Excel
+          <VisuallyHiddenInput
+            type="file"
+            // onChange={(event: { target: { files: any } }) => console.log(event.target.files)}
+            multiple
+            onChange={handleSubmitExcel}
+          />
+        </Button>
+        <Button variant="outlined" onClick={onClose}>
+          Cancel
+        </Button>
         <Button variant="contained" onClick={handleSubmit}>
           {initialData ? "Update" : "Add"}
         </Button>
