@@ -15689,6 +15689,7 @@ __metadata:
     react-responsive: ^10.0.1
     recharts: ^3.1.2
     shadcn: latest
+    simplex-noise: ^4.0.3
     tailwind-merge: ^3.3.1
     tailwindcss: ^4.1.11
     three: latest
@@ -16077,6 +16078,13 @@ __metadata:
   version: 2.1.7
   resolution: "simplesignal@npm:2.1.7"
   checksum: f9614a3fa8f0c9470ae2be4c55684d8a691f8a2c51bb48db6ae5c6d70a7a79e15331f26a4425b870be1149696677d052093e2dd6acb2f15b4a7c1716d194072d
+  languageName: node
+  linkType: hard
+
+"simplex-noise@npm:^4.0.3":
+  version: 4.0.3
+  resolution: "simplex-noise@npm:4.0.3"
+  checksum: b47720a540695947cd60b0571b4427b68392b1c75e76e27278e3c1b7ea13301d46d60fe9a81ff6a42b1048f2548c9c6687630b984ec0b59d7ab4e79969052462
   languageName: node
   linkType: hard
 

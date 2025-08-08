@@ -14,7 +14,7 @@ import Example from "~~/components/ui/pie-chart";
 import PriceChart from "~~/components/ui/price-chart";
 import CoinTable, { CoinDataProps } from "~~/components/ui/table";
 import UserTable, { UserDataProps } from "~~/components/ui/usertable";
-import { generateUserList, splitDecimal } from "~~/utils/helper";
+import { loadUserData, splitDecimal } from "~~/utils/helper";
 
 type RenderMapProps = {
   [key: string]: {
@@ -280,7 +280,7 @@ const DashboardPage: NextPage = () => {
     },
   ];
 
-  const userData: UserDataProps[] = generateUserList();
+  const userData: UserDataProps[] = loadUserData();
 
   return (
     <div className="flex flex-col md:px-24 px-5 py-12 gap-2 mt-10 relative antialiased">

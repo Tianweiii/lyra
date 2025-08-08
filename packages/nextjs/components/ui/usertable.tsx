@@ -6,6 +6,7 @@ import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TablePagin
 import { styled } from "@mui/material/styles";
 import { useMediaQuery } from "react-responsive";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { saveUserData } from "~~/utils/helper";
 
 export type UserDataProps = {
   walletAddress: string;
@@ -69,6 +70,8 @@ export const UserTable: React.FC<TableProps> = ({ data: initialData }) => {
     } else {
       updatedData.push(newUser);
     }
+
+    saveUserData(updatedData);
     setData(updatedData);
   };
 
@@ -76,6 +79,7 @@ export const UserTable: React.FC<TableProps> = ({ data: initialData }) => {
     if (deleteIndex !== null) {
       const updatedData = [...data];
       updatedData.splice(deleteIndex, 1);
+      saveUserData(updatedData);
       setData(updatedData);
       setDeleteIndex(null);
     }
