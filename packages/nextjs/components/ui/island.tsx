@@ -124,7 +124,8 @@ export const IslandView: React.FC<IslandProps> = ({ rightOnPress }) => {
                 duration: 0.3,
                 delay: 0.6,
               }}
-              onClick={() => router.push("/dashboard/123")}
+              // ROLE: ROUTE FOR ROLE
+              onClick={() => router.push("/dashboard/124")}
             >
               Dashboard
             </motion.p>
