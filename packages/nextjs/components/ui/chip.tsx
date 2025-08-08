@@ -5,7 +5,7 @@ import { alpha } from "@mui/material/styles";
 export type StatusChipProps = {
   stackProps?: StackProps;
   isMobile?: boolean;
-  status: "completed" | "pending" | "failed";
+  status: "completed" | "pending" | "failed" | "active" | "inactive";
 };
 
 export const CustomStatusChip: React.FC<StatusChipProps> = props => {
@@ -22,6 +22,14 @@ export const CustomStatusChip: React.FC<StatusChipProps> = props => {
     },
     failed: {
       label: "Failed",
+      color: "#FF4D49",
+    },
+    active: {
+      label: "Active",
+      color: "#67CA24",
+    },
+    inactive: {
+      label: "Inactive",
       color: "#FF4D49",
     },
   };
