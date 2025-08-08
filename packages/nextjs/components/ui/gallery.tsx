@@ -32,7 +32,7 @@ export const GalleryView = () => {
       title: "XRP",
       image: "/images/xrp.webp",
       initial: { top: "212px", right: "30%", rotate: 2 },
-      final: { top: "30px", right: "30%", rotate: 2 },
+      final: { top: "-5px", right: "30%", rotate: 2 },
     },
     {
       title: "Solana",
@@ -44,7 +44,7 @@ export const GalleryView = () => {
       title: "USDC",
       image: "/images/usdc.png",
       initial: { top: "164px", left: "35%", rotate: 4 },
-      final: { top: "80px", left: "30%", rotate: 4 },
+      final: { top: "-10px", left: "30%", rotate: 4 },
     },
   ];
 
