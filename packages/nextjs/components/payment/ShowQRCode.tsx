@@ -12,14 +12,14 @@ import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 
 interface showQRCodeProps {
   amount: number;
-  converted: number;
+  // converted: number;
   walletAddress: string;
   onPaid: (status: string) => void;
   onBack: () => void;
 }
 
-export default function ShowQRCode({ amount, walletAddress, converted, onPaid, onBack }: showQRCodeProps) {
-  const paymentData = JSON.stringify({ amount, walletAddress, token: converted });
+export default function ShowQRCode({ amount, walletAddress, onPaid, onBack }: showQRCodeProps) {
+  const paymentData = JSON.stringify({ amount, walletAddress });
 
   // TODO: Simulate scan + success
   const simulateScan = () => {
@@ -48,7 +48,8 @@ export default function ShowQRCode({ amount, walletAddress, converted, onPaid, o
       <motion.div {...fadeUp} className="space-y-3">
         <h2 className="text-lg font-semibold">Scan to Pay</h2>
         <p className="text-sm text-gray-400">
-          Amount: RM{amount.toFixed(2)} ({converted} TBT)
+          Amount: RM{amount.toFixed(2)}
+          {/* ({converted} TBT) */}
         </p>
       </motion.div>
 

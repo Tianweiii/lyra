@@ -69,7 +69,7 @@ export default function PaymentStatus({ status, amount, paymentRef, onTry }: Pay
             whileTap={{ scale: 0.95 }}
             className="mt-8 px-6 py-3 rounded-2xl border-2 border-gray-300 focus:bg-white focus:text-black hover:bg-white hover:text-black transition duration-300 cursor-pointer"
             onClick={() => {
-              router.push("/dashboard/123");
+              router.push("/dashboard/123"); // TODO: Route back to respective role
             }}
           >
             View History

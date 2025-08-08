@@ -19,7 +19,7 @@ const UserScanPage: NextPage = () => {
 
   const handleScanSuccess = (qrData: string) => {
     // TODO: Simulate verifying QR content
-    const isValid = qrData.includes("payment"); // TODO: real validation
+    const isValid = qrData.includes("ai"); // TODO: real validation
     console.log(qrData);
     console.log(isValid);
     const amountExtracted = 25; // Extract or calculate from QR
@@ -34,9 +34,9 @@ const UserScanPage: NextPage = () => {
   return (
     <div className="mt-10 text-white">
       <div className="relative flex items-center justify-between px-5">
-        {/* Back Button (left-aligned) */}
+        {/* Back Button */}
         <motion.button
-          onClick={() => router.push("/dashboard/123")}
+          onClick={() => router.push("/dashboard/123")} // TODO: Route back based on the role
           whileHover={{ x: -4 }}
           className="flex items-center gap-2 text-white hover:text-gray-300 transition-colors border p-2 rounded-xl cursor-pointer"
         >

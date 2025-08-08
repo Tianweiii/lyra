@@ -13,7 +13,7 @@ const MerchantPaymentFlow: NextPage = () => {
   const [step, setStep] = useState(1);
   const [amount, setAmount] = useState<number>(0);
   const [paymentRef, setPaymentRef] = useState<string>("");
-  const [convertedAmount, setConvertedAmount] = useState<number>(0);
+  // const [convertedAmount, setConvertedAmount] = useState<number>(0);
   const [status, setStatus] = useState("");
   // TODO: Both wallet address and wallet balance will be props
   const walletAddress = "0xABC123XXXXXXXXXXXXXXXXXXXXXDEF456";
@@ -24,7 +24,7 @@ const MerchantPaymentFlow: NextPage = () => {
 
   const handleNext = (value: number) => {
     setAmount(value);
-    setConvertedAmount(handleConversion(value));
+    // setConvertedAmount(handleConversion(value));
     setStep(2);
   };
 
@@ -34,11 +34,11 @@ const MerchantPaymentFlow: NextPage = () => {
     setStep(3);
   };
 
-  const handleConversion = (fiat: number) => {
-    // fiat;
-    // TODO: Convert from normal currency -> Sui coin/credit
-    return fiat + 0;
-  };
+  // const handleConversion = (fiat: number) => {
+  //   // fiat;
+  //   // TODO: Convert from normal currency -> Sui coin/credit
+  //   return fiat + 0;
+  // };
 
   return (
     <>
@@ -78,7 +78,7 @@ const MerchantPaymentFlow: NextPage = () => {
                 >
                   <ShowQRCode
                     amount={amount}
-                    converted={Number(convertedAmount)}
+                    // converted={Number(convertedAmount)}
                     walletAddress={walletAddress}
                     onPaid={handlePaymentComplete}
                     onBack={() => setStep(1)}
