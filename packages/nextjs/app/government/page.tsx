@@ -198,13 +198,13 @@ export default function GovernmentPage() {
           <h2 className="text-xl font-semibold mb-4">Current Prices</h2>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="text-sm text-gray-600">MATIC Price (USDT)</p>
+              <p className="text-sm text-blue-600">MATIC Price (USDT)</p>
               <p className="text-lg font-semibold">
                 {priceUsdtPerNative ? formatUnits(priceUsdtPerNative, 6) : "Loading..."} USDT
               </p>
             </div>
             <div>
-              <p className="text-sm text-gray-600">LYRA Price (USDT)</p>
+              <p className="text-sm text-blue-600">LYRA Price (USDT)</p>
               <p className="text-lg font-semibold">{lyraPerUsdt ? formatUnits(lyraPerUsdt, 12) : "Loading..."} USDT</p>
             </div>
           </div>
@@ -234,7 +234,7 @@ export default function GovernmentPage() {
               </ol>
             </div>
 
-            <div className="mt-4 p-4 bg-yellow-50 rounded">
+            <div className="mt-4 p-4 rounded">
               <h3 className="font-semibold mb-2">Important Notes:</h3>
               <ul className="list-disc list-inside space-y-1">
                 <li>Only government users can access this portal</li>
