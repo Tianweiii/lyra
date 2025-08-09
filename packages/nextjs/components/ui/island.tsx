@@ -2,317 +2,202 @@
 
 import React, { memo, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useWeb3Auth, useWeb3AuthConnect, useWeb3AuthDisconnect, useWeb3AuthUser } from "@web3auth/modal/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useAccount, useDisconnect } from "wagmi";
 import { Bars3Icon } from "@heroicons/react/24/outline";
 
-export type IslandProps = {
+interface IslandProps {
   leftOnPress?: () => void;
-};
+}
 
 export const IslandView: React.FC<IslandProps> = () => {
-  const [hover, setHover] = useState(false);
   const [showButtons, setShowButtons] = useState(false);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState(false);
-  const { disconnect } = useDisconnect();
 
-  // TODO: disable Web3Auth temporarily
-  const { isConnected } = useAccount();
-  // const { isConnected, address } = useAccount();
-  // const { userInfo } = useWeb3AuthUser();
-  // const { isConnected } = useAccount();
-  // const { disconnect } = useWeb3AuthDisconnect();
-  // Fake user info
-  const userInfo = {
-    profileImage: "https://avatars.dicebear.com/api/identicon/123.svg",
-  };
+  const { isConnected: wagmiConnected } = useAccount();
+  const { disconnect: wagmiDisconnect } = useDisconnect();
+  const { isConnected: web3AuthConnected } = useWeb3AuthConnect();
+  const { userInfo } = useWeb3AuthUser();
+  const { disconnect: web3AuthDisconnect } = useWeb3AuthDisconnect();
+  const { provider } = useWeb3Auth();
+  const [web3AuthAddress, setWeb3AuthAddress] = useState<string | null>(null);
+
+  // Get address from Web3Auth provider
+  useEffect(() => {
+    const getWeb3AuthAddress = async () => {
+      if (web3AuthConnected && provider && userInfo) {
+        try {
+          const accounts = await provider.request({ method: "eth_accounts" });
+          if (accounts && Array.isArray(accounts) && accounts.length > 0) {
+            setWeb3AuthAddress(accounts[0]);
+          }
+        } catch (error) {
+          console.error("Failed to get Web3Auth address:", error);
+          setWeb3AuthAddress(null);
+        }
+      } else {
+        setWeb3AuthAddress(null);
+      }
+    };
+
+    getWeb3AuthAddress();
+  }, [web3AuthConnected, provider, userInfo]);
+
+  // Prioritize Web3Auth connection over wagmi
+  const isConnected = (web3AuthConnected && userInfo && web3AuthAddress) || wagmiConnected;
+
   const router = useRouter();
 
   useEffect(() => {
-    const checkIfMobile = () => {
-      const hasTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
-      const isSmallScreen = window.matchMedia("(max-width: 768px)").matches;
-      setIsMobile(hasTouch || isSmallScreen);
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
     };
-
-    checkIfMobile();
-    window.addEventListener("resize", checkIfMobile);
-
-    return () => window.removeEventListener("resize", checkIfMobile);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && isExpanded) {
-        setIsExpanded(false);
-      }
-    };
-
-    if (isExpanded) {
-      document.addEventListener("keydown", handleKeyDown);
-    }
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [isExpanded]);
-
-  const handleIslandClick = (e: any) => {
+  const handleLogout = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    if (isMobile) {
-      setHover(!hover);
-      if (!hover) {
-        setShowButtons(true);
-      } else {
-        setShowButtons(false);
-      }
-    }
-  };
-
-  const onPressButton = (e: any) => {
-    e.stopPropagation();
-    setIsExpanded(!isExpanded);
-  };
-
-  const handleLogout = async () => {
     try {
-      await disconnect();
+      // Disconnect Web3Auth first
+      await web3AuthDisconnect();
+      // Then disconnect wagmi
+      wagmiDisconnect();
       router.push("/");
     } catch (error) {
       console.error("Logout error:", error);
     }
   };
 
-  const handleHoverStart = () => {
-    if (!isMobile) {
-      setHover(true);
+  const onPressButton = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    if (isMobile) {
+      setIsExpanded(!isExpanded);
     }
   };
 
-  const handleHoverEnd = () => {
+  const handleMouseEnter = () => {
     if (!isMobile) {
-      setHover(false);
-      setShowButtons(false);
-    }
-  };
-
-  const handleAnimationComplete = () => {
-    if (hover) {
       setShowButtons(true);
     }
   };
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
-      if (isMobile && hover && !isExpanded) {
-        const target = event.target as HTMLElement;
-        const islandElement = document.querySelector('[data-island="true"]');
-        if (islandElement && !islandElement.contains(target)) {
-          setHover(false);
-          setShowButtons(false);
-        }
-      }
-    };
-
-    if (isMobile && hover && !isExpanded) {
-      document.addEventListener("click", handleClickOutside);
-      document.addEventListener("touchstart", handleClickOutside);
+  const handleMouseLeave = () => {
+    if (!isMobile) {
+      setShowButtons(false);
     }
+  };
 
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-      document.removeEventListener("touchstart", handleClickOutside);
-    };
-  }, [isMobile, hover, isExpanded]);
+  const handleClickOutside = () => {
+    if (isMobile) {
+      setIsExpanded(false);
+    }
+  };
+
+  const displayButtons = isMobile ? isExpanded : showButtons;
 
   return (
-    <AnimatePresence>
+    <div className="fixed top-6 left-6 z-50">
+      {isMobile && isExpanded && <div className="fixed inset-0 bg-black bg-opacity-50" onClick={handleClickOutside} />}
       <motion.div
-        key="container1"
-        data-island="true"
-        className={`
-          fixed top-[50px] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[20vw] h-[50px] rounded-full flex justify-center items-center border border-white/30 bg-white/10 backdrop-blur-md shadow-lg z-[100]
-          ${isMobile ? "cursor-pointer" : ""}
-        `}
-        whileHover={!isMobile ? { width: "40vw" } : {}}
-        animate={isMobile && hover ? { width: "40vw" } : {}}
-        transition={{
-          duration: 0.3,
-          ease: "easeInOut",
-        }}
-        onHoverStart={handleHoverStart}
-        onHoverEnd={handleHoverEnd}
-        onClick={handleIslandClick}
-        onAnimationComplete={handleAnimationComplete}
+        className="relative flex items-center gap-2"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        animate={{ width: displayButtons ? "auto" : "auto" }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
       >
-        <p className="text-white font-semibold">Lyra</p>
-
         <AnimatePresence>
-          {showButtons && (
-            <>
+          {displayButtons && (
+            <motion.div
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -10 }}
+              transition={{ duration: 0.2 }}
+              className="flex gap-2"
+            >
               <motion.button
-                key="menu-btn"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ delay: 0.05 }}
-                className="absolute left-0 top-1/2 -translate-y-1/2 ml-2 h-[80%] px-4 rounded-full border border-white/50 flex justify-center items-center text-white hover:cursor-pointer"
-                onClick={onPressButton}
+                className="px-4 py-2 bg-gray-800 text-white rounded-full text-sm hover:bg-gray-700 transition-colors whitespace-nowrap"
+                onClick={() => router.push("/government")}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                <Bars3Icon className="h-6 w-6 text-white" />
+                Government
               </motion.button>
-
-              {/* Profile/Login Button */}
               <motion.button
-                key="profile-btn"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ delay: 0.1 }}
-                className="absolute right-0 top-1/2 -translate-y-1/2 mr-2 h-[80%] px-4 rounded-full border border-white/50 flex justify-center items-center text-white hover:cursor-pointer"
-                onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                  e.stopPropagation();
-                  if (!isConnected) {
-                    router.push("/login");
-                  }
-                }}
+                className="px-4 py-2 bg-gray-800 text-white rounded-full text-sm hover:bg-gray-700 transition-colors whitespace-nowrap"
+                onClick={() => router.push("/merchant")}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                {isConnected && userInfo && userInfo.profileImage ? (
-                  <div className="w-8 h-8 rounded-full border-2 border-gray-400 overflow-hidden">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={userInfo.profileImage} alt="Profile" className="w-full h-full object-cover" />
-                  </div>
-                ) : isConnected ? (
-                  // Show a default avatar
-                  <div className="w-8 h-8 rounded-full border-2 border-gray-400 bg-gray-600 flex items-center justify-center">
-                    <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                    </svg>
-                  </div>
-                ) : (
-                  <p className="text-sm px-6">Login</p>
-                )}
+                Merchant
               </motion.button>
-            </>
+              <motion.button
+                className="px-4 py-2 bg-gray-800 text-white rounded-full text-sm hover:bg-gray-700 transition-colors whitespace-nowrap"
+                onClick={() => router.push("/payment")}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Payment
+              </motion.button>
+              {isConnected && (
+                <motion.button
+                  className="px-4 py-2 bg-red-600 text-white rounded-full text-sm hover:bg-red-700 transition-colors whitespace-nowrap"
+                  onClick={handleLogout}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Logout
+                </motion.button>
+              )}
+            </motion.div>
           )}
         </AnimatePresence>
-      </motion.div>
 
-      <motion.div
-        key="container2"
-        className={`
-          bg-white/10 backdrop-blur-md fixed transform flex justify-center items-center flex-col gap-10 z-50
-          ${isExpanded ? "inset-0 w-screen h-screen top-0 left-0 bottom-0 -translate-x-0 -translate-y-0" : "w-10 h-10 top-[50px] left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-4xl"}
-        `}
-        transition={{
-          type: "spring",
-          stiffness: 300,
-          damping: 30,
-          duration: 0.8,
-        }}
-        layout
-      >
-        {isExpanded && (
-          <>
-            <motion.p
-              className="text-3xl text-white cursor-pointer hover:underline"
-              initial={{
-                opacity: 0,
-                y: 20,
-              }}
-              whileInView={{
-                opacity: 1,
-                y: 0,
-              }}
-              transition={{
-                duration: 0.3,
-                delay: 0.5,
-              }}
-              onClick={() => router.push("/")}
+        <motion.button
+          className="relative flex items-center justify-center w-12 h-12 bg-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200"
+          onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+            e.stopPropagation();
+            if (!isConnected) {
+              router.push("/login");
+            }
+          }}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          {isConnected ? (
+            <div className="w-8 h-8 rounded-full border-2 border-gray-400 bg-gray-600 flex items-center justify-center">
+              <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+              </svg>
+            </div>
+          ) : (
+            <p className="text-sm px-6">Login</p>
+          )}
+          {isMobile && (
+            <motion.button
+              className="absolute top-1 right-1 w-4 h-4 flex items-center justify-center"
+              onClick={onPressButton}
+              animate={{ rotate: isExpanded ? 45 : 0 }}
+              transition={{ duration: 0.3 }}
             >
-              Home
-            </motion.p>
-            <motion.p
-              className="text-3xl text-white cursor-pointer hover:underline"
-              initial={{
-                opacity: 0,
-                y: 20,
-              }}
-              whileInView={{
-                opacity: 1,
-                y: 0,
-              }}
-              transition={{
-                duration: 0.3,
-                delay: 0.6,
-              }}
-              // ROLE: ROUTE FOR ROLE
-              onClick={() => router.push("/dashboard/124")}
-            >
-              Dashboard
-            </motion.p>
-            {/* <motion.p
-              className="text-3xl text-white cursor-pointer hover:underline"
-              initial={{
-                opacity: 0,
-                y: 20,
-              }}
-              whileInView={{
-                opacity: 1,
-                y: 0,
-              }}
-              transition={{
-                duration: 0.3,
-                delay: 0.8,
-              }}
-            >
-              Profile
-            </motion.p> */}
-            <motion.p
-              className="text-3xl text-white cursor-pointer hover:underline"
-              initial={{
-                opacity: 0,
-                y: 20,
-              }}
-              whileInView={{
-                opacity: 1,
-                y: 0,
-              }}
-              transition={{
-                duration: 0.3,
-                delay: 0.8,
-              }}
-              onClick={() => router.push("/support")}
-            >
-              FAQ
-            </motion.p>
-            {isConnected && (
-              <motion.p
-                className="text-3xl text-white cursor-pointer hover:underline"
-                initial={{
-                  opacity: 0,
-                  y: 20,
-                }}
-                whileInView={{
-                  opacity: 1,
-                  y: 0,
-                }}
-                transition={{
-                  duration: 0.3,
-                  delay: 1.0,
-                }}
-                onClick={handleLogout}
-              >
-                Logout
-              </motion.p>
-            )}
-          </>
-        )}
+              <Bars3Icon className="w-3 h-3 text-gray-600" />
+            </motion.button>
+          )}
+        </motion.button>
       </motion.div>
-    </AnimatePresence>
+    </div>
   );
 };
 
-export const Island = memo(IslandView);
+const Island: React.FC<IslandProps> = memo(() => {
+  return <IslandView />;
+});
+
+Island.displayName = "Island";
+
 export default Island;
