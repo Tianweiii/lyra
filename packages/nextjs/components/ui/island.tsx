@@ -1,11 +1,9 @@
 "use client";
 
 import React, { memo, useState } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useWeb3AuthDisconnect, useWeb3AuthUser } from "@web3auth/modal/react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useAccount } from "wagmi";
+import { useAccount, useDisconnect } from "wagmi";
 import { Bars3Icon } from "@heroicons/react/24/outline";
 
 export type IslandProps = {
@@ -17,9 +15,8 @@ export const IslandView: React.FC<IslandProps> = () => {
   const [showButtons, setShowButtons] = useState(false);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
-  const { userInfo } = useWeb3AuthUser();
-  const { isConnected } = useAccount();
-  const { disconnect } = useWeb3AuthDisconnect();
+  const { isConnected, address } = useAccount();
+  const { disconnect } = useDisconnect();
 
   const onPressButton = (e: any) => {
     e.stopPropagation();
@@ -28,7 +25,7 @@ export const IslandView: React.FC<IslandProps> = () => {
 
   const handleLogout = async () => {
     try {
-      await disconnect();
+      disconnect();
       setIsExpanded(false);
     } catch (error) {
       console.error("Logout error:", error);
@@ -91,12 +88,8 @@ export const IslandView: React.FC<IslandProps> = () => {
                   }
                 }}
               >
-                {isConnected && userInfo && userInfo.profileImage ? (
-                  <div className="w-8 h-8 rounded-full border-2 border-gray-400 overflow-hidden">
-                    <Image src={userInfo.profileImage} alt="Profile" width={32} height={32} />
-                  </div>
-                ) : isConnected ? (
-                  // Show a default avatar
+                {isConnected && address ? (
+                  // Show a default avatar using address
                   <div className="w-8 h-8 rounded-full border-2 border-gray-400 bg-gray-600 flex items-center justify-center">
                     <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />

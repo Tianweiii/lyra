@@ -2,14 +2,17 @@
 
 import { useState } from "react";
 import { formatUnits, parseUnits } from "viem";
-import { useAccount } from "wagmi";
+import { useAccount, useChainId, useSwitchChain } from "wagmi";
+import { RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import { AddressInput } from "~~/components/scaffold-eth/Input/AddressInput";
 import { EtherInput } from "~~/components/scaffold-eth/Input/EtherInput";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth/useScaffoldReadContract";
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth/useScaffoldWriteContract";
 
 export default function GovernmentPage() {
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
+  const chainId = useChainId();
+  const { switchChain } = useSwitchChain();
 
   const [recipientAddress, setRecipientAddress] = useState("");
   const [usdtAmount, setUsdtAmount] = useState("");
@@ -17,7 +20,10 @@ export default function GovernmentPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [swapType, setSwapType] = useState<"usdt" | "native">("usdt");
 
-  // Read contract data
+  // Check if connected to Polygon network (chain ID 137)
+  const isPolygonNetwork = chainId === 137;
+
+  // Read contract data - only when wallet is connected and on correct network
   const { data: priceUsdtPerNative } = useScaffoldReadContract({
     contractName: "LyraOtcSeller",
     functionName: "priceUsdtPerNative",
@@ -36,6 +42,14 @@ export default function GovernmentPage() {
 
   // Write contract functions
   const { writeContractAsync: writeLyraOtcSeller } = useScaffoldWriteContract("LyraOtcSeller");
+
+  const handleSwitchToPolygon = async () => {
+    try {
+      await switchChain({ chainId: 137 });
+    } catch (error) {
+      console.error("Failed to switch to Polygon:", error);
+    }
+  };
 
   const handleUsdtSwap = async () => {
     if (!usdtAmount || !recipientAddress) return;
@@ -102,12 +116,35 @@ export default function GovernmentPage() {
     return "0";
   };
 
-  if (!address) {
+  if (!isConnected) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
+        <div className="text-center space-y-4">
+          <div className="flex justify-center">
+            <RainbowKitCustomConnectButton />
+          </div>
           <h1 className="text-2xl font-bold mb-4">Government Portal</h1>
           <p className="text-gray-600">Please connect your wallet to access the government portal.</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isPolygonNetwork) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center space-y-4">
+          <div className="flex justify-center">
+            <RainbowKitCustomConnectButton />
+          </div>
+          <h1 className="text-2xl font-bold mb-4">Wrong Network</h1>
+          <p className="text-gray-600 mb-4">Please switch to Polygon network to access the government portal.</p>
+          <button
+            onClick={handleSwitchToPolygon}
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >
+            Switch to Polygon
+          </button>
         </div>
       </div>
     );
@@ -116,7 +153,10 @@ export default function GovernmentPage() {
   if (!isGovernment) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
+        <div className="text-center space-y-4">
+          <div className="flex justify-center">
+            <RainbowKitCustomConnectButton />
+          </div>
           <h1 className="text-2xl font-bold mb-4">Access Denied</h1>
           <p className="text-gray-600">You are not authorized as a government user.</p>
           <p className="text-sm text-gray-500 mt-2">Contact the contract owner to set your address as government.</p>
@@ -128,7 +168,15 @@ export default function GovernmentPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-2xl mx-auto">
+        <div className="flex justify-end mb-4">
+          <RainbowKitCustomConnectButton />
+        </div>
         <h1 className="text-3xl font-bold mb-8 text-center">Government Portal</h1>
+
+        {/* Network Status */}
+        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded">
+          <p className="text-green-800 text-sm">✅ Connected to Polygon Network (Chain ID: {chainId})</p>
+        </div>
 
         <div className="bg-base-100 rounded-lg shadow-lg p-6 mb-6">
           <h2 className="text-xl font-semibold mb-4">Swap & Send LYRA</h2>

@@ -2,19 +2,25 @@
 
 import { useState } from "react";
 import { formatUnits, parseUnits } from "viem";
-import { useAccount } from "wagmi";
+import { useAccount, useChainId, useSwitchChain } from "wagmi";
+import { RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import { Address } from "~~/components/scaffold-eth/Address/Address";
 import { EtherInput } from "~~/components/scaffold-eth/Input/EtherInput";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth/useScaffoldReadContract";
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth/useScaffoldWriteContract";
 
 export default function MerchantPage() {
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
+  const chainId = useChainId();
+  const { switchChain } = useSwitchChain();
 
   const [lyraAmount, setLyraAmount] = useState("");
   const [swapType, setSwapType] = useState<"usdt" | "native">("usdt");
   const [isLoading, setIsLoading] = useState(false);
   const [qrCodeData, setQrCodeData] = useState("");
+
+  // Check if connected to Polygon network (chain ID 137)
+  const isPolygonNetwork = chainId === 137;
 
   // Read contract data
   const { data: priceUsdtPerNative } = useScaffoldReadContract({
@@ -41,6 +47,14 @@ export default function MerchantPage() {
 
   // Write contract functions
   const { writeContractAsync: writeLyraOtcSeller } = useScaffoldWriteContract("LyraOtcSeller");
+
+  const handleSwitchToPolygon = async () => {
+    try {
+      await switchChain({ chainId: 137 });
+    } catch (error) {
+      console.error("Failed to switch to Polygon:", error);
+    }
+  };
 
   const handleSwapToUsdt = async () => {
     if (!lyraAmount) return;
@@ -108,12 +122,32 @@ export default function MerchantPage() {
     };
   };
 
-  if (!address) {
+  if (!isConnected) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">Merchant Portal</h1>
-          <p className="text-gray-600">Please connect your wallet to access the merchant portal.</p>
+          <p className="text-gray-600 mb-6">Please connect your wallet to access the merchant portal.</p>
+          <div className="flex justify-center">
+            <RainbowKitCustomConnectButton />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isPolygonNetwork) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">Wrong Network</h1>
+          <p className="text-gray-600 mb-4">Please switch to Polygon network to access the merchant portal.</p>
+          <button
+            onClick={handleSwitchToPolygon}
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >
+            Switch to Polygon
+          </button>
         </div>
       </div>
     );
@@ -125,6 +159,7 @@ export default function MerchantPage() {
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">Access Denied</h1>
           <p className="text-gray-600">You are not authorized as a merchant.</p>
+          <p className="text-sm text-gray-500 mt-2">Contact the contract owner to set your address as merchant.</p>
         </div>
       </div>
     );
