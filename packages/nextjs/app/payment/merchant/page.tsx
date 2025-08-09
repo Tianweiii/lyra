@@ -5,26 +5,26 @@ import { AnimatePresence, motion } from "framer-motion";
 // import { useRouter } from "next/navigation";
 import type { NextPage } from "next";
 import { useAccount } from "wagmi";
-import PaymentStatus from "~~/components/payment/PaymentStatus";
+// import PaymentStatus from "~~/components/payment/PaymentStatus";
 import { ProgressBar } from "~~/components/payment/ProgressBar";
 import { PromptPayment } from "~~/components/payment/PromptPayment";
 import ShowQRCode from "~~/components/payment/ShowQRCode";
 import { RainbowKitCustomConnectButton } from "~~/components/scaffold-eth/RainbowKitCustomConnectButton";
-import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
+// import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 
 const MerchantPaymentFlow: NextPage = () => {
   const [step, setStep] = useState(1);
   const [amount, setAmount] = useState<number>(0);
-  const [paymentRef, setPaymentRef] = useState<string>("");
-  const [status, setStatus] = useState("");
+  const [, setPaymentRef] = useState<string>("");
+  const [, setStatus] = useState("");
   const { address } = useAccount();
   const steps = ["Enter Amount", "Scan QR", "Payment Status"];
 
-  const { data: isMerchant } = useScaffoldReadContract({
-    contractName: "LyraOtcSeller",
-    functionName: "isMerchant",
-    args: [address],
-  });
+  // const { data: isMerchant } = useScaffoldReadContract({
+  //   contractName: "LyraOtcSeller",
+  //   functionName: "isMerchant",
+  //   args: [address],
+  // });
 
   const handleNext = (value: number) => {
     setAmount(value);
