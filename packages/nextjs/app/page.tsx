@@ -1,24 +1,23 @@
 "use client";
 
-// import Link from "next/link";
-// import { useEffect, useRef, useState } from "react";
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
+import { InstallPrompt, PushNotificationManager } from "../components/PWAComponents";
+import { RainbowKitCustomConnectButton } from "../components/scaffold-eth";
+import BentoGrids from "../components/ui/bento-grids";
+import { CanvasRevealEffect } from "../components/ui/canvas-reveal";
+import { Card } from "../components/ui/card";
+import Carousel from "../components/ui/carousel";
+import CustomScrollContainer from "../components/ui/custom-scroll-container";
+import Gallery from "../components/ui/gallery";
+import Island from "../components/ui/island";
+import { clearUserData } from "../utils/helper";
 import { useWeb3Auth, useWeb3AuthConnect, useWeb3AuthUser } from "@web3auth/modal/react";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import type { NextPage } from "next";
-import { useAccount, useSwitchChain } from "wagmi";
+import { useAccount } from "wagmi";
 import { BoltIcon, ChartBarSquareIcon, CubeTransparentIcon } from "@heroicons/react/24/outline";
-import { RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
-import BentoGrids from "~~/components/ui/bento-grids";
-import { CanvasRevealEffect } from "~~/components/ui/canvas-reveal";
-import { Card } from "~~/components/ui/card";
-import Carousel from "~~/components/ui/carousel";
-import CustomScrollContainer from "~~/components/ui/custom-scroll-container";
-import Gallery from "~~/components/ui/gallery";
-import Island from "~~/components/ui/island";
-import { clearUserData } from "~~/utils/helper";
 
 const Home: NextPage = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -28,17 +27,6 @@ const Home: NextPage = () => {
   const { userInfo } = useWeb3AuthUser();
   const { provider } = useWeb3Auth();
   const [web3AuthAddress, setWeb3AuthAddress] = useState<string | null>(null);
-  const { switchChain } = useSwitchChain();
-  const { chainId } = useAccount();
-
-  // Prioritize Web3Auth connection over wagmi
-  const isConnected = (web3AuthConnected && userInfo && web3AuthAddress) || wagmiConnected;
-
-  useEffect(() => {
-    if (isConnected && chainId !== 137) {
-      switchChain({ chainId: 137 });
-    }
-  }, [isConnected, chainId, switchChain]);
 
   // Get address from Web3Auth provider
   useEffect(() => {
@@ -60,6 +48,9 @@ const Home: NextPage = () => {
 
     getWeb3AuthAddress();
   }, [web3AuthConnected, provider, userInfo]);
+
+  // Prioritize Web3Auth connection over wagmi
+  const isConnected = (web3AuthConnected && userInfo && web3AuthAddress) || wagmiConnected;
 
   const router = useRouter();
 
@@ -89,15 +80,6 @@ const Home: NextPage = () => {
     };
   }, [fadeOut]);
 
-  // async function getPrices() {
-  //   const options: RequestInit = { method: "GET", headers: { accepted: "application.json" } };
-  //   // const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd');
-  //   const res = await fetch("https://api.coingecko.com/api/v3/simple/exchanges", options);
-  //   const data = await res.json();
-  //   console.log(data);
-  // }
-  // getPrices();
-
   return (
     <>
       <Island leftOnPress={() => router.push("/dashboard/123")} />
@@ -121,18 +103,18 @@ const Home: NextPage = () => {
         <div className="absolute top-4 right-4 z-30">
           <div className="bg-black/70 backdrop-blur-sm rounded-lg p-4">
             <div className="flex items-center gap-3">
-              <div className={`w-3 h-3 rounded-full ${isConnected ? "bg-green-500" : "bg-red-500"}`}></div>
-              <span className="text-white text-sm">
-                {isConnected
-                  ? `Wallet Connected${userInfo?.name ? ` (${userInfo.name})` : ""}${web3AuthAddress ? ` - ${web3AuthAddress.slice(0, 6)}...${web3AuthAddress.slice(-4)}` : ""}`
-                  : "Wallet Disconnected"}
-              </span>
+              <div className={`w-3 h-3 rounded-full ${isConnected ? "bg-green-500" : "bg-red-500"}`}></div>{" "}
+              {/* Fixed template literal */}
+              <span className="text-white text-sm">{isConnected ? "Wallet Connected" : "Wallet Disconnected"}</span>
               <RainbowKitCustomConnectButton />
             </div>
           </div>
+
+          {/* Push Notification Components */}
+          <PushNotificationManager />
+          <InstallPrompt />
         </div>
 
-        {/* Rest of the component remains the same */}
         <div className="relative z-20 flex h-full px-12 gap-2 items-end pb-36">
           <div>
             <p className="text-[60px] text-white">Financing - Enhanced</p>
@@ -216,12 +198,11 @@ const Home: NextPage = () => {
             delay: 0.9,
           }}
         >
-          <Card title="Quick and easy" icon={<ChartBarSquareIcon />}>
+          <Card title="I dont know at this point" icon={<ChartBarSquareIcon />}>
             <CanvasRevealEffect animationSpeed={3} containerClassName="bg-sky-600" colors={[[125, 211, 252]]} />
           </Card>
         </motion.div>
       </div>
-      {/* <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-black z-20"></div> */}
 
       <div className="flex flex-row items-center justify-center pb-20 h-screen md:h-auto dark:bg-black bg-white relative w-full mb-[100px] mt-20">
         <div className="max-w-7xl mx-auto w-full relative overflow-hidden h-full md:h-[40rem] px-4">
@@ -255,7 +236,7 @@ const Home: NextPage = () => {
       </div>
 
       <div className="flex items-start relative overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 h-[80%] bg-gradient-to-b from-black to transparent z-20"></div>
+        <div className="absolute top-0 left-0 right-0 h-[80%] bg-gradient-to-b from-black to-transparent z-20"></div>
         <p className="text-[280px] text-[#4d4d4d]">LyraStudios</p>
       </div>
     </>

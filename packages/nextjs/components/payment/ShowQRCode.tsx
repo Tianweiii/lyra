@@ -20,7 +20,10 @@ interface showQRCodeProps {
 
 export default function ShowQRCode({ amount, walletAddress, onPaid, onBack }: showQRCodeProps) {
   // Use merchantAddress instead of walletAddress to match user page expectations
-  const paymentData = JSON.stringify({ amount, merchantAddress: walletAddress });
+  const paymentData = JSON.stringify({
+    amount,
+    merchantAddress: walletAddress,
+  });
   const encoded = btoa(paymentData);
   const baseURL = typeof window !== "undefined" ? window.location.origin : "";
   // Point to the user payment page
@@ -52,7 +55,7 @@ export default function ShowQRCode({ amount, walletAddress, onPaid, onBack }: sh
       <motion.div {...fadeUp} className="space-y-3">
         <h2 className="text-lg font-semibold">Scan to Pay</h2>
         <p className="text-sm text-gray-400">
-          Amount: RM{amount.toFixed(2)}
+          Amount: {amount} LYRA
           {/* ({converted} TBT) */}
         </p>
       </motion.div>
