@@ -58,15 +58,15 @@ const useResponsiveDimensions = () => {
     const updateDimensions = () => {
       const width = window.innerWidth;
 
-      if (width < 768) {
+      if (width > 1024) {
         setDimensions({
-          innerRadius: 30,
-          outerRadius: 50,
-          fontSize: 15,
-          padding: 15,
-          legendFontSize: 11,
+          innerRadius: 80,
+          outerRadius: 100,
+          fontSize: 16,
+          padding: 20,
+          legendFontSize: 14,
         });
-      } else if (width < 1024) {
+      } else if (width > 1400) {
         setDimensions({
           innerRadius: 50,
           outerRadius: 70,
@@ -76,13 +76,39 @@ const useResponsiveDimensions = () => {
         });
       } else {
         setDimensions({
-          innerRadius: 80,
-          outerRadius: 100,
-          fontSize: 16,
-          padding: 20,
-          legendFontSize: 14,
+          innerRadius: 30,
+          outerRadius: 50,
+          fontSize: 15,
+          padding: 15,
+          legendFontSize: 11,
         });
       }
+
+      // if (width < 768) {
+      //   setDimensions({
+      //     innerRadius: 30,
+      //     outerRadius: 50,
+      //     fontSize: 15,
+      //     padding: 15,
+      //     legendFontSize: 11,
+      //   });
+      // } else if (width < 1024) {
+      //   setDimensions({
+      //     innerRadius: 50,
+      //     outerRadius: 70,
+      //     fontSize: 16,
+      //     padding: 18,
+      //     legendFontSize: 12,
+      //   });
+      // } else {
+      //   setDimensions({
+      //     innerRadius: 80,
+      //     outerRadius: 100,
+      //     fontSize: 16,
+      //     padding: 20,
+      //     legendFontSize: 14,
+      //   });
+      // }
     };
 
     updateDimensions();

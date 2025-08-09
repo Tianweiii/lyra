@@ -93,7 +93,7 @@ export const CarouselView: React.FC<CarouselProps> = () => {
           {items.map((item, i) => (
             <motion.div
               key={i}
-              className="relative min-w-[20vw] md:min-w-[40%] h-[70vh] border-1 rounded-3xl overflow-hidden px-[30px] py-[20px]"
+              className="relative md:min-w-[40%] min-w-[70%] h-[70vh] border-1 rounded-3xl overflow-hidden px-[30px] py-[20px]"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{
