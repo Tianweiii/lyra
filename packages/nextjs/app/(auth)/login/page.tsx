@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useWeb3AuthConnect } from "@web3auth/modal/react";
 import { BackgroundGradient } from "~~/components/ui/neon-div";
@@ -44,6 +45,7 @@ const LoginPage = () => {
             {/* Lyra Logo */}
             <div className="space-y-5">
               <div className="mx-auto">
+                <Image src="/images/Lyra-Logo.png" alt="Lyra Logo" width={200} height={50} />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/images/Lyra-Logo.png"

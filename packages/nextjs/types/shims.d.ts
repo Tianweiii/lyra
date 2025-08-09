@@ -1,0 +1,16 @@
+declare module "@apollo/client";
+declare module "react-responsive";
+declare module "@mui/material";
+declare module "@mui/material/styles";
+declare module "framer-motion";
+declare module "motion/react";
+declare module "@zxing/browser";
+declare module "react-qr-code";
+declare module "@react-three/fiber";
+declare module "three";
+declare module "@react-three/drei";
+declare module "three-globe";
+declare module "recharts";
+declare module "simplex-noise";
+declare module "dotted-map";
+declare module "xlsx";

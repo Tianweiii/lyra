@@ -7,7 +7,9 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
 import type { NextPage } from "next";
+import { useAccount } from "wagmi";
 import { BoltIcon, ChartBarSquareIcon, CubeTransparentIcon } from "@heroicons/react/24/outline";
+import { RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import BentoGrids from "~~/components/ui/bento-grids";
 import { CanvasRevealEffect } from "~~/components/ui/canvas-reveal";
 import { Card } from "~~/components/ui/card";
@@ -19,6 +21,7 @@ import Island from "~~/components/ui/island";
 const Home: NextPage = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [fadeOut, setFadeOut] = useState(false);
+  const { isConnected } = useAccount();
 
   const router = useRouter();
 
@@ -74,6 +77,17 @@ const Home: NextPage = () => {
         </video>
 
         <div className="absolute inset-0 bg-black/40 z-0" />
+
+        {/* Wallet Connection Status */}
+        <div className="absolute top-4 right-4 z-30">
+          <div className="bg-black/70 backdrop-blur-sm rounded-lg p-4">
+            <div className="flex items-center gap-3">
+              <div className={`w-3 h-3 rounded-full ${isConnected ? "bg-green-500" : "bg-red-500"}`}></div>
+              <span className="text-white text-sm">{isConnected ? "Wallet Connected" : "Wallet Disconnected"}</span>
+              <RainbowKitCustomConnectButton />
+            </div>
+          </div>
+        </div>
 
         <div className="relative z-20 flex h-full px-12 gap-2 items-end pb-36">
           <div>

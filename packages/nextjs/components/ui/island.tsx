@@ -2,9 +2,8 @@
 
 import React, { memo, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useWeb3AuthDisconnect, useWeb3AuthUser } from "@web3auth/modal/react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useAccount } from "wagmi";
+import { useAccount, useDisconnect } from "wagmi";
 import { Bars3Icon } from "@heroicons/react/24/outline";
 
 export type IslandProps = {
@@ -16,10 +15,18 @@ export const IslandView: React.FC<IslandProps> = () => {
   const [showButtons, setShowButtons] = useState(false);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState(false);
+  const { disconnect } = useDisconnect();
 
-  const { userInfo } = useWeb3AuthUser();
+  // TODO: disable Web3Auth temporarily
   const { isConnected } = useAccount();
-  const { disconnect } = useWeb3AuthDisconnect();
+  // const { isConnected, address } = useAccount();
+  // const { userInfo } = useWeb3AuthUser();
+  // const { isConnected } = useAccount();
+  // const { disconnect } = useWeb3AuthDisconnect();
+  // Fake user info
+  const userInfo = {
+    profileImage: "https://avatars.dicebear.com/api/identicon/123.svg",
+  };
   const router = useRouter();
 
   useEffect(() => {

@@ -58,7 +58,7 @@ export const CameraScanner = ({ onScanSuccess }: CameraScannerProps) => {
       active = false;
       if (controls) controls.stop();
     };
-  }, [onScanSuccess]);
+  }, [onScanSuccess, controls]);
 
   const handleScanAgain = () => {
     setQrResult(null);
