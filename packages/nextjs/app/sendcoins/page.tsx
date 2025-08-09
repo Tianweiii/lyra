@@ -16,6 +16,7 @@ import { loadUserData } from "~~/utils/helper";
 const steps = ["Select Recipient & Amount", "Complete Payment"];
 
 const SendCoinPage = () => {
+  const [paymentRef, setPaymentRef] = useState("")
   const [step, setStep] = useState(0);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const router = useRouter();
@@ -108,12 +109,13 @@ const SendCoinPage = () => {
       const minLyraOut = (lyraPerUsdt * usdtAmountWei) / BigInt(1e6); // Calculate expected LYRA output
 
       // Use the new multiple recipients function instead of looping
-      await writeLyraOtcSeller({
+      const tx = await writeLyraOtcSeller({
         functionName: "govSwapUsdtAndSendMultiple",
         args: [selectedUsers, usdtAmountWei, minLyraOut],
       });
 
       // alert("USDT换LYRA交易成功！");
+      setPaymentRef(typeof tx === "string" ? tx : "");
       setUsdtAmount("");
       setSelectedUsers([]);
     } catch (error) {
@@ -133,13 +135,14 @@ const SendCoinPage = () => {
       const minLyraOut = (lyraPerUsdt * expectedUsdtValue) / BigInt(1e6);
 
       // Use the new multiple recipients function instead of looping
-      await writeLyraOtcSeller({
+      const tx = await writeLyraOtcSeller({
         functionName: "govSwapNativeAndSendMultiple",
         args: [selectedUsers, minLyraOut],
         value: nativeAmountWei,
       });
 
       // alert("MATIC换LYRA交易成功！");
+      setPaymentRef(typeof tx === "string" ? tx : "");
       setNativeAmount("");
       setSelectedUsers([]);
     } catch (error) {
@@ -321,11 +324,11 @@ const SendCoinPage = () => {
           transition={{ delay: 0.4 }}
         >
           <p className="text-sm text-gray-400 mb-2">Transaction Hash:</p>
-          <p className="text-sm text-blue-400 font-mono">0x1234567890abcdef...</p>
+          <p className="text-sm text-blue-400 font-mono">{paymentRef}</p>
         </motion.div>
       </motion.div>,
     ],
-    [activeUsers, swapType, usdtAmount, getQuote, nativeAmount],
+    [activeUsers, swapType, usdtAmount, nativeAmount, getQuote, paymentRef],
   );
 
   // Memoize StepContent to prevent unnecessary re-renders
