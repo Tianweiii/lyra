@@ -172,6 +172,16 @@ export default function MerchantPage() {
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold mb-8 text-center">Merchant Portal</h1>
 
+        {/* <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center space-y-4">
+            <div className="flex justify-center">
+              <RainbowKitCustomConnectButton />
+            </div>
+            <h1 className="text-2xl font-bold mb-4">Government Portal</h1>
+            <p className="text-gray-600">Please connect your wallet to access the government portal.</p>
+          </div>
+        </div> */}
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* QR Code Generation */}
           <div className="rounded-lg shadow-lg p-6">
