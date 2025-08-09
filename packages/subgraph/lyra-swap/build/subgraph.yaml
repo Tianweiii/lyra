@@ -1,0 +1,47 @@
+specVersion: 1.3.0
+indexerHints:
+  prune: auto
+schema:
+  file: schema.graphql
+dataSources:
+  - kind: ethereum
+    name: LyraOtcSeller
+    network: matic
+    source:
+      address: "0xb919d234f9081d8c0f20ee4219c4605ba883dc32"
+      abi: LyraOtcSeller
+      startBlock: 74957352
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      entities:
+        - GovSwapNativeSent
+        - GovSwapUsdtSent
+        - GovUpdated
+        - MerchantSwapLyraToNative
+        - MerchantSwapLyraToUsdt
+        - MerchantUpdated
+        - OwnershipTransferred
+        - PricesUpdated
+      abis:
+        - name: LyraOtcSeller
+          file: LyraOtcSeller\LyraOtcSeller.json
+      eventHandlers:
+        - event: GovSwapNativeSent(indexed address,indexed address,uint256,uint256,uint256)
+          handler: handleGovSwapNativeSent
+        - event: GovSwapUsdtSent(indexed address,indexed address,uint256,uint256,uint256)
+          handler: handleGovSwapUsdtSent
+        - event: GovUpdated(address,bool)
+          handler: handleGovUpdated
+        - event: MerchantSwapLyraToNative(indexed address,uint256,uint256)
+          handler: handleMerchantSwapLyraToNative
+        - event: MerchantSwapLyraToUsdt(indexed address,uint256,uint256)
+          handler: handleMerchantSwapLyraToUsdt
+        - event: MerchantUpdated(address,bool)
+          handler: handleMerchantUpdated
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: PricesUpdated(uint256,uint256)
+          handler: handlePricesUpdated
+      file: LyraOtcSeller\LyraOtcSeller.wasm
