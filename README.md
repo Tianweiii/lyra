@@ -3,11 +3,11 @@
 ## 🚀 Overview
 **LYRA QR Merchant Payment System** is a blockchain-based payment platform that lets merchants receive **LYRA token** payments instantly via QR codes.
 
-**Government distributes** LYRA tokens to registered users.
+- **Government distributes** LYRA tokens to registered users.
 
-**Merchants** generate QR codes with payment details.
+- **Merchants** generate QR codes with payment details.
 
-**Users** scan and pay securely, directly on the blockchain — no banks or middlemen.
+- **Users** scan and pay securely, directly on the blockchain — no banks or middlemen.
 
 Built for the **Polygon network (Chain ID: 137)**, it integrates with **LyraToken** and **LyraOtcSeller** smart contracts for merchant verification, token transfers, and swaps.
 
@@ -21,10 +21,10 @@ Generate QR codes containing:
 - 📝 Extra metadata
 
 ### 📲 **User Payment via QR Scan**  
-Users scan the merchant’s QR code, verify details, and pay using LYRA tokens directly on-chain.
+- Users scan the merchant’s QR code, verify details, and pay using LYRA tokens directly on-chain.
 
 ### 🏛 **Government Token Disbursement**  
-Directly distribute LYRA tokens to citizens’ wallets.
+- Directly distribute LYRA tokens to citizens’ wallets.
 
 ### ⛓ **Blockchain Smart Contract Integration**  
 Seamless interaction with:
@@ -32,10 +32,10 @@ Seamless interaction with:
 - **`LyraToken`** ERC-20 contract for token balance management
 
 ### 🌐 **Multi-Network Ready**  
-Currently deployed on Polygon (Chain ID: 137) but adaptable to other EVM-compatible networks.
+- Currently deployed on Polygon (Chain ID: 137) but adaptable to other EVM-compatible networks.
 
 ### 💱 **Real-Time Balance Conversion**  
-Wallet balances are shown in **MYR** and **USD** using live exchange rate APIs.
+- Wallet balances are shown in **MYR** and **USD** using live exchange rate APIs.
 
 
 ## 🛠 Tech Stack
