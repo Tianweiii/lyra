@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import type { NextPage } from "next";
 import { parseUnits } from "viem";
-import { useAccount, useChainId, useSwitchChain } from "wagmi";
+import { useChainId, useSwitchChain } from "wagmi";
 import { sendPaymentNotification } from "~~/components/PWAComponents";
 import { CameraScanner } from "~~/components/payment/CameraScanner";
 import PaymentStatus from "~~/components/payment/PaymentStatus";
@@ -16,8 +16,6 @@ import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth/useScaffoldWrite
 
 const CHAIN_ID_POLYGON = 137 as const;
 
-// Import the notification helper
-
 const UserScanPage: NextPage = () => {
   const [step, setStep] = useState(1);
   const [status, setStatus] = useState("");
@@ -27,6 +25,7 @@ const UserScanPage: NextPage = () => {
   const [paymentRef, setPaymentRef] = useState<string>("");
   const [validationError, setValidationError] = useState("");
   const [merchantAddress, setMerchantAddress] = useState<string>("");
+  const [merchantEndpoint, setMerchantEndpoint] = useState<string>("");
   // Check if connected to Polygon network (chain ID 137)
   const isPolygonNetwork = chainId === 137;
 
@@ -95,6 +94,7 @@ const UserScanPage: NextPage = () => {
 
       setValidationError("");
       setMerchantAddress(data.merchantAddress);
+      setMerchantEndpoint(data.merchantEndpoint || data.merchantAddress.toLowerCase());
       setAmount(data.amount);
       setStep(2);
     } catch (error) {
@@ -121,10 +121,30 @@ const UserScanPage: NextPage = () => {
         functionName: "transfer",
         args: [merchantAddress, amountInBase],
       });
+
+      const txHash = typeof tx === "string" ? tx : "";
       setStatus("success");
-      setPaymentRef(typeof tx === "string" ? tx : "");
+      setPaymentRef(txHash);
+
+      // Send push notification to merchant when payment is successful
+      if (merchantEndpoint) {
+        try {
+          console.log("Sending payment notification to merchant...");
+          const notificationResult = await sendPaymentNotification(merchantEndpoint, amount, txHash);
+
+          if (notificationResult.success) {
+            console.log("Payment notification sent successfully to merchant");
+          } else {
+            console.error("Failed to send payment notification:", notificationResult.error);
+          }
+        } catch (error) {
+          console.error("Error sending payment notification:", error);
+        }
+      }
+
       setStep(3);
-    } catch {
+    } catch (error) {
+      console.error("Payment failed:", error);
       setStatus("failed");
       setValidationError("Transfer failed. Please try again.");
       setStep(3);

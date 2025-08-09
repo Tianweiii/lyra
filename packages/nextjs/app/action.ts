@@ -79,6 +79,56 @@ export async function subscribeUser(sub: PushSubscription) {
   }
 }
 
+// New function to associate wallet address with push subscription
+export async function associateWalletWithSubscription(endpoint: string, walletAddress: string) {
+  try {
+    const { error: updateError } = await supabaseAdmin
+      .from("push_subscriptions")
+      .update({
+        wallet_address: walletAddress.toLowerCase(),
+        updated_at: new Date().toISOString(),
+      })
+      .eq("endpoint", endpoint);
+
+    if (updateError) {
+      console.error("Error associating wallet with subscription:", updateError);
+      return { success: false, error: "Failed to associate wallet" };
+    }
+
+    console.log("Wallet associated with subscription:", walletAddress);
+    return { success: true, message: "Wallet associated successfully!" };
+  } catch (error) {
+    console.error("Error associating wallet:", error);
+    return { success: false, error: "Failed to associate wallet" };
+  }
+}
+
+// New function to get subscription endpoint by wallet address
+export async function getSubscriptionByWallet(walletAddress: string) {
+  try {
+    const { data: subscription, error } = await supabaseAdmin
+      .from("push_subscriptions")
+      .select("endpoint, is_active")
+      .eq("wallet_address", walletAddress.toLowerCase())
+      .eq("is_active", true)
+      .single();
+
+    if (error && error.code !== "PGRST116") {
+      console.error("Error fetching subscription by wallet:", error);
+      return { success: false, error: "Failed to fetch subscription" };
+    }
+
+    return {
+      success: true,
+      endpoint: subscription?.endpoint || null,
+      exists: !!subscription,
+    };
+  } catch (error) {
+    console.error("Error getting subscription by wallet:", error);
+    return { success: false, error: "Failed to get subscription" };
+  }
+}
+
 export async function unsubscribeUser(endpoint?: string) {
   try {
     if (!endpoint) {
@@ -107,13 +157,18 @@ export async function unsubscribeUser(endpoint?: string) {
   }
 }
 
-export async function sendNotification(message: string, targetEndpoint?: string) {
+export async function sendNotification(message: string, targetEndpoint?: string, walletAddress?: string) {
   try {
     let query = supabaseAdmin.from("push_subscriptions").select("*").eq("is_active", true);
 
     // If targeting specific endpoint, add that filter
     if (targetEndpoint) {
       query = query.eq("endpoint", targetEndpoint);
+    }
+
+    // If targeting by wallet address, add that filter
+    if (walletAddress && !targetEndpoint) {
+      query = query.eq("wallet_address", walletAddress.toLowerCase());
     }
 
     const { data: subscriptions, error: fetchError } = await query;
@@ -126,9 +181,10 @@ export async function sendNotification(message: string, targetEndpoint?: string)
     if (!subscriptions || subscriptions.length === 0) {
       return {
         success: false,
-        error: targetEndpoint
-          ? "No active subscription found for this user"
-          : "No active subscriptions found. Please subscribe first.",
+        error:
+          targetEndpoint || walletAddress
+            ? "No active subscription found for this user"
+            : "No active subscriptions found. Please subscribe first.",
       };
     }
 
