@@ -43,7 +43,6 @@ const DashboardPage: NextPage = () => {
   const { id } = useParams();
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const { address: wagmiAddress } = useAccount();
-  const accountId = "0x5265BCcc8aB5A36A45ABD2E574E6Fa7F863e5C2e";
 
   // New state to hold fetched balance data
   const [amount, setAmount] = useState<number>(0); // Add amount to state
@@ -94,6 +93,7 @@ const DashboardPage: NextPage = () => {
   const coinAmount: number = amount;
   const coinType: string = "LYRA";
   const role = getRole(id?.toString());
+  const accountId = role === "admin" ?  "0x5265BCcc8aB5A36A45ABD2E574E6Fa7F863e5C2e": useAccount().address || "";
 
   const renderMap: RenderMapProps = {
     user: {
