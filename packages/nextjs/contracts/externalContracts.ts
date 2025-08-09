@@ -269,128 +269,253 @@ export const externalContracts = {
       ],
     },
     LyraOtcSeller: {
-      address: "0xB919D234f9081D8c0F20ee4219C4605BA883dc32",
+      address: "0x5265BCcc8aB5A36A45ABD2E574E6Fa7F863e5C2e",
       abi: [
         {
           inputs: [
-            {
-              internalType: "address",
-              name: "_usdt",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "_lyra",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "_priceUsdtPerNative",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "_lyraPerUsdtHuman",
-              type: "uint256",
-            },
-            {
-              internalType: "address",
-              name: "initialOwner",
-              type: "address",
-            },
+            { internalType: "address", name: "_usdt", type: "address" },
+            { internalType: "address", name: "_lyra", type: "address" },
+            { internalType: "uint256", name: "_priceUsdtPerNative", type: "uint256" },
+            { internalType: "uint256", name: "_lyraPerUsdtHuman", type: "uint256" },
+            { internalType: "address", name: "initialOwner", type: "address" },
           ],
           stateMutability: "nonpayable",
           type: "constructor",
         },
         {
+          inputs: [{ internalType: "address", name: "owner", type: "address" }],
+          name: "OwnableInvalidOwner",
+          type: "error",
+        },
+        {
+          inputs: [{ internalType: "address", name: "account", type: "address" }],
+          name: "OwnableUnauthorizedAccount",
+          type: "error",
+        },
+        { inputs: [], name: "ReentrancyGuardReentrantCall", type: "error" },
+        {
+          inputs: [{ internalType: "address", name: "token", type: "address" }],
+          name: "SafeERC20FailedOperation",
+          type: "error",
+        },
+        {
+          anonymous: false,
           inputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
+            { indexed: true, internalType: "address", name: "gov", type: "address" },
+            { indexed: true, internalType: "address", name: "recipient", type: "address" },
+            { indexed: false, internalType: "uint256", name: "nativeIn", type: "uint256" },
+            { indexed: false, internalType: "uint256", name: "lyraOut", type: "uint256" },
+            { indexed: false, internalType: "uint256", name: "nativeFee", type: "uint256" },
           ],
-          name: "isGovernment",
-          outputs: [
-            {
-              internalType: "bool",
-              name: "",
-              type: "bool",
-            },
+          name: "GovSwapNativeSent",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            { indexed: true, internalType: "address", name: "gov", type: "address" },
+            { indexed: true, internalType: "address", name: "recipient", type: "address" },
+            { indexed: false, internalType: "uint256", name: "usdtIn", type: "uint256" },
+            { indexed: false, internalType: "uint256", name: "lyraOut", type: "uint256" },
+            { indexed: false, internalType: "uint256", name: "nativeFee", type: "uint256" },
           ],
+          name: "GovSwapUsdtSent",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            { indexed: false, internalType: "address", name: "who", type: "address" },
+            { indexed: false, internalType: "bool", name: "enabled", type: "bool" },
+          ],
+          name: "GovUpdated",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            { indexed: true, internalType: "address", name: "merchant", type: "address" },
+            { indexed: false, internalType: "uint256", name: "lyraIn", type: "uint256" },
+            { indexed: false, internalType: "uint256", name: "nativeOut", type: "uint256" },
+          ],
+          name: "MerchantSwapLyraToNative",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            { indexed: true, internalType: "address", name: "merchant", type: "address" },
+            { indexed: false, internalType: "uint256", name: "lyraIn", type: "uint256" },
+            { indexed: false, internalType: "uint256", name: "usdtOut", type: "uint256" },
+          ],
+          name: "MerchantSwapLyraToUsdt",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            { indexed: false, internalType: "address", name: "who", type: "address" },
+            { indexed: false, internalType: "bool", name: "enabled", type: "bool" },
+          ],
+          name: "MerchantUpdated",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            { indexed: true, internalType: "address", name: "previousOwner", type: "address" },
+            { indexed: true, internalType: "address", name: "newOwner", type: "address" },
+          ],
+          name: "OwnershipTransferred",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            { indexed: false, internalType: "uint256", name: "priceUsdtPerNative", type: "uint256" },
+            { indexed: false, internalType: "uint256", name: "lyraPerUsdt", type: "uint256" },
+          ],
+          name: "PricesUpdated",
+          type: "event",
+        },
+        { stateMutability: "payable", type: "fallback" },
+        {
+          inputs: [],
+          name: "FEE_DEN",
+          outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "FEE_NUM",
+          outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "LYRA",
+          outputs: [{ internalType: "contract IERC20", name: "", type: "address" }],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "USDT",
+          outputs: [{ internalType: "contract IERC20", name: "", type: "address" }],
           stateMutability: "view",
           type: "function",
         },
         {
           inputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
+            { internalType: "address[]", name: "recipients", type: "address[]" },
+            { internalType: "uint256", name: "perRecipientMinLyraOut", type: "uint256" },
           ],
+          name: "govSwapNativeAndSendMultiple",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+        },
+        {
+          inputs: [
+            { internalType: "address[]", name: "recipients", type: "address[]" },
+            { internalType: "uint256", name: "perRecipientUsdtAmount", type: "uint256" },
+            { internalType: "uint256", name: "minLyraOutPerRecipient", type: "uint256" },
+          ],
+          name: "govSwapUsdtAndSendMultiple",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [{ internalType: "address", name: "", type: "address" }],
+          name: "isGovernment",
+          outputs: [{ internalType: "bool", name: "", type: "bool" }],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [{ internalType: "address", name: "", type: "address" }],
           name: "isMerchant",
-          outputs: [
-            {
-              internalType: "bool",
-              name: "",
-              type: "bool",
-            },
-          ],
+          outputs: [{ internalType: "bool", name: "", type: "bool" }],
           stateMutability: "view",
           type: "function",
         },
         {
           inputs: [],
           name: "lyraPerUsdt",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
+          outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
           stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            { internalType: "uint256", name: "lyraAmount", type: "uint256" },
+            { internalType: "uint256", name: "minNativeOut", type: "uint256" },
+          ],
+          name: "merchantSwapLyraToNative",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            { internalType: "uint256", name: "lyraAmount", type: "uint256" },
+            { internalType: "uint256", name: "minUsdtOut", type: "uint256" },
+          ],
+          name: "merchantSwapLyraToUsdt",
+          outputs: [],
+          stateMutability: "nonpayable",
           type: "function",
         },
         {
           inputs: [],
           name: "owner",
-          outputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
-          ],
+          outputs: [{ internalType: "address", name: "", type: "address" }],
           stateMutability: "view",
           type: "function",
         },
         {
           inputs: [],
           name: "priceUsdtPerNative",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
+          outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
           stateMutability: "view",
           type: "function",
         },
         {
+          inputs: [{ internalType: "uint256", name: "nativeAmount", type: "uint256" }],
+          name: "quoteLyraForNative",
+          outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [{ internalType: "uint256", name: "usdtAmount", type: "uint256" }],
+          name: "quoteLyraForUsdt",
+          outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [{ internalType: "uint256", name: "lyraAmount", type: "uint256" }],
+          name: "quoteNativeForLyra",
+          outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [{ internalType: "uint256", name: "lyraAmount", type: "uint256" }],
+          name: "quoteUsdtForLyra",
+          outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+          stateMutability: "view",
+          type: "function",
+        },
+        { inputs: [], name: "renounceOwnership", outputs: [], stateMutability: "nonpayable", type: "function" },
+        {
           inputs: [
-            {
-              internalType: "address",
-              name: "who",
-              type: "address",
-            },
-            {
-              internalType: "bool",
-              name: "enabled",
-              type: "bool",
-            },
+            { internalType: "address", name: "who", type: "address" },
+            { internalType: "bool", name: "enabled", type: "bool" },
           ],
           name: "setGovernment",
           outputs: [],
@@ -399,16 +524,8 @@ export const externalContracts = {
         },
         {
           inputs: [
-            {
-              internalType: "address",
-              name: "who",
-              type: "address",
-            },
-            {
-              internalType: "bool",
-              name: "enabled",
-              type: "bool",
-            },
+            { internalType: "address", name: "who", type: "address" },
+            { internalType: "bool", name: "enabled", type: "bool" },
           ],
           name: "setMerchant",
           outputs: [],
@@ -417,16 +534,8 @@ export const externalContracts = {
         },
         {
           inputs: [
-            {
-              internalType: "uint256",
-              name: "_priceUsdtPerNative",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "_lyraPerUsdtHuman",
-              type: "uintuint256",
-            },
+            { internalType: "uint256", name: "_priceUsdtPerNative", type: "uint256" },
+            { internalType: "uint256", name: "_lyraPerUsdtHuman", type: "uint256" },
           ],
           name: "setPrices",
           outputs: [],
@@ -434,65 +543,24 @@ export const externalContracts = {
           type: "function",
         },
         {
-          inputs: [
-            {
-              internalType: "address",
-              name: "recipient",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "usdtAmount",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "minLyraOut",
-              type: "uint256",
-            },
-          ],
-          name: "govSwapUsdtAndSend",
+          inputs: [{ internalType: "address", name: "newOwner", type: "address" }],
+          name: "transferOwnership",
           outputs: [],
           stateMutability: "nonpayable",
           type: "function",
         },
         {
           inputs: [
-            {
-              internalType: "address",
-              name: "recipient",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "minLyraOut",
-              type: "uint256",
-            },
+            { internalType: "address", name: "token", type: "address" },
+            { internalType: "uint256", name: "amount", type: "uint256" },
+            { internalType: "address payable", name: "to", type: "address" },
           ],
-          name: "govSwapNativeAndSend",
+          name: "withdraw",
           outputs: [],
-          stateMutability: "payable",
+          stateMutability: "nonpayable",
           type: "function",
         },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "token",
-              type: "address",
-            },
-          ],
-          name: "getBalance",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
+        { stateMutability: "payable", type: "receive" },
       ],
     },
     USDT: {

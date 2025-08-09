@@ -146,7 +146,7 @@ export default function ExternalContractsPage() {
           <h2 className="text-xl font-semibold mb-4">Contract Information</h2>
           <div className="space-y-2 text-sm text-gray-600">
             <p>• LyraToken Address: 0xc11bd7B043736423Dbc2d70AE5A0f642f9959257</p>
-            <p>• LyraOtcSeller Address: 0xB919D234f9081D8c0F20ee4219C4605BA883dc32</p>
+            <p>• LyraOtcSeller Address: 0x5265BCcc8aB5A36A45ABD2E574E6Fa7F863e5C2e</p>
             <p>• MATIC Price: {priceUsdtPerNative ? formatUnits(priceUsdtPerNative, 6) : "Loading..."} USDT</p>
             <p>• LYRA Price: {lyraPerUsdt ? formatUnits(lyraPerUsdt, 12) : "Loading..."} USDT</p>
           </div>
