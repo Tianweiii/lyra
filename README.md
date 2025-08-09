@@ -1,41 +1,42 @@
 # LYRA – Blockchain-Powered Aid Distribution That Works
 
 ## 🚀 Overview
-The **LYRA QR Merchant Payment System** is a blockchain-powered payment solution enabling merchants to receive **LYRA token** payments instantly via QR codes.  
+**LYRA QR Merchant Payment System** is a blockchain-based payment platform that lets merchants receive **LYRA token** payments instantly via QR codes.
 
-The **Lyra token** will be disbursed by the federal government to all registered users.  
-Merchants generate QR codes with payment details, and users scan them to initiate secure, on-chain transfers — no centralized payment gateways required.
+**Government distributes** LYRA tokens to registered users.
 
-The system is designed for the **Polygon network (Chain ID: 137)** and integrates with the **LyraToken** and **LyraOtcSeller** smart contracts for merchant verification, token transfers, and swaps.
+**Merchants** generate QR codes with payment details.
 
----
+**Users** scan and pay securely, directly on the blockchain — no banks or middlemen.
+
+Built for the **Polygon network (Chain ID: 137)**, it integrates with **LyraToken** and **LyraOtcSeller** smart contracts for merchant verification, token transfers, and swaps.
+
 
 ## ✨ Features
 
-### **Merchant QR Code Generation**  
-Merchants can generate QR codes containing:
-- Merchant wallet address
-- Payment amount
-- Additional metadata
+### 🏪 **Merchant QR Code Generation**  
+Generate QR codes containing:
+- 🏷 Merchant address
+- 💰 Payment amount
+- 📝 Extra metadata
 
-### **User Payment via QR Scan**  
+### 📲 **User Payment via QR Scan**  
 Users scan the merchant’s QR code, verify details, and pay using LYRA tokens directly on-chain.
 
-### **Government Token Disbursement**  
-The government can distribute LYRA tokens directly to citizens’ wallets through the system.
+### 🏛 **Government Token Disbursement**  
+Directly distribute LYRA tokens to citizens’ wallets.
 
-### **Blockchain Smart Contract Integration**  
+### ⛓ **Blockchain Smart Contract Integration**  
 Seamless interaction with:
 - **`LyraOtcSeller`** for merchant verification, token swaps, and transfers
 - **`LyraToken`** ERC-20 contract for token balance management
 
-### **Multi-Network Ready**  
+### 🌐 **Multi-Network Ready**  
 Currently deployed on Polygon (Chain ID: 137) but adaptable to other EVM-compatible networks.
 
-### **Real-Time Balance Conversion**  
+### 💱 **Real-Time Balance Conversion**  
 Wallet balances are shown in **MYR** and **USD** using live exchange rate APIs.
 
----
 
 ## 🛠 Tech Stack
 
@@ -47,7 +48,7 @@ Wallet balances are shown in **MYR** and **USD** using live exchange rate APIs.
   - `LyraOtcSeller` – merchant verification & OTC swaps
   - `LyraToken` – ERC-20 LYRA token
 
----
+
 
 ## ⚙️ Installation & Setup
 
@@ -57,7 +58,6 @@ Wallet balances are shown in **MYR** and **USD** using live exchange rate APIs.
 - Browser with **MetaMask** or **WalletConnect**
 - Access to **Polygon Network (Chain ID: 137)**
 
----
 
 ### 2️⃣ Clone the Repository
 ```bash
