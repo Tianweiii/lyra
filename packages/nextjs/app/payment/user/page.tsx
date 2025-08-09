@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { formatUnits, parseUnits } from "viem";
 import { useAccount, useChainId, useSwitchChain } from "wagmi";
-import { RainbowKitCustomConnectButton } from "/components/scaffold-eth";
-import { Address } from "/components/scaffold-eth/Address/Address";
-import { EtherInput } from "/components/scaffold-eth/Input/EtherInput";
-import { useScaffoldReadContract } from "/hooks/scaffold-eth/useScaffoldReadContract";
-import { useScaffoldWriteContract } from "/hooks/scaffold-eth/useScaffoldWriteContract";
+import { RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
+import { Address } from "~~/components/scaffold-eth/Address/Address";
+import { EtherInput } from "~~/components/scaffold-eth/Input/EtherInput";
+import { useScaffoldReadContract } from "~~/hooks/scaffold-eth/useScaffoldReadContract";
+import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth/useScaffoldWriteContract";
 
 export default function PaymentPage() {
   const { address, isConnected } = useAccount();

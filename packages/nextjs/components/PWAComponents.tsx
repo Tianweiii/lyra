@@ -17,10 +17,19 @@ function urlBase64ToUint8Array(base64String: string) {
 }
 
 // Helper function to send payment notification
-export async function sendPaymentNotification(merchantEndpoint: string, amount: number, paymentRef: string) {
+export async function sendPaymentNotification(merchantIdentifier: string, amount: number, paymentRef: string) {
   try {
-    const message = `💰 Payment received: $${amount.toFixed(2)} - Ref: ${paymentRef}`;
-    const result = await sendNotification(message, merchantEndpoint);
+    const message = `💰 Payment received: ${amount} LYRA - Ref: ${paymentRef}`;
+
+    // Try to send notification by wallet address first, then fallback to endpoint
+    const result = await sendNotification(message, undefined, merchantIdentifier);
+
+    if (!result.success) {
+      // Fallback: try as endpoint if wallet address lookup failed
+      const fallbackResult = await sendNotification(message, merchantIdentifier);
+      return fallbackResult;
+    }
+
     return result;
   } catch (error) {
     console.error("Error sending payment notification:", error);

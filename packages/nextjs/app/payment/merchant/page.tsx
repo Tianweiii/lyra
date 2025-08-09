@@ -4,13 +4,13 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { NextPage } from "next";
 import { useAccount } from "wagmi";
-import { sendPaymentNotification } from "/components/PWAComponents";
-import PaymentStatus from "/components/payment/PaymentStatus";
-import { ProgressBar } from "/components/payment/ProgressBar";
-import { PromptPayment } from "/components/payment/PromptPayment";
-import ShowQRCode from "/components/payment/ShowQRCode";
-import { RainbowKitCustomConnectButton } from "/components/scaffold-eth/RainbowKitCustomConnectButton";
-import { useScaffoldReadContract } from "/hooks/scaffold-eth";
+import { sendPaymentNotification } from "~~/components/PWAComponents";
+import PaymentStatus from "~~/components/payment/PaymentStatus";
+import { ProgressBar } from "~~/components/payment/ProgressBar";
+import { PromptPayment } from "~~/components/payment/PromptPayment";
+import ShowQRCode from "~~/components/payment/ShowQRCode";
+import { RainbowKitCustomConnectButton } from "~~/components/scaffold-eth/RainbowKitCustomConnectButton";
+import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 
 // Import the notification helper
 
