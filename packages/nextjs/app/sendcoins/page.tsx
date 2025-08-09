@@ -89,7 +89,7 @@ const SendCoinPage = () => {
   }, [usdtAmount, nativeAmount, swapType, lyraPerUsdt, priceUsdtPerNative]);
 
   // step 2: approve transaction
-  const OTC_ADDRESS = "0xB919D234f9081D8c0F20ee4219C4605BA883dc32";
+  const OTC_ADDRESS = "0x5265BCcc8aB5A36A45ABD2E574E6Fa7F863e5C2e";
   const { writeContractAsync: writeUsdt } = useScaffoldWriteContract("USDT");
 
   const { data: usdtAllowance } = useScaffoldReadContract({
@@ -107,16 +107,11 @@ const SendCoinPage = () => {
       const usdtAmountWei = parseUnits(usdtAmount, 6); // USDT has 6 decimals
       const minLyraOut = (lyraPerUsdt * usdtAmountWei) / BigInt(1e6); // Calculate expected LYRA output
 
-      // await writeLyraOtcSeller({
-      //   functionName: "govSwapUsdtAndSend",
-      //   args: [selectedUsers[0], usdtAmountWei, minLyraOut],
-      // });
-      for (const recipient of selectedUsers) {
-        await writeLyraOtcSeller({
-          functionName: "govSwapUsdtAndSend",
-          args: [recipient, usdtAmountWei, minLyraOut],
-        });
-      }
+      // Use the new multiple recipients function instead of looping
+      await writeLyraOtcSeller({
+        functionName: "govSwapUsdtAndSendMultiple",
+        args: [selectedUsers, usdtAmountWei, minLyraOut],
+      });
 
       // alert("USDT换LYRA交易成功！");
       setUsdtAmount("");
@@ -137,13 +132,12 @@ const SendCoinPage = () => {
       const expectedUsdtValue = (nativeAmountWei * priceUsdtPerNative) / BigInt(1e18);
       const minLyraOut = (lyraPerUsdt * expectedUsdtValue) / BigInt(1e6);
 
-      for (const recipient of selectedUsers) {
-        await writeLyraOtcSeller({
-          functionName: "govSwapNativeAndSend",
-          args: [recipient, minLyraOut],
-          value: nativeAmountWei,
-        });
-      }
+      // Use the new multiple recipients function instead of looping
+      await writeLyraOtcSeller({
+        functionName: "govSwapNativeAndSendMultiple",
+        args: [selectedUsers, minLyraOut],
+        value: nativeAmountWei,
+      });
 
       // alert("MATIC换LYRA交易成功！");
       setNativeAmount("");
@@ -361,7 +355,7 @@ const SendCoinPage = () => {
 
   return (
     <div className="w-[calc(100%-4rem)] mx-auto rounded-md overflow-hidden flex justify-center items-center min-h-screen">
-      <RainbowKitCustomConnectButton />
+      {/* <RainbowKitCustomConnectButton /> */}
       <Vortex
         backgroundColor="black"
         className="flex items-center flex-col justify-center px-2 md:px-10 py-4 w-full h-full"

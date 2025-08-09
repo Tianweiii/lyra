@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { useWeb3Auth, useWeb3AuthConnect, useWeb3AuthUser } from "@web3auth/modal/react";
 import { motion } from "motion/react";
 import type { NextPage } from "next";
-import { useAccount } from "wagmi";
+import { useAccount, useSwitchChain } from "wagmi";
 import { BoltIcon, ChartBarSquareIcon, CubeTransparentIcon } from "@heroicons/react/24/outline";
 import { RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import BentoGrids from "~~/components/ui/bento-grids";
@@ -28,6 +28,17 @@ const Home: NextPage = () => {
   const { userInfo } = useWeb3AuthUser();
   const { provider } = useWeb3Auth();
   const [web3AuthAddress, setWeb3AuthAddress] = useState<string | null>(null);
+  const { switchChain } = useSwitchChain();
+  const { chainId } = useAccount();
+
+  // Prioritize Web3Auth connection over wagmi
+  const isConnected = (web3AuthConnected && userInfo && web3AuthAddress) || wagmiConnected;
+
+  useEffect(() => {
+    if (isConnected && chainId !== 137) {
+      switchChain({ chainId: 137 });
+    }
+  }, [isConnected, chainId, switchChain]);
 
   // Get address from Web3Auth provider
   useEffect(() => {
@@ -49,9 +60,6 @@ const Home: NextPage = () => {
 
     getWeb3AuthAddress();
   }, [web3AuthConnected, provider, userInfo]);
-
-  // Prioritize Web3Auth connection over wagmi
-  const isConnected = (web3AuthConnected && userInfo && web3AuthAddress) || wagmiConnected;
 
   const router = useRouter();
 
@@ -208,7 +216,7 @@ const Home: NextPage = () => {
             delay: 0.9,
           }}
         >
-          <Card title="I dont know at this point" icon={<ChartBarSquareIcon />}>
+          <Card title="Quick and easy" icon={<ChartBarSquareIcon />}>
             <CanvasRevealEffect animationSpeed={3} containerClassName="bg-sky-600" colors={[[125, 211, 252]]} />
           </Card>
         </motion.div>
