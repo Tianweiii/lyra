@@ -12,7 +12,7 @@ import "../contracts/LyraRamp.sol";
  *      - Provides `deployer` variable
  * Example:
  * yarn deploy --file DeployLyraRamp.s.sol  # local anvil chain
- * yarn deploy --file DeployLyraRamp.s.sol --network scroll  # Scroll network (requires keystore)
+ * yarn deploy --file DeployLyraRamp.s.sol --network scrollSepolia # live network (requires keystore)
  */
 contract DeployLyraRamp is ScaffoldETHDeploy {
     /**
@@ -25,11 +25,19 @@ contract DeployLyraRamp is ScaffoldETHDeploy {
      *      - Export contract addresses & ABIs to `nextjs` packages
      */
     function run() external ScaffoldEthDeployerRunner {
-        // Mock USDT and USDC addresses for Scroll Sepolia
-        // In production, use actual token addresses
-        address mockUsdt = address(0x1234567890123456789012345678901234567890);
-        address mockUsdc = address(0x0987654321098765432109876543210987654321);
+        // Deploy LyraRamp contract
+        LyraRamp lyraRamp = new LyraRamp();
         
-        new LyraRamp(mockUsdt, mockUsdc);
+        // Add supported stablecoins (Scroll Sepolia addresses)
+        // USDT
+        lyraRamp.addSupportedStablecoin(0xF086deDf6a89E7B16145B03A6Cb461C97670C5Ce);
+        // USDC
+        lyraRamp.addSupportedStablecoin(0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4);
+        // DAI
+        lyraRamp.addSupportedStablecoin(0xcA77eB3fEFe3725Dc33bccB54eDEFc3D9f764f97);
+
+        console.log("LyraRamp deployed to:", address(lyraRamp));
+        console.log("Contract owner:", lyraRamp.owner());
+        console.log("Fee percentage:", lyraRamp.feePercentage());
     }
 } 

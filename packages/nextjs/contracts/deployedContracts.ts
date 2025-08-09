@@ -5,1295 +5,551 @@
 import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 
 const deployedContracts = {
-  534351: {
-    LyraRamp: {
-      address: "0xf750e0b6d4f6a1c0b0b3707cb2191b8b521c2797",
+  137: {
+    LyraToken: {
+      address: "0xc11bd7B043736423Dbc2d70AE5A0f642f9959257",
       abi: [
         {
+          inputs: [{ internalType: "address", name: "initialOwner", type: "address" }],
+          stateMutability: "nonpayable",
           type: "constructor",
+        },
+        {
           inputs: [
-            {
-              name: "_usdtToken",
-              type: "address",
-              internalType: "address",
-            },
-            {
-              name: "_usdcToken",
-              type: "address",
-              internalType: "address",
-            },
+            { internalType: "address", name: "spender", type: "address" },
+            { internalType: "uint256", name: "allowance", type: "uint256" },
+            { internalType: "uint256", name: "needed", type: "uint256" },
           ],
-          stateMutability: "nonpayable",
-        },
-        {
-          type: "function",
-          name: "calculateUsdtEquivalent",
-          inputs: [
-            {
-              name: "_amount",
-              type: "uint256",
-              internalType: "uint256",
-            },
-            {
-              name: "_currency",
-              type: "string",
-              internalType: "string",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "completeRampRequest",
-          inputs: [
-            {
-              name: "_requestId",
-              type: "uint256",
-              internalType: "uint256",
-            },
-            {
-              name: "_tokenAddress",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-          outputs: [],
-          stateMutability: "nonpayable",
-        },
-        {
-          type: "function",
-          name: "createRampRequest",
-          inputs: [
-            {
-              name: "_currency",
-              type: "string",
-              internalType: "string",
-            },
-            {
-              name: "_recipientName",
-              type: "string",
-              internalType: "string",
-            },
-            {
-              name: "_amount",
-              type: "uint256",
-              internalType: "uint256",
-            },
-            {
-              name: "_selectedChain",
-              type: "string",
-              internalType: "string",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          stateMutability: "nonpayable",
-        },
-        {
-          type: "function",
-          name: "feePercentage",
-          inputs: [],
-          outputs: [
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "getQRCodeData",
-          inputs: [
-            {
-              name: "_requestId",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "string",
-              internalType: "string",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "getRampRequest",
-          inputs: [
-            {
-              name: "_requestId",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "tuple",
-              internalType: "struct LyraRamp.RampRequest",
-              components: [
-                {
-                  name: "recipient",
-                  type: "address",
-                  internalType: "address",
-                },
-                {
-                  name: "currency",
-                  type: "string",
-                  internalType: "string",
-                },
-                {
-                  name: "recipientName",
-                  type: "string",
-                  internalType: "string",
-                },
-                {
-                  name: "amount",
-                  type: "uint256",
-                  internalType: "uint256",
-                },
-                {
-                  name: "usdtEquivalent",
-                  type: "uint256",
-                  internalType: "uint256",
-                },
-                {
-                  name: "requestId",
-                  type: "uint256",
-                  internalType: "uint256",
-                },
-                {
-                  name: "isCompleted",
-                  type: "bool",
-                  internalType: "bool",
-                },
-                {
-                  name: "timestamp",
-                  type: "uint256",
-                  internalType: "uint256",
-                },
-                {
-                  name: "selectedChain",
-                  type: "string",
-                  internalType: "string",
-                },
-              ],
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "getRate",
-          inputs: [
-            {
-              name: "_currency",
-              type: "string",
-              internalType: "string",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "tuple",
-              internalType: "struct LyraRamp.Rate",
-              components: [
-                {
-                  name: "rate",
-                  type: "uint256",
-                  internalType: "uint256",
-                },
-                {
-                  name: "isActive",
-                  type: "bool",
-                  internalType: "bool",
-                },
-                {
-                  name: "lastUpdated",
-                  type: "uint256",
-                  internalType: "uint256",
-                },
-              ],
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "getUserRequests",
-          inputs: [
-            {
-              name: "_user",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "uint256[]",
-              internalType: "uint256[]",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "owner",
-          inputs: [],
-          outputs: [
-            {
-              name: "",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "pause",
-          inputs: [],
-          outputs: [],
-          stateMutability: "nonpayable",
-        },
-        {
-          type: "function",
-          name: "rampRequests",
-          inputs: [
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          outputs: [
-            {
-              name: "recipient",
-              type: "address",
-              internalType: "address",
-            },
-            {
-              name: "currency",
-              type: "string",
-              internalType: "string",
-            },
-            {
-              name: "recipientName",
-              type: "string",
-              internalType: "string",
-            },
-            {
-              name: "amount",
-              type: "uint256",
-              internalType: "uint256",
-            },
-            {
-              name: "usdtEquivalent",
-              type: "uint256",
-              internalType: "uint256",
-            },
-            {
-              name: "requestId",
-              type: "uint256",
-              internalType: "uint256",
-            },
-            {
-              name: "isCompleted",
-              type: "bool",
-              internalType: "bool",
-            },
-            {
-              name: "timestamp",
-              type: "uint256",
-              internalType: "uint256",
-            },
-            {
-              name: "selectedChain",
-              type: "string",
-              internalType: "string",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "rates",
-          inputs: [
-            {
-              name: "",
-              type: "string",
-              internalType: "string",
-            },
-          ],
-          outputs: [
-            {
-              name: "rate",
-              type: "uint256",
-              internalType: "uint256",
-            },
-            {
-              name: "isActive",
-              type: "bool",
-              internalType: "bool",
-            },
-            {
-              name: "lastUpdated",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "renounceOwnership",
-          inputs: [],
-          outputs: [],
-          stateMutability: "nonpayable",
-        },
-        {
-          type: "function",
-          name: "requestCounter",
-          inputs: [],
-          outputs: [
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "setCurrencyActive",
-          inputs: [
-            {
-              name: "_currency",
-              type: "string",
-              internalType: "string",
-            },
-            {
-              name: "_isActive",
-              type: "bool",
-              internalType: "bool",
-            },
-          ],
-          outputs: [],
-          stateMutability: "nonpayable",
-        },
-        {
-          type: "function",
-          name: "transferOwnership",
-          inputs: [
-            {
-              name: "newOwner",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-          outputs: [],
-          stateMutability: "nonpayable",
-        },
-        {
-          type: "function",
-          name: "updateFeePercentage",
-          inputs: [
-            {
-              name: "_newFeePercentage",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          outputs: [],
-          stateMutability: "nonpayable",
-        },
-        {
-          type: "function",
-          name: "updateRate",
-          inputs: [
-            {
-              name: "_currency",
-              type: "string",
-              internalType: "string",
-            },
-            {
-              name: "_newRate",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          outputs: [],
-          stateMutability: "nonpayable",
-        },
-        {
-          type: "function",
-          name: "usdcToken",
-          inputs: [],
-          outputs: [
-            {
-              name: "",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "usdtToken",
-          inputs: [],
-          outputs: [
-            {
-              name: "",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "userRequests",
-          inputs: [
-            {
-              name: "",
-              type: "address",
-              internalType: "address",
-            },
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "event",
-          name: "FeeCollected",
-          inputs: [
-            {
-              name: "requestId",
-              type: "uint256",
-              indexed: true,
-              internalType: "uint256",
-            },
-            {
-              name: "feeAmount",
-              type: "uint256",
-              indexed: false,
-              internalType: "uint256",
-            },
-            {
-              name: "token",
-              type: "address",
-              indexed: false,
-              internalType: "address",
-            },
-            {
-              name: "timestamp",
-              type: "uint256",
-              indexed: false,
-              internalType: "uint256",
-            },
-          ],
-          anonymous: false,
-        },
-        {
-          type: "event",
-          name: "OwnershipTransferred",
-          inputs: [
-            {
-              name: "previousOwner",
-              type: "address",
-              indexed: true,
-              internalType: "address",
-            },
-            {
-              name: "newOwner",
-              type: "address",
-              indexed: true,
-              internalType: "address",
-            },
-          ],
-          anonymous: false,
-        },
-        {
-          type: "event",
-          name: "RampRequestCompleted",
-          inputs: [
-            {
-              name: "requestId",
-              type: "uint256",
-              indexed: true,
-              internalType: "uint256",
-            },
-            {
-              name: "sender",
-              type: "address",
-              indexed: true,
-              internalType: "address",
-            },
-            {
-              name: "recipient",
-              type: "address",
-              indexed: true,
-              internalType: "address",
-            },
-            {
-              name: "amount",
-              type: "uint256",
-              indexed: false,
-              internalType: "uint256",
-            },
-            {
-              name: "currency",
-              type: "string",
-              indexed: false,
-              internalType: "string",
-            },
-            {
-              name: "usdtAmount",
-              type: "uint256",
-              indexed: false,
-              internalType: "uint256",
-            },
-            {
-              name: "selectedChain",
-              type: "string",
-              indexed: false,
-              internalType: "string",
-            },
-            {
-              name: "timestamp",
-              type: "uint256",
-              indexed: false,
-              internalType: "uint256",
-            },
-          ],
-          anonymous: false,
-        },
-        {
-          type: "event",
-          name: "RampRequestCreated",
-          inputs: [
-            {
-              name: "requestId",
-              type: "uint256",
-              indexed: true,
-              internalType: "uint256",
-            },
-            {
-              name: "recipient",
-              type: "address",
-              indexed: true,
-              internalType: "address",
-            },
-            {
-              name: "currency",
-              type: "string",
-              indexed: false,
-              internalType: "string",
-            },
-            {
-              name: "recipientName",
-              type: "string",
-              indexed: false,
-              internalType: "string",
-            },
-            {
-              name: "amount",
-              type: "uint256",
-              indexed: false,
-              internalType: "uint256",
-            },
-            {
-              name: "usdtEquivalent",
-              type: "uint256",
-              indexed: false,
-              internalType: "uint256",
-            },
-            {
-              name: "selectedChain",
-              type: "string",
-              indexed: false,
-              internalType: "string",
-            },
-            {
-              name: "timestamp",
-              type: "uint256",
-              indexed: false,
-              internalType: "uint256",
-            },
-          ],
-          anonymous: false,
-        },
-        {
-          type: "event",
-          name: "RateUpdated",
-          inputs: [
-            {
-              name: "currency",
-              type: "string",
-              indexed: false,
-              internalType: "string",
-            },
-            {
-              name: "oldRate",
-              type: "uint256",
-              indexed: false,
-              internalType: "uint256",
-            },
-            {
-              name: "newRate",
-              type: "uint256",
-              indexed: false,
-              internalType: "uint256",
-            },
-            {
-              name: "timestamp",
-              type: "uint256",
-              indexed: false,
-              internalType: "uint256",
-            },
-          ],
-          anonymous: false,
-        },
-        {
+          name: "ERC20InsufficientAllowance",
           type: "error",
+        },
+        {
+          inputs: [
+            { internalType: "address", name: "sender", type: "address" },
+            { internalType: "uint256", name: "balance", type: "uint256" },
+            { internalType: "uint256", name: "needed", type: "uint256" },
+          ],
+          name: "ERC20InsufficientBalance",
+          type: "error",
+        },
+        {
+          inputs: [{ internalType: "address", name: "approver", type: "address" }],
+          name: "ERC20InvalidApprover",
+          type: "error",
+        },
+        {
+          inputs: [{ internalType: "address", name: "receiver", type: "address" }],
+          name: "ERC20InvalidReceiver",
+          type: "error",
+        },
+        {
+          inputs: [{ internalType: "address", name: "sender", type: "address" }],
+          name: "ERC20InvalidSender",
+          type: "error",
+        },
+        {
+          inputs: [{ internalType: "address", name: "spender", type: "address" }],
+          name: "ERC20InvalidSpender",
+          type: "error",
+        },
+        {
+          inputs: [{ internalType: "address", name: "owner", type: "address" }],
           name: "OwnableInvalidOwner",
-          inputs: [
-            {
-              name: "owner",
-              type: "address",
-              internalType: "address",
-            },
-          ],
+          type: "error",
         },
         {
-          type: "error",
+          inputs: [{ internalType: "address", name: "account", type: "address" }],
           name: "OwnableUnauthorizedAccount",
-          inputs: [
-            {
-              name: "account",
-              type: "address",
-              internalType: "address",
-            },
-          ],
+          type: "error",
         },
         {
-          type: "error",
-          name: "ReentrancyGuardReentrantCall",
+          anonymous: false,
+          inputs: [
+            { indexed: true, internalType: "address", name: "owner", type: "address" },
+            { indexed: true, internalType: "address", name: "spender", type: "address" },
+            { indexed: false, internalType: "uint256", name: "value", type: "uint256" },
+          ],
+          name: "Approval",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            { indexed: true, internalType: "address", name: "who", type: "address" },
+            { indexed: false, internalType: "bool", name: "enabled", type: "bool" },
+          ],
+          name: "GovernmentUpdated",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            { indexed: true, internalType: "address", name: "who", type: "address" },
+            { indexed: false, internalType: "bool", name: "enabled", type: "bool" },
+          ],
+          name: "MerchantUpdated",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            { indexed: true, internalType: "address", name: "previousOwner", type: "address" },
+            { indexed: true, internalType: "address", name: "newOwner", type: "address" },
+          ],
+          name: "OwnershipTransferred",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            { indexed: true, internalType: "address", name: "from", type: "address" },
+            { indexed: true, internalType: "address", name: "to", type: "address" },
+            { indexed: false, internalType: "uint256", name: "value", type: "uint256" },
+          ],
+          name: "Transfer",
+          type: "event",
+        },
+        {
+          inputs: [
+            { internalType: "address", name: "owner", type: "address" },
+            { internalType: "address", name: "spender", type: "address" },
+          ],
+          name: "allowance",
+          outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            { internalType: "address", name: "spender", type: "address" },
+            { internalType: "uint256", name: "value", type: "uint256" },
+          ],
+          name: "approve",
+          outputs: [{ internalType: "bool", name: "", type: "bool" }],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [{ internalType: "address", name: "account", type: "address" }],
+          name: "balanceOf",
+          outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
           inputs: [],
+          name: "decimals",
+          outputs: [{ internalType: "uint8", name: "", type: "uint8" }],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [{ internalType: "address", name: "", type: "address" }],
+          name: "isGovernment",
+          outputs: [{ internalType: "bool", name: "", type: "bool" }],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [{ internalType: "address", name: "", type: "address" }],
+          name: "isMerchant",
+          outputs: [{ internalType: "bool", name: "", type: "bool" }],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "name",
+          outputs: [{ internalType: "string", name: "", type: "string" }],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "owner",
+          outputs: [{ internalType: "address", name: "", type: "address" }],
+          stateMutability: "view",
+          type: "function",
+        },
+        { inputs: [], name: "renounceOwnership", outputs: [], stateMutability: "nonpayable", type: "function" },
+        {
+          inputs: [
+            { internalType: "address", name: "who", type: "address" },
+            { internalType: "bool", name: "enabled", type: "bool" },
+          ],
+          name: "setGovernment",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            { internalType: "address[]", name: "who", type: "address[]" },
+            { internalType: "bool", name: "enabled", type: "bool" },
+          ],
+          name: "setGovernments",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            { internalType: "address", name: "who", type: "address" },
+            { internalType: "bool", name: "enabled", type: "bool" },
+          ],
+          name: "setMerchant",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            { internalType: "address[]", name: "who", type: "address[]" },
+            { internalType: "bool", name: "enabled", type: "bool" },
+          ],
+          name: "setMerchants",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "symbol",
+          outputs: [{ internalType: "string", name: "", type: "string" }],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "totalSupply",
+          outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            { internalType: "address", name: "to", type: "address" },
+            { internalType: "uint256", name: "value", type: "uint256" },
+          ],
+          name: "transfer",
+          outputs: [{ internalType: "bool", name: "", type: "bool" }],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            { internalType: "address", name: "from", type: "address" },
+            { internalType: "address", name: "to", type: "address" },
+            { internalType: "uint256", name: "value", type: "uint256" },
+          ],
+          name: "transferFrom",
+          outputs: [{ internalType: "bool", name: "", type: "bool" }],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [{ internalType: "address", name: "newOwner", type: "address" }],
+          name: "transferOwnership",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
         },
       ],
-      inheritedFunctions: {},
-      deployedOnBlock: 11356437,
     },
-    TestContract: {
-      address: "0xd0bf6b78cb7d23cd10134f5073b47f5da7a2398f",
+    LyraOtcSeller: {
+      address: "0xB919D234f9081D8c0F20ee4219C4605BA883dc32",
       abi: [
         {
+          inputs: [
+            { internalType: "address", name: "_usdt", type: "address" },
+            { internalType: "address", name: "_lyra", type: "address" },
+            { internalType: "uint256", name: "_priceUsdtPerNative", type: "uint256" },
+            { internalType: "uint256", name: "_lyraPerUsdtHuman", type: "uint256" },
+            { internalType: "address", name: "initialOwner", type: "address" },
+          ],
+          stateMutability: "nonpayable",
           type: "constructor",
-          inputs: [
-            {
-              name: "_owner",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-          stateMutability: "nonpayable",
         },
         {
-          type: "function",
-          name: "createPost",
+          inputs: [{ internalType: "address", name: "owner", type: "address" }],
+          name: "OwnableInvalidOwner",
+          type: "error",
+        },
+        {
+          inputs: [{ internalType: "address", name: "account", type: "address" }],
+          name: "OwnableUnauthorizedAccount",
+          type: "error",
+        },
+        { inputs: [], name: "ReentrancyGuardReentrantCall", type: "error" },
+        {
+          inputs: [{ internalType: "address", name: "token", type: "address" }],
+          name: "SafeERC20FailedOperation",
+          type: "error",
+        },
+        {
+          anonymous: false,
           inputs: [
-            {
-              name: "_content",
-              type: "string",
-              internalType: "string",
-            },
+            { indexed: true, internalType: "address", name: "gov", type: "address" },
+            { indexed: true, internalType: "address", name: "recipient", type: "address" },
+            { indexed: false, internalType: "uint256", name: "nativeIn", type: "uint256" },
+            { indexed: false, internalType: "uint256", name: "lyraOut", type: "uint256" },
+            { indexed: false, internalType: "uint256", name: "nativeFee", type: "uint256" },
           ],
+          name: "GovSwapNativeSent",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            { indexed: true, internalType: "address", name: "gov", type: "address" },
+            { indexed: true, internalType: "address", name: "recipient", type: "address" },
+            { indexed: false, internalType: "uint256", name: "usdtIn", type: "uint256" },
+            { indexed: false, internalType: "uint256", name: "lyraOut", type: "uint256" },
+            { indexed: false, internalType: "uint256", name: "nativeFee", type: "uint256" },
+          ],
+          name: "GovSwapUsdtSent",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            { indexed: false, internalType: "address", name: "who", type: "address" },
+            { indexed: false, internalType: "bool", name: "enabled", type: "bool" },
+          ],
+          name: "GovUpdated",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            { indexed: true, internalType: "address", name: "merchant", type: "address" },
+            { indexed: false, internalType: "uint256", name: "lyraIn", type: "uint256" },
+            { indexed: false, internalType: "uint256", name: "nativeOut", type: "uint256" },
+          ],
+          name: "MerchantSwapLyraToNative",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            { indexed: true, internalType: "address", name: "merchant", type: "address" },
+            { indexed: false, internalType: "uint256", name: "lyraIn", type: "uint256" },
+            { indexed: false, internalType: "uint256", name: "usdtOut", type: "uint256" },
+          ],
+          name: "MerchantSwapLyraToUsdt",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            { indexed: false, internalType: "address", name: "who", type: "address" },
+            { indexed: false, internalType: "bool", name: "enabled", type: "bool" },
+          ],
+          name: "MerchantUpdated",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            { indexed: true, internalType: "address", name: "previousOwner", type: "address" },
+            { indexed: true, internalType: "address", name: "newOwner", type: "address" },
+          ],
+          name: "OwnershipTransferred",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            { indexed: false, internalType: "uint256", name: "priceUsdtPerNative", type: "uint256" },
+            { indexed: false, internalType: "uint256", name: "lyraPerUsdt", type: "uint256" },
+          ],
+          name: "PricesUpdated",
+          type: "event",
+        },
+        { stateMutability: "payable", type: "fallback" },
+        {
+          inputs: [],
+          name: "FEE_DEN",
+          outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "FEE_NUM",
+          outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "LYRA",
+          outputs: [{ internalType: "contract IERC20", name: "", type: "address" }],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "USDT",
+          outputs: [{ internalType: "contract IERC20", name: "", type: "address" }],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            { internalType: "address", name: "recipient", type: "address" },
+            { internalType: "uint256", name: "minLyraOut", type: "uint256" },
+          ],
+          name: "govSwapNativeAndSend",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+        },
+        {
+          inputs: [
+            { internalType: "address", name: "recipient", type: "address" },
+            { internalType: "uint256", name: "usdtAmount", type: "uint256" },
+            { internalType: "uint256", name: "minLyraOut", type: "uint256" },
+          ],
+          name: "govSwapUsdtAndSend",
           outputs: [],
           stateMutability: "nonpayable",
+          type: "function",
         },
         {
+          inputs: [{ internalType: "address", name: "", type: "address" }],
+          name: "isGovernment",
+          outputs: [{ internalType: "bool", name: "", type: "bool" }],
+          stateMutability: "view",
           type: "function",
-          name: "followUser",
+        },
+        {
+          inputs: [{ internalType: "address", name: "", type: "address" }],
+          name: "isMerchant",
+          outputs: [{ internalType: "bool", name: "", type: "bool" }],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "lyraPerUsdt",
+          outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
           inputs: [
-            {
-              name: "_userToFollow",
-              type: "address",
-              internalType: "address",
-            },
+            { internalType: "uint256", name: "lyraAmount", type: "uint256" },
+            { internalType: "uint256", name: "minNativeOut", type: "uint256" },
           ],
+          name: "merchantSwapLyraToNative",
           outputs: [],
           stateMutability: "nonpayable",
+          type: "function",
         },
         {
-          type: "function",
-          name: "getPost",
           inputs: [
-            {
-              name: "_postId",
-              type: "uint256",
-              internalType: "uint256",
-            },
+            { internalType: "uint256", name: "lyraAmount", type: "uint256" },
+            { internalType: "uint256", name: "minUsdtOut", type: "uint256" },
           ],
-          outputs: [
-            {
-              name: "",
-              type: "tuple",
-              internalType: "struct TestContract.Post",
-              components: [
-                {
-                  name: "id",
-                  type: "uint256",
-                  internalType: "uint256",
-                },
-                {
-                  name: "author",
-                  type: "address",
-                  internalType: "address",
-                },
-                {
-                  name: "content",
-                  type: "string",
-                  internalType: "string",
-                },
-                {
-                  name: "timestamp",
-                  type: "uint256",
-                  internalType: "uint256",
-                },
-                {
-                  name: "likes",
-                  type: "uint256",
-                  internalType: "uint256",
-                },
-                {
-                  name: "exists",
-                  type: "bool",
-                  internalType: "bool",
-                },
-              ],
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "getUser",
-          inputs: [
-            {
-              name: "_userAddress",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "tuple",
-              internalType: "struct TestContract.User",
-              components: [
-                {
-                  name: "userAddress",
-                  type: "address",
-                  internalType: "address",
-                },
-                {
-                  name: "username",
-                  type: "string",
-                  internalType: "string",
-                },
-                {
-                  name: "postCount",
-                  type: "uint256",
-                  internalType: "uint256",
-                },
-                {
-                  name: "followerCount",
-                  type: "uint256",
-                  internalType: "uint256",
-                },
-                {
-                  name: "exists",
-                  type: "bool",
-                  internalType: "bool",
-                },
-              ],
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "hasUserLikedPost",
-          inputs: [
-            {
-              name: "_user",
-              type: "address",
-              internalType: "address",
-            },
-            {
-              name: "_postId",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "bool",
-              internalType: "bool",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "isUserFollowing",
-          inputs: [
-            {
-              name: "_follower",
-              type: "address",
-              internalType: "address",
-            },
-            {
-              name: "_following",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "bool",
-              internalType: "bool",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "likePost",
-          inputs: [
-            {
-              name: "_postId",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
+          name: "merchantSwapLyraToUsdt",
           outputs: [],
           stateMutability: "nonpayable",
+          type: "function",
         },
         {
-          type: "function",
+          inputs: [],
           name: "owner",
+          outputs: [{ internalType: "address", name: "", type: "address" }],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
           inputs: [],
-          outputs: [
-            {
-              name: "",
-              type: "address",
-              internalType: "address",
-            },
-          ],
+          name: "priceUsdtPerNative",
+          outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
           stateMutability: "view",
+          type: "function",
         },
         {
-          type: "function",
-          name: "postCounter",
-          inputs: [],
-          outputs: [
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
+          inputs: [{ internalType: "uint256", name: "nativeAmount", type: "uint256" }],
+          name: "quoteLyraForNative",
+          outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
           stateMutability: "view",
+          type: "function",
         },
         {
+          inputs: [{ internalType: "uint256", name: "usdtAmount", type: "uint256" }],
+          name: "quoteLyraForUsdt",
+          outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+          stateMutability: "view",
           type: "function",
-          name: "posts",
+        },
+        {
+          inputs: [{ internalType: "uint256", name: "lyraAmount", type: "uint256" }],
+          name: "quoteNativeForLyra",
+          outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [{ internalType: "uint256", name: "lyraAmount", type: "uint256" }],
+          name: "quoteUsdtForLyra",
+          outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+          stateMutability: "view",
+          type: "function",
+        },
+        { inputs: [], name: "renounceOwnership", outputs: [], stateMutability: "nonpayable", type: "function" },
+        {
           inputs: [
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
+            { internalType: "address", name: "who", type: "address" },
+            { internalType: "bool", name: "enabled", type: "bool" },
           ],
-          outputs: [
-            {
-              name: "id",
-              type: "uint256",
-              internalType: "uint256",
-            },
-            {
-              name: "author",
-              type: "address",
-              internalType: "address",
-            },
-            {
-              name: "content",
-              type: "string",
-              internalType: "string",
-            },
-            {
-              name: "timestamp",
-              type: "uint256",
-              internalType: "uint256",
-            },
-            {
-              name: "likes",
-              type: "uint256",
-              internalType: "uint256",
-            },
-            {
-              name: "exists",
-              type: "bool",
-              internalType: "bool",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "registerUser",
-          inputs: [
-            {
-              name: "_username",
-              type: "string",
-              internalType: "string",
-            },
-          ],
+          name: "setGovernment",
           outputs: [],
           stateMutability: "nonpayable",
+          type: "function",
         },
         {
-          type: "function",
-          name: "unfollowUser",
           inputs: [
-            {
-              name: "_userToUnfollow",
-              type: "address",
-              internalType: "address",
-            },
+            { internalType: "address", name: "who", type: "address" },
+            { internalType: "bool", name: "enabled", type: "bool" },
           ],
+          name: "setMerchant",
           outputs: [],
           stateMutability: "nonpayable",
+          type: "function",
         },
         {
-          type: "function",
-          name: "unlikePost",
           inputs: [
-            {
-              name: "_postId",
-              type: "uint256",
-              internalType: "uint256",
-            },
+            { internalType: "uint256", name: "_priceUsdtPerNative", type: "uint256" },
+            { internalType: "uint256", name: "_lyraPerUsdtHuman", type: "uint256" },
           ],
+          name: "setPrices",
           outputs: [],
           stateMutability: "nonpayable",
-        },
-        {
           type: "function",
-          name: "userCounter",
-          inputs: [],
-          outputs: [
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          stateMutability: "view",
         },
         {
+          inputs: [{ internalType: "address", name: "newOwner", type: "address" }],
+          name: "transferOwnership",
+          outputs: [],
+          stateMutability: "nonpayable",
           type: "function",
-          name: "userFollows",
-          inputs: [
-            {
-              name: "",
-              type: "address",
-              internalType: "address",
-            },
-            {
-              name: "",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "bool",
-              internalType: "bool",
-            },
-          ],
-          stateMutability: "view",
         },
         {
+          inputs: [
+            { internalType: "address", name: "token", type: "address" },
+            { internalType: "uint256", name: "amount", type: "uint256" },
+            { internalType: "address payable", name: "to", type: "address" },
+          ],
+          name: "withdraw",
+          outputs: [],
+          stateMutability: "nonpayable",
           type: "function",
-          name: "userLikes",
-          inputs: [
-            {
-              name: "",
-              type: "address",
-              internalType: "address",
-            },
-            {
-              name: "",
-              type: "uint256",
-              internalType: "uint256",
-            },
-          ],
-          outputs: [
-            {
-              name: "",
-              type: "bool",
-              internalType: "bool",
-            },
-          ],
-          stateMutability: "view",
         },
-        {
-          type: "function",
-          name: "users",
-          inputs: [
-            {
-              name: "",
-              type: "address",
-              internalType: "address",
-            },
-          ],
-          outputs: [
-            {
-              name: "userAddress",
-              type: "address",
-              internalType: "address",
-            },
-            {
-              name: "username",
-              type: "string",
-              internalType: "string",
-            },
-            {
-              name: "postCount",
-              type: "uint256",
-              internalType: "uint256",
-            },
-            {
-              name: "followerCount",
-              type: "uint256",
-              internalType: "uint256",
-            },
-            {
-              name: "exists",
-              type: "bool",
-              internalType: "bool",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "event",
-          name: "PostCreated",
-          inputs: [
-            {
-              name: "postId",
-              type: "uint256",
-              indexed: true,
-              internalType: "uint256",
-            },
-            {
-              name: "author",
-              type: "address",
-              indexed: true,
-              internalType: "address",
-            },
-            {
-              name: "content",
-              type: "string",
-              indexed: false,
-              internalType: "string",
-            },
-            {
-              name: "timestamp",
-              type: "uint256",
-              indexed: false,
-              internalType: "uint256",
-            },
-          ],
-          anonymous: false,
-        },
-        {
-          type: "event",
-          name: "PostLiked",
-          inputs: [
-            {
-              name: "postId",
-              type: "uint256",
-              indexed: true,
-              internalType: "uint256",
-            },
-            {
-              name: "liker",
-              type: "address",
-              indexed: true,
-              internalType: "address",
-            },
-            {
-              name: "author",
-              type: "address",
-              indexed: true,
-              internalType: "address",
-            },
-            {
-              name: "timestamp",
-              type: "uint256",
-              indexed: false,
-              internalType: "uint256",
-            },
-          ],
-          anonymous: false,
-        },
-        {
-          type: "event",
-          name: "PostUnliked",
-          inputs: [
-            {
-              name: "postId",
-              type: "uint256",
-              indexed: true,
-              internalType: "uint256",
-            },
-            {
-              name: "unliker",
-              type: "address",
-              indexed: true,
-              internalType: "address",
-            },
-            {
-              name: "author",
-              type: "address",
-              indexed: true,
-              internalType: "address",
-            },
-            {
-              name: "timestamp",
-              type: "uint256",
-              indexed: false,
-              internalType: "uint256",
-            },
-          ],
-          anonymous: false,
-        },
-        {
-          type: "event",
-          name: "UserFollowed",
-          inputs: [
-            {
-              name: "follower",
-              type: "address",
-              indexed: true,
-              internalType: "address",
-            },
-            {
-              name: "following",
-              type: "address",
-              indexed: true,
-              internalType: "address",
-            },
-            {
-              name: "timestamp",
-              type: "uint256",
-              indexed: false,
-              internalType: "uint256",
-            },
-          ],
-          anonymous: false,
-        },
-        {
-          type: "event",
-          name: "UserRegistered",
-          inputs: [
-            {
-              name: "userAddress",
-              type: "address",
-              indexed: true,
-              internalType: "address",
-            },
-            {
-              name: "username",
-              type: "string",
-              indexed: false,
-              internalType: "string",
-            },
-            {
-              name: "timestamp",
-              type: "uint256",
-              indexed: false,
-              internalType: "uint256",
-            },
-          ],
-          anonymous: false,
-        },
-        {
-          type: "event",
-          name: "UserUnfollowed",
-          inputs: [
-            {
-              name: "follower",
-              type: "address",
-              indexed: true,
-              internalType: "address",
-            },
-            {
-              name: "following",
-              type: "address",
-              indexed: true,
-              internalType: "address",
-            },
-            {
-              name: "timestamp",
-              type: "uint256",
-              indexed: false,
-              internalType: "uint256",
-            },
-          ],
-          anonymous: false,
-        },
+        { stateMutability: "payable", type: "receive" },
       ],
-      inheritedFunctions: {},
-      deployedOnBlock: 11353088,
     },
   },
 } as const;

@@ -35,179 +35,197 @@ contract LyraRampTest is Test {
         mockUsdt = new MockUSDT();
         mockUsdc = new MockUSDC();
         
-        lyraRamp = new LyraRamp(address(mockUsdt), address(mockUsdc));
+        lyraRamp = new LyraRamp();
+        
+        // Add supported stablecoins
+        lyraRamp.addSupportedStablecoin(address(mockUsdt));
+        lyraRamp.addSupportedStablecoin(address(mockUsdc));
     }
 
-    function testCreateRampRequest() public {
-        vm.startPrank(recipient);
-        
-        uint256 requestId = lyraRamp.createRampRequest(
-            "MYR",
-            "John Doe",
-            100,
-            "polygon"
-        );
-        
-        assertEq(requestId, 1);
-        
-        LyraRamp.RampRequest memory request = lyraRamp.getRampRequest(1);
-        assertEq(request.recipient, recipient);
-        assertEq(request.currency, "MYR");
-        assertEq(request.recipientName, "John Doe");
-        assertEq(request.amount, 100);
-        assertEq(request.selectedChain, "polygon");
-        assertFalse(request.isCompleted);
-        
-        vm.stopPrank();
-    }
-
-    function testCalculateUsdtEquivalent() public {
-        uint256 usdtAmount = lyraRamp.calculateUsdtEquivalent(100, "MYR");
-        // 100 MYR * 2300 basis points / 10000 = 23 USDT
-        assertEq(usdtAmount, 23);
-        
-        uint256 usdAmount = lyraRamp.calculateUsdtEquivalent(100, "USD");
-        // 100 USD * 10000 basis points / 10000 = 100 USDT
-        assertEq(usdAmount, 100);
-    }
-
-    function testCompleteRampRequest() public {
-        // Create a request
-        vm.startPrank(recipient);
-        uint256 requestId = lyraRamp.createRampRequest(
-            "MYR",
-            "John Doe",
-            100,
-            "polygon"
-        );
-        vm.stopPrank();
-        
+    function testCompletePayment() public {
         // Fund sender with USDT
-        mockUsdt.transfer(sender, 1000);
+        mockUsdt.transfer(sender, 1000 * 10**6); // 1000 USDT with 6 decimals
         
         // Approve USDT transfer
         vm.startPrank(sender);
-        mockUsdt.approve(address(lyraRamp), 1000);
+        mockUsdt.approve(address(lyraRamp), 1000 * 10**6);
         
-        // Complete the request
-        lyraRamp.completeRampRequest(requestId, address(mockUsdt));
-        
-        // Check that request is completed
-        LyraRamp.RampRequest memory request = lyraRamp.getRampRequest(requestId);
-        assertTrue(request.isCompleted);
-        
-        vm.stopPrank();
-    }
-
-    function testUpdateRate() public {
-        uint256 oldRate = lyraRamp.getRate("MYR").rate;
-        
-        lyraRamp.updateRate("MYR", 2500); // 1 MYR = 0.25 USDT
-        
-        uint256 newRate = lyraRamp.getRate("MYR").rate;
-        assertEq(newRate, 2500);
-        
-        // Test new rate calculation
-        uint256 usdtAmount = lyraRamp.calculateUsdtEquivalent(100, "MYR");
-        assertEq(usdtAmount, 25); // 100 * 2500 / 10000 = 25
-    }
-
-    function testGetQRCodeData() public {
-        vm.startPrank(recipient);
-        
-        uint256 requestId = lyraRamp.createRampRequest(
+        // Complete payment
+        lyraRamp.completePayment(
+            recipient,
             "MYR",
             "John Doe",
-            100,
-            "polygon"
+            100, // fiat amount
+            23 * 10**6, // stablecoin amount (23 USDT with 6 decimals)
+            "polygon",
+            "scroll",
+            address(mockUsdt)
         );
         
-        string memory qrData = lyraRamp.getQRCodeData(requestId);
-        
-        // Check that QR data contains expected information
-        assertTrue(bytes(qrData).length > 0);
-        assertTrue(contains(qrData, "requestId=1"));
-        assertTrue(contains(qrData, "currency=MYR"));
-        assertTrue(contains(qrData, "amount=100"));
+        // Check that payment is recorded
+        LyraRamp.Payment memory payment = lyraRamp.getPayment(1);
+        assertEq(payment.recipient, recipient);
+        assertEq(payment.currency, "MYR");
+        assertEq(payment.recipientName, "John Doe");
+        assertEq(payment.amount, 100);
+        assertEq(payment.stablecoinAmount, 23 * 10**6);
+        assertEq(payment.sourceChain, "polygon");
+        assertEq(payment.targetChain, "scroll");
+        assertTrue(payment.isCompleted);
+        assertEq(payment.sender, sender);
+        assertEq(payment.stablecoinToken, address(mockUsdt));
         
         vm.stopPrank();
     }
 
-    function testGetUserRequests() public {
-        vm.startPrank(recipient);
+    function testAddSupportedStablecoin() public {
+        address newToken = makeAddr("newToken");
         
-        lyraRamp.createRampRequest("MYR", "John", 100, "polygon");
-        lyraRamp.createRampRequest("USD", "Jane", 200, "arbitrum");
+        lyraRamp.addSupportedStablecoin(newToken);
         
-        uint256[] memory requests = lyraRamp.getUserRequests(recipient);
-        assertEq(requests.length, 2);
-        assertEq(requests[0], 1);
-        assertEq(requests[1], 2);
-        
-        vm.stopPrank();
+        assertTrue(lyraRamp.isStablecoinSupported(newToken));
     }
 
-    function test_RevertWhen_CreateRequestWithInvalidCurrency() public {
-        vm.startPrank(recipient);
+    function testRemoveSupportedStablecoin() public {
+        address tokenToRemove = address(mockUsdt);
         
-        vm.expectRevert("Currency not supported");
-        lyraRamp.createRampRequest(
-            "INVALID",
-            "John Doe",
-            100,
-            "polygon"
-        );
+        lyraRamp.removeSupportedStablecoin(tokenToRemove);
         
-        vm.stopPrank();
+        assertFalse(lyraRamp.isStablecoinSupported(tokenToRemove));
     }
 
-    function test_RevertWhen_CompleteAlreadyCompletedRequest() public {
-        // Create a request
-        vm.startPrank(recipient);
-        uint256 requestId = lyraRamp.createRampRequest(
-            "MYR",
-            "John Doe",
-            100,
-            "polygon"
-        );
-        vm.stopPrank();
+    function testUpdateFeePercentage() public {
+        uint256 newFee = 100; // 1%
         
-        // Fund sender with USDT
-        mockUsdt.transfer(sender, 1000);
+        lyraRamp.updateFeePercentage(newFee);
         
-        // Complete the request twice
+        assertEq(lyraRamp.feePercentage(), newFee);
+    }
+
+    function test_RevertWhen_CompletePaymentWithInvalidRecipient() public {
         vm.startPrank(sender);
-        mockUsdt.approve(address(lyraRamp), 1000);
-        lyraRamp.completeRampRequest(requestId, address(mockUsdt));
         
-        // This should fail
-        vm.expectRevert("Request already completed");
-        lyraRamp.completeRampRequest(requestId, address(mockUsdt));
+        vm.expectRevert("Invalid recipient address");
+        lyraRamp.completePayment(
+            address(0),
+            "MYR",
+            "John Doe",
+            100,
+            23 * 10**6,
+            "polygon",
+            "scroll",
+            address(mockUsdt)
+        );
         
         vm.stopPrank();
     }
 
-    // Helper function to check if string contains substring
-    function contains(string memory _string, string memory _search) internal pure returns (bool) {
-        bytes memory stringBytes = bytes(_string);
-        bytes memory searchBytes = bytes(_search);
+    function test_RevertWhen_CompletePaymentWithUnsupportedStablecoin() public {
+        address unsupportedToken = makeAddr("unsupportedToken");
         
-        if (searchBytes.length > stringBytes.length) {
-            return false;
-        }
+        vm.startPrank(sender);
         
-        for (uint i = 0; i <= stringBytes.length - searchBytes.length; i++) {
-            bool found = true;
-            for (uint j = 0; j < searchBytes.length; j++) {
-                if (stringBytes[i + j] != searchBytes[j]) {
-                    found = false;
-                    break;
-                }
-            }
-            if (found) {
-                return true;
-            }
-        }
-        return false;
+        vm.expectRevert("Stablecoin not supported");
+        lyraRamp.completePayment(
+            recipient,
+            "MYR",
+            "John Doe",
+            100,
+            23 * 10**6,
+            "polygon",
+            "scroll",
+            unsupportedToken
+        );
+        
+        vm.stopPrank();
+    }
+
+    function test_RevertWhen_CompletePaymentWithZeroAmount() public {
+        vm.startPrank(sender);
+        
+        vm.expectRevert("Amount must be greater than 0");
+        lyraRamp.completePayment(
+            recipient,
+            "MYR",
+            "John Doe",
+            0,
+            23 * 10**6,
+            "polygon",
+            "scroll",
+            address(mockUsdt)
+        );
+        
+        vm.stopPrank();
+    }
+
+    function test_RevertWhen_CompletePaymentWithZeroStablecoinAmount() public {
+        vm.startPrank(sender);
+        
+        vm.expectRevert("Stablecoin amount must be greater than 0");
+        lyraRamp.completePayment(
+            recipient,
+            "MYR",
+            "John Doe",
+            100,
+            0,
+            "polygon",
+            "scroll",
+            address(mockUsdt)
+        );
+        
+        vm.stopPrank();
+    }
+
+    function testGetUserPayments() public {
+        // Complete a payment
+        mockUsdt.transfer(sender, 1000 * 10**6); // 1000 USDT with 6 decimals
+        vm.startPrank(sender);
+        mockUsdt.approve(address(lyraRamp), 1000 * 10**6);
+        
+        lyraRamp.completePayment(
+            recipient,
+            "MYR",
+            "John Doe",
+            100,
+            23 * 10**6,
+            "polygon",
+            "scroll",
+            address(mockUsdt)
+        );
+        
+        vm.stopPrank();
+        
+        // Check user payments
+        uint256[] memory recipientPayments = lyraRamp.getUserPayments(recipient);
+        uint256[] memory senderPayments = lyraRamp.getUserPayments(sender);
+        
+        assertEq(recipientPayments.length, 1);
+        assertEq(senderPayments.length, 1);
+        assertEq(recipientPayments[0], 1);
+        assertEq(senderPayments[0], 1);
+    }
+
+    function testPaymentCounter() public {
+        assertEq(lyraRamp.paymentCounter(), 0);
+        
+        // Complete a payment
+        mockUsdt.transfer(sender, 1000 * 10**6); // 1000 USDT with 6 decimals
+        vm.startPrank(sender);
+        mockUsdt.approve(address(lyraRamp), 1000 * 10**6);
+        
+        lyraRamp.completePayment(
+            recipient,
+            "MYR",
+            "John Doe",
+            100,
+            23 * 10**6,
+            "polygon",
+            "scroll",
+            address(mockUsdt)
+        );
+        
+        vm.stopPrank();
+        
+        assertEq(lyraRamp.paymentCounter(), 1);
     }
 } 

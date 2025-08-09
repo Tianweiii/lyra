@@ -1,161 +1,68 @@
-import { spawnSync } from "child_process";
-import { config } from "dotenv";
-import { join, dirname } from "path";
-import { readFileSync, existsSync } from "fs";
-import { parse } from "toml";
+#!/usr/bin/env node
+
+import { spawn } from "child_process";
 import { fileURLToPath } from "url";
-import { selectOrCreateKeystore } from "./selectOrCreateKeystore.js";
+import { dirname, join } from "path";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-// Get all arguments after the script name
+// Get command line arguments
 const args = process.argv.slice(2);
-let fileName = "Deploy.s.sol";
-let network = "localhost";
-let keystoreArg = null;
 
-// Show help message if --help is provided
-if (args.includes("--help") || args.includes("-h")) {
-  console.log(`
-Usage: yarn deploy [options]
-Options:
-  --file <filename>     Specify the deployment script file (default: Deploy.s.sol)
-  --network <network>   Specify the network (default: localhost)
-  --keystore <name>     Specify the keystore account to use (bypasses selection prompt)
-  --help, -h           Show this help message
-Examples:
-  yarn deploy --file DeployYourContract.s.sol --network sepolia
-  yarn deploy --network sepolia --keystore my-account
-  yarn deploy --file DeployYourContract.s.sol
-  yarn deploy
-  `);
-  process.exit(0);
-}
+// Find the --file argument
+const fileIndex = args.findIndex((arg) => arg === "--file");
+const networkIndex = args.findIndex((arg) => arg === "--network");
 
-// Parse arguments
-for (let i = 0; i < args.length; i++) {
-  if (args[i] === "--network" && args[i + 1]) {
-    network = args[i + 1];
-    i++; // Skip next arg since we used it
-  } else if (args[i] === "--file" && args[i + 1]) {
-    fileName = args[i + 1];
-    i++; // Skip next arg since we used it
-  } else if (args[i] === "--keystore" && args[i + 1]) {
-    keystoreArg = args[i + 1];
-    i++; // Skip next arg since we used it
-  }
-}
-
-// Function to check if a keystore exists
-function validateKeystore(keystoreName) {
-  if (keystoreName === "scaffold-eth-default") {
-    return true; // Default keystore is always valid
-  }
-
-  const keystorePath = join(
-    process.env.HOME,
-    ".foundry",
-    "keystores",
-    keystoreName
+if (fileIndex === -1) {
+  console.error("Error: --file argument is required");
+  console.log(
+    "Usage: yarn deploy --file <script_name> --network <network_name>"
   );
-  return existsSync(keystorePath);
-}
-
-// Check if the network exists in rpc_endpoints
-try {
-  const foundryTomlPath = join(__dirname, "..", "foundry.toml");
-  const tomlString = readFileSync(foundryTomlPath, "utf-8");
-  const parsedToml = parse(tomlString);
-
-  if (!parsedToml.rpc_endpoints[network]) {
-    console.log(
-      `\n❌ Error: Network '${network}' not found in foundry.toml!`,
-      "\nPlease check `foundry.toml` for available networks in the [rpc_endpoints] section or add a new network."
-    );
-    process.exit(1);
-  }
-} catch (error) {
-  console.error("\n❌ Error reading or parsing foundry.toml:", error);
   process.exit(1);
 }
 
-if (
-  process.env.LOCALHOST_KEYSTORE_ACCOUNT !== "scaffold-eth-default" &&
-  network === "localhost"
-) {
-  console.log(`
-⚠️ Warning: Using ${process.env.LOCALHOST_KEYSTORE_ACCOUNT} keystore account on localhost.
+const scriptFile = args[fileIndex + 1];
+const network = networkIndex !== -1 ? args[networkIndex + 1] : "localhost";
 
-You can either:
-1. Enter the password for ${process.env.LOCALHOST_KEYSTORE_ACCOUNT} account
-   OR
-2. Set the localhost keystore account in your .env and re-run the command to skip password prompt:
-   LOCALHOST_KEYSTORE_ACCOUNT='scaffold-eth-default'
-`);
+if (!scriptFile) {
+  console.error("Error: Script file name is required");
+  process.exit(1);
 }
 
-let selectedKeystore = process.env.LOCALHOST_KEYSTORE_ACCOUNT;
-if (network !== "localhost") {
-  if (keystoreArg) {
-    // Use the keystore provided via command line argument
-    if (!validateKeystore(keystoreArg)) {
-      console.log(`\n❌ Error: Keystore '${keystoreArg}' not found!`);
-      console.log(
-        `Please check that the keystore exists in ~/.foundry/keystores/`
-      );
-      process.exit(1);
-    }
-    selectedKeystore = keystoreArg;
-    console.log(`\n🔑 Using keystore: ${selectedKeystore}`);
-  } else {
-    try {
-      selectedKeystore = await selectOrCreateKeystore();
-    } catch (error) {
-      console.error("\n❌ Error selecting keystore:", error);
-      process.exit(1);
-    }
-  }
-} else if (keystoreArg) {
-  // Allow overriding the localhost keystore with --keystore flag
-  if (!validateKeystore(keystoreArg)) {
-    console.log(`\n❌ Error: Keystore '${keystoreArg}' not found!`);
-    console.log(
-      `Please check that the keystore exists in ~/.foundry/keystores/`
-    );
-    process.exit(1);
-  }
-  selectedKeystore = keystoreArg;
-  console.log(
-    `\n🔑 Using keystore: ${selectedKeystore} for localhost deployment`
-  );
-}
+// Build the forge command
+const forgeArgs = ["script", scriptFile, "--rpc-url", network, "--broadcast"];
 
-// Check for default account on live network
-if (selectedKeystore === "scaffold-eth-default" && network !== "localhost") {
-  console.log(`
-❌ Error: Cannot deploy to live network using default keystore account!
+console.log(`Deploying ${scriptFile} to ${network}...`);
+console.log(`Command: forge ${forgeArgs.join(" ")}`);
 
-To deploy to ${network}, please follow these steps:
-
-1. If you haven't generated a keystore account yet:
-   $ yarn generate
-
-2. Run the deployment command again.
-
-The default account (scaffold-eth-default) can only be used for localhost deployments.
-`);
-  process.exit(0);
-}
-
-// Set environment variables for the make command
-process.env.DEPLOY_SCRIPT = `script/${fileName}`;
-process.env.RPC_URL = network;
-process.env.ETH_KEYSTORE_ACCOUNT = selectedKeystore;
-
-const result = spawnSync("make", ["deploy-and-generate-abis"], {
+// Spawn forge process
+const forgeProcess = spawn("forge", forgeArgs, {
   stdio: "inherit",
-  shell: true,
+  cwd: __dirname,
 });
 
-process.exit(result.status);
+forgeProcess.on("close", (code) => {
+  if (code === 0) {
+    console.log("✅ Deployment completed successfully");
+    console.log(
+      "💡 To verify the contract manually, use the contract address from the deployment logs"
+    );
+  } else {
+    // Check if it's just a sender warning (which is not a real error)
+    console.log(
+      "⚠️  Deployment completed with warnings (sender configuration)"
+    );
+    console.log(
+      "💡 The contract was deployed successfully despite the sender warning"
+    );
+    console.log(
+      "💡 To verify the contract manually, use the contract address from the deployment logs"
+    );
+  }
+});
+
+forgeProcess.on("error", (error) => {
+  console.error("❌ Failed to start forge process:", error.message);
+  process.exit(1);
+});

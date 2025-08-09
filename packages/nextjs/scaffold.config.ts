@@ -40,8 +40,21 @@ const scrollSepolia = {
 } as const;
 
 const scaffoldConfig = {
-  // The networks on which your DApp is live
-  targetNetworks: [scrollSepolia, chains.foundry],
+  // The networks on which your DApp is live - now includes all major networks for 1inch support
+  targetNetworks: [
+    scrollSepolia,
+    chains.foundry,
+    chains.mainnet, // Ethereum
+    chains.polygon, // Polygon
+    chains.arbitrum, // Arbitrum
+    chains.base, // Base
+    chains.optimism, // Optimism
+    chains.bsc, // BNB Chain
+    chains.avalanche, // Avalanche
+    chains.zora, // Zora (similar to zkSync)
+    chains.linea, // Linea
+    chains.polygonZkEvm, // Polygon zkEVM
+  ],
   // The interval at which your front-end polls the RPC servers for new data (it has no effect if you only target the local network (default is 4000))
   pollingInterval: 30000,
   // This is ours Alchemy's default API key.
