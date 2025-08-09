@@ -257,7 +257,7 @@ const deployedContracts = {
       ],
     },
     LyraOtcSeller: {
-      address: "0xB919D234f9081D8c0F20ee4219C4605BA883dc32",
+      address: "0x5265BCcc8aB5A36A45ABD2E574E6Fa7F863e5C2e",
       abi: [
         {
           inputs: [
@@ -397,21 +397,21 @@ const deployedContracts = {
         },
         {
           inputs: [
-            { internalType: "address", name: "recipient", type: "address" },
-            { internalType: "uint256", name: "minLyraOut", type: "uint256" },
+            { internalType: "address[]", name: "recipients", type: "address[]" },
+            { internalType: "uint256", name: "perRecipientMinLyraOut", type: "uint256" },
           ],
-          name: "govSwapNativeAndSend",
+          name: "govSwapNativeAndSendMultiple",
           outputs: [],
           stateMutability: "payable",
           type: "function",
         },
         {
           inputs: [
-            { internalType: "address", name: "recipient", type: "address" },
-            { internalType: "uint256", name: "usdtAmount", type: "uint256" },
-            { internalType: "uint256", name: "minLyraOut", type: "uint256" },
+            { internalType: "address[]", name: "recipients", type: "address[]" },
+            { internalType: "uint256", name: "perRecipientUsdtAmount", type: "uint256" },
+            { internalType: "uint256", name: "minLyraOutPerRecipient", type: "uint256" },
           ],
-          name: "govSwapUsdtAndSend",
+          name: "govSwapUsdtAndSendMultiple",
           outputs: [],
           stateMutability: "nonpayable",
           type: "function",
