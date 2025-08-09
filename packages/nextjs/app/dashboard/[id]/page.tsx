@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import { GET_ACCOUNTS, GET_TRANSFERS } from "../../../graphql/queries";
+import { GET_TRANSFERS } from "../../../graphql/queries";
 import { useQuery } from "@apollo/client";
 import { useWeb3Auth } from "@web3auth/modal/react";
 import { ethers, formatUnits } from "ethers";
@@ -46,6 +46,10 @@ const DashboardPage: NextPage = () => {
   const accountId = useAccount().address;
   const { provider, status } = useWeb3Auth();
 
+  // New state to hold fetched balance data
+  const [amount, setAmount] = useState<number>(0); // Add amount to state
+  const [hasFetchedBalance, setHasFetchedBalance] = useState<boolean>(false);
+
   useEffect(() => {
     if (status === "connected") {
       (async () => {
@@ -56,15 +60,37 @@ const DashboardPage: NextPage = () => {
     }
   }, [status, provider]);
 
-  const { data: accountData } = useQuery(GET_ACCOUNTS, {
-    variables: {
-      accountId: address || "",
-    },
-    fetchPolicy: "cache-and-network",
-  });
+  useEffect(() => {
+    const contractAddress = "0xc11bd7b043736423dbc2d70ae5a0f642f9959257";
+    const apiKey = "NBXFCCHJ8RSXX3X86E4QU1FTJK7JG5ZTD5";
 
-  const balance = accountData?.accounts[0]?.balance || 0;
-  const amount: number = parseFloat(formatUnits(balance, 18)); // in wei
+    const fetchBalances = async () => {
+      try {
+        const res = await fetch(
+          `https://api.etherscan.io/v2/api?module=account&action=tokenbalance&contractaddress=${contractAddress}&address=${address}&tag=latest&apikey=${apiKey}&chainid=137`,
+        );
+
+        if (!res.ok) throw new Error("Network response was not ok");
+
+        const json = await res.json();
+
+        // Update the amount state here after a successful fetch
+        const balanceString = json.result;
+        try {
+          const formattedBalance = formatUnits(balanceString, 18);
+          setAmount(parseFloat(formattedBalance));
+          setHasFetchedBalance(true);
+        } catch (err) {
+          console.error("Error formatting balance:", err);
+          setAmount(0);
+        }
+      } catch (err) {
+        console.error("Error fetching token balance:", err);
+      }
+    };
+
+    fetchBalances();
+  }, [address, hasFetchedBalance]);
 
   // converted wallet amount
   const walletAmount: number = amount;
@@ -99,7 +125,6 @@ const DashboardPage: NextPage = () => {
     data: transferData,
   } = useQuery(GET_TRANSFERS, {
     variables: { accountId: accountId?.toString() || "" },
-    fetchPolicy: "cache-and-network",
   });
 
   if (transferLoading)
@@ -361,7 +386,7 @@ const DashboardPage: NextPage = () => {
               {coinAmount} {coinType}s &middot; {currencyType}
             </p>
           </div>
-          <PriceChart />
+          <PriceChart accountId={accountId} />
         </div>
         {/* box 2 */}
         <div className="flex-1 lg:flex-2 flex flex-col gap-2">
@@ -374,7 +399,7 @@ const DashboardPage: NextPage = () => {
             <BackgroundGradient
               containerClassName="rounded-lg flex-1"
               className="w-full h-full bg-[#1e1e1e] p-4 flex flex-col justify-between rounded-lg hover:cursor-pointer"
-              onClick={renderMap[role].onClick}
+              onClick={() => router.push("/payment/user")}
             >
               <>
                 <div className="self-end md:p-4 p-2 bg-[#757575] rounded-full">

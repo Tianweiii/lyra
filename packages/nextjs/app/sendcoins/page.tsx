@@ -89,7 +89,7 @@ const SendCoinPage = () => {
   }, [usdtAmount, nativeAmount, swapType, lyraPerUsdt, priceUsdtPerNative]);
 
   // step 2: approve transaction
-  const OTC_ADDRESS = "0xB919D234f9081D8c0F20ee4219C4605BA883dc32";
+  const OTC_ADDRESS = "0x5265BCcc8aB5A36A45ABD2E574E6Fa7F863e5C2e";
   const { writeContractAsync: writeUsdt } = useScaffoldWriteContract("USDT");
 
   const { data: usdtAllowance } = useScaffoldReadContract({
