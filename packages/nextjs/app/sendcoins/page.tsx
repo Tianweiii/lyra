@@ -95,6 +95,18 @@ const SendCoinPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
+          <div className="flex flex-col gap-2">
+            <p className="text-[#8c8c8c] text-[12px]">Recipients</p>
+            <MultiSelectView data={activeUsers} callback={setSelectedUsers} />
+          </div>
+        </motion.div>
+
+        <motion.div
+          className="flex flex-col gap-2"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
           <p className="text-gray-400 text-sm">Each user will receive</p>
           <div className="relative inline-block">
             <input
@@ -121,7 +133,7 @@ const SendCoinPage = () => {
           className="flex flex-col gap-2"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
+          transition={{ delay: 0.4 }}
         >
           <p className="text-gray-400 text-sm">You will send (approx.)</p>
           <input
@@ -132,18 +144,6 @@ const SendCoinPage = () => {
             placeholder="0.00"
             className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-blue-500 focus:outline-none transition-colors"
           />
-        </motion.div>
-
-        <motion.div
-          className="flex flex-col gap-2"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-        >
-          <div className="flex flex-col gap-2">
-            <p className="text-[#8c8c8c] text-[12px]">Recipients</p>
-            <MultiSelectView data={activeUsers} callback={setSelectedUsers} />
-          </div>
         </motion.div>
 
         <motion.div
@@ -258,7 +258,8 @@ const SendCoinPage = () => {
         <div className="w-full flex items-center justify-center p-4">
           <Island />
           <motion.div
-            className="bg-gradient-to-br from-gray-900 to-gray-800 md:w-[70vw] w-[90vw] rounded-2xl p-8 flex flex-col gap-6 border border-gray-700"
+            // className="bg-gradient-to-br from-gray-900 to-gray-800 md:w-[70vw] w-[90vw] rounded-2xl p-8 flex flex-col gap-6 border border-gray-700"
+            className="border-white/30 bg-gray-900/20 backdrop-blur-md md:w-[70vw] w-[90vw] rounded-2xl p-8 flex flex-col gap-6 border"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}

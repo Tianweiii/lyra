@@ -68,7 +68,7 @@ export const MultiSelectView: React.FC<MultiSelectViewProps> = ({ data, callback
           value={selected}
           onChange={handleChange}
           input={<OutlinedInput label="Wallet Address" sx={{ color: "white" }} />}
-          renderValue={() => "Select"}
+          renderValue={() => (selected.length === 0 ? "Select" : `${selected.length} selected`)}
           sx={{
             color: "white",
             fieldset: {

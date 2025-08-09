@@ -44,6 +44,7 @@ const LoginPage = () => {
             {/* Lyra Logo */}
             <div className="space-y-5">
               <div className="mx-auto">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/images/Lyra-Logo.png"
                   alt="Lyra Logo"
