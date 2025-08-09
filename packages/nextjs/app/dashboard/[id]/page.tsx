@@ -1,19 +1,18 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { GET_ACCOUNTS, GET_TRANSFERS } from "../../../graphql/queries";
 import { useQuery } from "@apollo/client";
-import { formatUnits } from "ethers";
+import { useWeb3Auth } from "@web3auth/modal/react";
+import { ethers, formatUnits } from "ethers";
+import { motion } from "motion/react";
 import { NextPage } from "next";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
-// import { BackgroundBeams } from "~~/components/ui/background-beams";
-// import CandleChart from "~~/components/ui/candlestick-chart";
 import Island from "~~/components/ui/island";
 import { BackgroundGradient } from "~~/components/ui/neon-div";
-// import NeonButton from "~~/components/ui/neon-button";
 import Example from "~~/components/ui/pie-chart";
 import PriceChart from "~~/components/ui/price-chart";
 import CoinTable, { CoinDataProps } from "~~/components/ui/table";
@@ -40,14 +39,40 @@ const getRole = (id: string | number | undefined) => {
 };
 
 const DashboardPage: NextPage = () => {
+  const [address, setAddress] = useState<string>("");
   const router = useRouter();
   const { id } = useParams();
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const accountId = useAccount().address;
+  const { isConnected, provider } = useWeb3Auth();
+
+  useEffect(() => {
+    if (!isConnected) {
+      router.push("/login");
+    }
+    const getWalletAddress = async () => {
+      if (provider) {
+        const ethersProvider = new ethers.BrowserProvider(provider);
+        const signer = await ethersProvider.getSigner();
+        const address = await signer.getAddress();
+        setAddress(address);
+      }
+    };
+
+    getWalletAddress();
+  });
 
   const { data: accountData } = useQuery(GET_ACCOUNTS, {
-    variables: { accountId: accountId?.toString() || "" },
+    variables: {
+      accountId: address || "",
+    },
   });
+
+  // const { data: transactionHistory } = useQuery(GET_TRANSFERS, {
+  //   variables: {
+  //     accountId: address || "",
+  //   },
+  // });
 
   const balance = accountData?.accounts[0]?.balance || 0;
   const amount: number = parseFloat(formatUnits(balance, 18)); // in wei
@@ -58,8 +83,6 @@ const DashboardPage: NextPage = () => {
   // lyra coin  balance
   const coinAmount: number = amount;
   const coinType: string = "LYRA";
-
-  // 123 == merchant, 124 == admin, else user
   const role = getRole(id?.toString());
 
   const renderMap: RenderMapProps = {
@@ -89,7 +112,16 @@ const DashboardPage: NextPage = () => {
     variables: { accountId: accountId?.toString() || "" },
   });
 
-  if (transferLoading) return <p>Loading...</p>;
+  if (transferLoading)
+    return (
+      <div className="h-screen w-screen flex justify-center items-center">
+        <motion.div
+          className="w-20 h-20 border-4 border-blue-500 border-t-transparent rounded-full"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+        />
+      </div>
+    );
   if (transferError) return <p>Error: {transferError.message}</p>;
 
   // Transform the data into the format expected by CoinTable
@@ -324,11 +356,11 @@ const DashboardPage: NextPage = () => {
   const userData: UserDataProps[] = loadUserData();
 
   return (
-    <div className="flex flex-col md:px-24 px-5 py-12 gap-2 mt-10 relative antialiased">
+    <div className="flex flex-col md:px-24 px-5 py-16 gap-2 relative antialiased">
       <Island />
-      <div className="flex md:flex-row flex-col h-[45vh] gap-2 z-[10]">
+      <div className="flex lg:flex-row flex-col gap-2 z-[10] md:h-[45vh] h-[70vh]">
         {/* box 1 */}
-        <div className="flex-3 h-[45vh] rounded-lg md:px-8 py-8 flex flex-col gap-5 bg-[#1e1e1e]">
+        <div className="lg:flex-3 flex-4 rounded-lg md:px-8 py-8 flex flex-col gap-5 bg-[#1e1e1e]">
           <p className="text-sm md:text-xl font-normal px-4">Total Balance</p>
           <div className="flex flex-col gap-3 px-4">
             <div className="flex items-end gap-1">
@@ -342,7 +374,7 @@ const DashboardPage: NextPage = () => {
           <PriceChart />
         </div>
         {/* box 2 */}
-        <div className="flex-2 md:h-[45vh] flex flex-col gap-2">
+        <div className="flex-1 lg:flex-2 flex flex-col gap-2">
           <div className="w-full flex-1 flex gap-2">
             {/* spent this month here */}
             <div className="bg-[#1e1e1e] rounded-lg flex-1">

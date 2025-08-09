@@ -46,6 +46,12 @@ const LoginPage = () => {
             <div className="space-y-5">
               <div className="mx-auto">
                 <Image src="/images/Lyra-Logo.png" alt="Lyra Logo" width={200} height={50} />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/images/Lyra-Logo.png"
+                  alt="Lyra Logo"
+                  className="max-w-[200px] w-full h-auto object-contain mx-auto"
+                />
               </div>
               <div>
                 <p className="text-neon-blue font-bold text-[25px] leading-tight">Digital Payments</p>
