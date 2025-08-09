@@ -19,17 +19,21 @@ interface showQRCodeProps {
 }
 
 export default function ShowQRCode({ amount, walletAddress, onPaid, onBack }: showQRCodeProps) {
-  const paymentData = JSON.stringify({ amount, walletAddress });
+  // Use merchantAddress instead of walletAddress to match user page expectations
+  const paymentData = JSON.stringify({ amount, merchantAddress: walletAddress });
+  const encoded = btoa(paymentData);
+  const baseURL = typeof window !== "undefined" ? window.location.origin : "";
+  // Point to the user payment page
+  const qrURL = `${baseURL}/payment/user?data=${encoded}`;
 
-  // TODO: Simulate scan + success
-  const simulateScan = () => {
-    setTimeout(() => onPaid("success"), 3000); // simulate delay
-  };
+  // console for debug
+  console.log("Generated QR Data:", paymentData);
+  console.log("Generated QR URL:", qrURL);
 
   const fadeUp = {
     initial: { opacity: 0, y: 30 },
     animate: { opacity: 1, y: 0, transition: { duration: 0.6 } },
-  };
+  } as const;
 
   return (
     <motion.div
@@ -53,20 +57,25 @@ export default function ShowQRCode({ amount, walletAddress, onPaid, onBack }: sh
         </p>
       </motion.div>
 
+      {/* White container to provide strong contrast and quiet zone */}
       <motion.div className="flex justify-center py-4">
-        {React.createElement(QRCodeComponent as any, {
-          value: paymentData,
-          size: 270,
-          bgColor: "#000",
-          fgColor: "#ffffff",
-          level: "H",
-          style: { display: "block" },
-        })}
-        {/* <QRCode value={paymentData} size={200} bgColor="#000" fgColor="#ffffff" level="H" /> */}
+        <div className="bg-white p-4 rounded-lg shadow-md">
+          {React.createElement(QRCodeComponent as any, {
+            value: qrURL,
+            size: 320,
+            bgColor: "#ffffff",
+            fgColor: "#000000",
+            level: "H",
+            style: { display: "block" },
+          })}
+        </div>
       </motion.div>
 
       <motion.div {...fadeUp} className="space-y-3">
-        <button onClick={simulateScan} className="text-sm underline text-gray-400 hover:text-white">
+        <button
+          onClick={() => setTimeout(() => onPaid("success"), 3000)}
+          className="text-sm underline text-gray-400 hover:text-white"
+        >
           Simulate Payment (for demo)
         </button>
       </motion.div>

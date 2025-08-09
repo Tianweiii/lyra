@@ -4,37 +4,17 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 interface PromptPaymentProps {
-  walletAddress: string;
-  balance: number;
+  walletAddress?: string;
   onNext: (value: number) => void;
 }
 
-export const PromptPayment = ({ walletAddress, balance, onNext }: PromptPaymentProps) => {
+export const PromptPayment = ({ walletAddress, onNext }: PromptPaymentProps) => {
   const [value, setValue] = useState<number | undefined>();
-  const [rate, setRate] = useState<number | undefined>();
-  const [loading, setLoading] = useState(true);
   const [validationError, setValidationError] = useState("");
   const [touched, setTouched] = useState(false);
-
-  useEffect(() => {
-    const fetchRate = async () => {
-      try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_EXCHANGE_RATE_API}/USDT`);
-        const data = await response.json();
-        setRate(data.rates.MYR); // USDT to MYR rate
-      } catch (error) {
-        console.error("Error fetching rates:", error);
-        setRate(4.68); // Fallback rate
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchRate();
-  }, []);
-
-  const convertedAmount = rate ? (balance / rate).toFixed(2) : "--";
   const isValid = touched && value !== undefined && !validationError;
+
+  const safeWalletAddress = typeof walletAddress === "string" ? walletAddress : "";
 
   useEffect(() => {
     if (!touched) return;
@@ -43,12 +23,10 @@ export const PromptPayment = ({ walletAddress, balance, onNext }: PromptPaymentP
       setValidationError("Please enter a valid number.");
     } else if (value <= 0) {
       setValidationError("Amount must be greater than 0.");
-    } else if (value > balance) {
-      setValidationError("Amount exceeds wallet balance.");
     } else {
       setValidationError("");
     }
-  }, [value, balance, touched]);
+  }, [value, touched]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const num = Number(e.target.value);
@@ -65,7 +43,7 @@ export const PromptPayment = ({ walletAddress, balance, onNext }: PromptPaymentP
   const fadeUp = {
     initial: { opacity: 0, y: 30 },
     animate: { opacity: 1, y: 0, transition: { duration: 0.6 } },
-  };
+  } as const;
 
   return (
     <motion.div
@@ -79,49 +57,18 @@ export const PromptPayment = ({ walletAddress, balance, onNext }: PromptPaymentP
         <h2 className="text-lg md:text-xl font-bold text-white/80">Wallet Address</h2>
         <div className="flex justify-between items-center p-4 rounded-xl bg-black/10 border border-gray-500/40 text-sm md:text-base">
           <p className="text-gray-400 select-none">
-            {walletAddress.length > 0 ? `${walletAddress.slice(0, 8)}****${walletAddress.slice(-4)}` : walletAddress}
+            {safeWalletAddress ? `${safeWalletAddress.slice(0, 8)}****${safeWalletAddress.slice(-4)}` : ""}
           </p>
           <span className="text-xs text-gray-500">Read-only</span>
         </div>
       </motion.div>
 
-      {/* Balance info */}
-      <motion.div {...fadeUp} className="space-y-3">
-        <h2 className="text-lg md:text-xl font-bold text-white/80">Balance in Wallet</h2>
-
-        <div className="flex flex-row items-center justify-between p-4 rounded-xl bg-black/10 border border-gray-500/40 gap-4 text-sm md:text-base">
-          <div className="flex-1 min-w-0">
-            <div className="flex flex-col">
-              <span className="text-gray-400">MYR</span>
-              <span className="text-white font-sm md:text-lg text whitespace-nowrap overflow-hidden text-ellipsis">
-                RM {balance.toFixed(2)}
-              </span>
-            </div>
-          </div>
-
-          <div className="w-px bg-gray-500/40 h-10 mx-2"></div>
-
-          <div className="flex-1 min-w-0 text-right">
-            <div className="flex flex-col items-end">
-              <span className="text-gray-400">Equivalent (USD)</span>
-              {loading ? (
-                <span className="text-gray-500 md:text-lg text">Loading...</span>
-              ) : (
-                <span className="text-white font-medium md:text-lg text whitespace-nowrap overflow-hidden text-ellipsis">
-                  ~ {convertedAmount}
-                </span>
-              )}
-            </div>
-          </div>
-        </div>
-      </motion.div>
-
       {/* Payment input */}
       <motion.div {...fadeUp} className="space-y-3">
-        <h2 className="text-lg md:text-xl font-bold text-white">Enter Payment Amount (MYR)</h2>
+        <h2 className="text-lg md:text-xl font-bold text-white">Enter Payment Amount (LYRA)</h2>
         <input
           type="number"
-          className={`w-full p-3 text-base rounded-lg bg-white/5 backdrop-blur-md border focus:outline-none focus:ring-2 placeholder:text-gray-400 text-white shadow-md $ ${
+          className={`w-full p-3 text-base rounded-lg bg-white/5 backdrop-blur-md border focus:outline-none focus:ring-2 placeholder:text-gray-400 text-white shadow-md border-blue-400 focus:ring-blue-500 ${
             !touched
               ? "border-blue-400 focus:ring-blue-500"
               : isValid
@@ -142,10 +89,10 @@ export const PromptPayment = ({ walletAddress, balance, onNext }: PromptPaymentP
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
           onClick={() => onNext(Number(value))}
-          disabled={!value || isNaN(value) || value <= 0 || value > balance}
+          disabled={!value || isNaN(value) || value <= 0}
           //
           className={`w-full py-2 md:py-4 rounded-xl font-semibold transition-all duration-300 ${
-            value && value > 0 && value <= balance
+            value && value > 0
               ? "bg-blue-600 hover:bg-blue-700 cursor-pointer text-white"
               : "bg-gray-600 cursor-not-allowed text-gray-300"
           }`}
