@@ -402,7 +402,7 @@ const DashboardPage: NextPage = () => {
             <BackgroundGradient
               containerClassName="rounded-lg flex-1"
               className="w-full h-full bg-[#1e1e1e] p-4 flex flex-col justify-between rounded-lg hover:cursor-pointer"
-              onClick={renderMap[role].onClick}
+              onClick={() => router.push("/payment/user")}
             >
               <>
                 <div className="self-end md:p-4 p-2 bg-[#757575] rounded-full">
