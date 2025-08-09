@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import type { NextPage } from "next";
 import { useAccount } from "wagmi";
@@ -17,17 +17,34 @@ const UserScanPage: NextPage = () => {
   const [amount, setAmount] = useState<number>(0);
   const [paymentRef, setPaymentRef] = useState<string>("");
   const [validationError, setValidationError] = useState("");
+  const [merchantAddress, setMerchantAddress] = useState<string>("");
 
   const router = useRouter();
-  const { address, isConnected } = useAccount();
+  const searchParams = useSearchParams();
   const steps = ["Scan QR", "Payment Status"];
   // TODO: Wallet balance will be props
   const walletBalance = 50.23;
 
-  const handleScanSuccess = (qrData: string) => {
-    // TODO: FETCH JSON
+  // React hooks must be at the top level
+  const { data: isMerchant } = useScaffoldReadContract({
+    contractName: "LyraOtcSeller",
+    functionName: "isMerchant",
+    args: [merchantAddress],
+  });
 
-    // qrData = `{"amount": 25, "merchantAddress": "0xPAYREF123456"}`;
+  const { writeContractAsync: writeLyraOtcSeller } = useScaffoldWriteContract("LyraOtcSeller");
+
+  // Check for URL data parameter on page load
+  useEffect(() => {
+    const urlData = searchParams.get("data");
+    if (urlData) {
+      console.log("URL data found:", urlData);
+      handleScanSuccess(`${window.location.origin}/payment/user?data=${urlData}`);
+    }
+  }, [searchParams]);
+
+  const handleScanSuccess = (qrData: string) => {
+    console.log("Scanned QR Data:", qrData);
 
     try {
       let data;
@@ -35,40 +52,45 @@ const UserScanPage: NextPage = () => {
       if (qrData.startsWith("http")) {
         const url = new URL(qrData);
         const encodedData = url.searchParams.get("data");
+        console.log("Encoded data from URL:", encodedData);
+
         if (!encodedData) {
-          throw new Error("Missing data in QR code.");
+          throw new Error("Missing data parameter in QR code URL.");
         }
 
         try {
-          // Try Base64 first
+          // Try Base64 decoding first
           const jsonStr = atob(encodedData);
+          console.log("Decoded JSON string:", jsonStr);
           data = JSON.parse(jsonStr);
+          console.log("Parsed data:", data);
         } catch (e) {
+          console.error("Base64 decode failed:", e);
           // If Base64 fails, fall back to URI decoding
           try {
-            data = JSON.parse(decodeURIComponent(encodedData));
+            const decodedStr = decodeURIComponent(encodedData);
+            console.log("URI decoded string:", decodedStr);
+            data = JSON.parse(decodedStr);
+            console.log("Parsed data from URI decode:", data);
           } catch (err) {
+            console.error("URI decode also failed:", err);
             throw new Error("Invalid QR code data format.");
           }
         }
       } else {
+        // Direct JSON string
+        console.log("Direct JSON parsing:", qrData);
         data = JSON.parse(qrData);
       }
-      // let data;
 
-      // if (qrData.startsWith("http")) {
-      //   const url = new URL(qrData);
-      //   const encodedData = url.searchParams.get("data");
-      //   if (!encodedData) {
-      //     console.error("ERRORRRRR");
-      //   }
-      //   data = JSON.parse(decodeURIComponent(encodedData!));
-      // } else {
-      //   data = JSON.parse(qrData);
-      // }
-
-      if (typeof data.amount !== "number") {
+      // Validate required fields
+      if (typeof data.amount !== "number" || isNaN(data.amount)) {
         setValidationError("Invalid QR code: Missing or invalid amount.");
+        return;
+      }
+
+      if (!data.merchantAddress || typeof data.merchantAddress !== "string") {
+        setValidationError("Invalid QR code: Missing merchant address.");
         return;
       }
 
@@ -78,42 +100,39 @@ const UserScanPage: NextPage = () => {
       }
 
       setValidationError("");
+      setMerchantAddress(data.merchantAddress);
       setStatus("success");
       setAmount(data.amount);
       setPaymentRef(data.ref || "0xPAYREF123456");
       setStep(2);
 
-      // Trigger Blockchain Transfer;
+      // Trigger Blockchain Transfer
       HandleTransfer(data);
-    } catch {
-      setValidationError("Invalid QR code format.");
+    } catch (error) {
+      console.error("QR code parsing error:", error);
+      setValidationError(`Invalid QR code format: ${error instanceof Error ? error.message : "Unknown error"}`);
     }
-
-    // setStatus(isValid ? "success" : "failed");
-    // setAmount(amountExtracted);
-    // setPaymentRef(ref);
-    // setStep(2);
   };
 
   const HandleTransfer = async (data: { amount: number; merchantAddress: string }) => {
-    // Check merchant
-    const { data: isMerchant } = useScaffoldReadContract({
-      contractName: "LyraOtcSeller",
-      functionName: "isMerchant",
-      args: [data.merchantAddress],
-    });
+    console.log("Starting transfer:", data);
 
+    // Merchant validation will be handled by the useScaffoldReadContract hook
     if (!isMerchant) {
       setValidationError("Merchant is not registered.");
       return;
     }
 
-    // Transfer LYRA
-    const { writeContractAsync: writeLyraOtcSeller } = useScaffoldWriteContract("LyraOtcSeller");
-    await writeLyraOtcSeller({
-      functionName: "transfer",
-      args: [data.merchantAddress, amount],
-    });
+    try {
+      // Transfer LYRA
+      await writeLyraOtcSeller({
+        functionName: "transfer",
+        args: [data.merchantAddress, amount],
+      });
+    } catch (error) {
+      console.error("Transfer failed:", error);
+      setValidationError("Transfer failed. Please try again.");
+    }
   };
 
   return (

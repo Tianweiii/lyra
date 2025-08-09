@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 interface PromptPaymentProps {
-  walletAddress: string;
+  walletAddress?: string;
   onNext: (value: number) => void;
 }
 
@@ -14,7 +14,8 @@ export const PromptPayment = ({ walletAddress, onNext }: PromptPaymentProps) => 
   const [touched, setTouched] = useState(false);
   const isValid = touched && value !== undefined && !validationError;
 
-  console.log(walletAddress);
+  const safeWalletAddress = typeof walletAddress === "string" ? walletAddress : "";
+
   useEffect(() => {
     if (!touched) return;
 
@@ -22,11 +23,7 @@ export const PromptPayment = ({ walletAddress, onNext }: PromptPaymentProps) => 
       setValidationError("Please enter a valid number.");
     } else if (value <= 0) {
       setValidationError("Amount must be greater than 0.");
-    }
-    // else if (value > balance) {
-    //   setValidationError("Amount exceeds wallet balance.");
-    // }
-    else {
+    } else {
       setValidationError("");
     }
   }, [value, touched]);
@@ -46,7 +43,7 @@ export const PromptPayment = ({ walletAddress, onNext }: PromptPaymentProps) => 
   const fadeUp = {
     initial: { opacity: 0, y: 30 },
     animate: { opacity: 1, y: 0, transition: { duration: 0.6 } },
-  };
+  } as const;
 
   return (
     <motion.div
@@ -60,42 +57,11 @@ export const PromptPayment = ({ walletAddress, onNext }: PromptPaymentProps) => 
         <h2 className="text-lg md:text-xl font-bold text-white/80">Wallet Address</h2>
         <div className="flex justify-between items-center p-4 rounded-xl bg-black/10 border border-gray-500/40 text-sm md:text-base">
           <p className="text-gray-400 select-none">
-            {walletAddress.length > 0 ? `${walletAddress.slice(0, 8)}****${walletAddress.slice(-4)}` : walletAddress}
+            {safeWalletAddress ? `${safeWalletAddress.slice(0, 8)}****${safeWalletAddress.slice(-4)}` : ""}
           </p>
           <span className="text-xs text-gray-500">Read-only</span>
         </div>
       </motion.div>
-
-      {/* Balance info */}
-      {/* <motion.div {...fadeUp} className="space-y-3">
-        <h2 className="text-lg md:text-xl font-bold text-white/80">Balance in Wallet</h2>
-
-        <div className="flex flex-row items-center justify-between p-4 rounded-xl bg-black/10 border border-gray-500/40 gap-4 text-sm md:text-base">
-          <div className="flex-1 min-w-0">
-            <div className="flex flex-col">
-              <span className="text-gray-400">MYR</span>
-              <span className="text-white font-sm md:text-lg text whitespace-nowrap overflow-hidden text-ellipsis">
-                RM {balance.toFixed(2)}
-              </span>
-            </div>
-          </div>
-
-          <div className="w-px bg-gray-500/40 h-10 mx-2"></div>
-
-          <div className="flex-1 min-w-0 text-right">
-            <div className="flex flex-col items-end">
-              <span className="text-gray-400">Equivalent (USD)</span>
-              {loading ? (
-                <span className="text-gray-500 md:text-lg text">Loading...</span>
-              ) : (
-                <span className="text-white font-medium md:text-lg text whitespace-nowrap overflow-hidden text-ellipsis">
-                  ~ {convertedAmount}
-                </span>
-              )}
-            </div>
-          </div>
-        </div>
-      </motion.div> */}
 
       {/* Payment input */}
       <motion.div {...fadeUp} className="space-y-3">
