@@ -5,6 +5,7 @@
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
+import { useWeb3Auth, useWeb3AuthConnect, useWeb3AuthUser } from "@web3auth/modal/react";
 import { motion } from "motion/react";
 import type { NextPage } from "next";
 import { useAccount } from "wagmi";
@@ -22,7 +23,35 @@ import Island from "~~/components/ui/island";
 const Home: NextPage = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [fadeOut, setFadeOut] = useState(false);
-  const { isConnected } = useAccount();
+  const { isConnected: wagmiConnected } = useAccount();
+  const { isConnected: web3AuthConnected } = useWeb3AuthConnect();
+  const { userInfo } = useWeb3AuthUser();
+  const { provider } = useWeb3Auth();
+  const [web3AuthAddress, setWeb3AuthAddress] = useState<string | null>(null);
+
+  // Get address from Web3Auth provider
+  useEffect(() => {
+    const getWeb3AuthAddress = async () => {
+      if (web3AuthConnected && provider && userInfo) {
+        try {
+          const accounts = await provider.request({ method: "eth_accounts" });
+          if (accounts && accounts.length > 0) {
+            setWeb3AuthAddress(accounts[0]);
+          }
+        } catch (error) {
+          console.error("Failed to get Web3Auth address:", error);
+          setWeb3AuthAddress(null);
+        }
+      } else {
+        setWeb3AuthAddress(null);
+      }
+    };
+
+    getWeb3AuthAddress();
+  }, [web3AuthConnected, provider, userInfo]);
+
+  // Prioritize Web3Auth connection over wagmi
+  const isConnected = (web3AuthConnected && userInfo && web3AuthAddress) || wagmiConnected;
 
   const router = useRouter();
 
@@ -84,7 +113,11 @@ const Home: NextPage = () => {
           <div className="bg-black/70 backdrop-blur-sm rounded-lg p-4">
             <div className="flex items-center gap-3">
               <div className={`w-3 h-3 rounded-full ${isConnected ? "bg-green-500" : "bg-red-500"}`}></div>
-              <span className="text-white text-sm">{isConnected ? "Wallet Connected" : "Wallet Disconnected"}</span>
+              <span className="text-white text-sm">
+                {isConnected
+                  ? `Wallet Connected${userInfo?.name ? ` (${userInfo.name})` : ""}${web3AuthAddress ? ` - ${web3AuthAddress.slice(0, 6)}...${web3AuthAddress.slice(-4)}` : ""}`
+                  : "Wallet Disconnected"}
+              </span>
               <RainbowKitCustomConnectButton />
             </div>
           </div>
@@ -94,6 +127,7 @@ const Home: NextPage = () => {
           <InstallPrompt />
         </div>
 
+        {/* Rest of the component remains the same */}
         <div className="relative z-20 flex h-full px-12 gap-2 items-end pb-36">
           <div>
             <p className="text-[60px] text-white">Financing - Enhanced</p>
@@ -216,7 +250,7 @@ const Home: NextPage = () => {
       </div>
 
       <div className="flex items-start relative overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 h-[80%] bg-gradient-to-b from-black to-transparent z-20"></div>
+        <div className="absolute top-0 left-0 right-0 h-[80%] bg-gradient-to-b from-black to transparent z-20"></div>
         <p className="text-[280px] text-[#4d4d4d]">LyraStudios</p>
       </div>
     </>
