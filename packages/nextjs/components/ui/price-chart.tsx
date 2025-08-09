@@ -1,25 +1,21 @@
 import React from "react";
+import { useWalletData } from "../../hooks/useWalletData";
 import { useMediaQuery } from "react-responsive";
 import { Bar, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
-export const generateWalletData = () => {
-  const data = [];
-  let amount = 1000;
+const useWalletChartData = (accountId: string | undefined) => {
+  const { loading, data } = useWalletData(accountId);
 
-  for (let i = 0; i < 100; i++) {
-    const date = new Date(2024, 0, 1 + i);
-    amount += (Math.random() - 0.5) * 100;
-    data.push({
-      date: date.toISOString().split("T")[0],
-      amount: Math.round(amount * 100) / 100,
-    });
+  if (loading) {
+    return [];
   }
 
   return data;
 };
 
-const WalletBalanceChart = () => {
+const WalletBalanceChart = ({ accountId }: { accountId?: string }) => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
+  const chartData = useWalletChartData(accountId);
 
   return (
     <div
@@ -31,7 +27,7 @@ const WalletBalanceChart = () => {
       }}
     >
       <ResponsiveContainer width="100%" height="100%">
-        <ComposedChart data={generateWalletData()}>
+        <ComposedChart data={chartData}>
           <XAxis
             dataKey="date"
             tick={{
