@@ -2,7 +2,7 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 
 const client = new ApolloClient({
-  uri: "https://api.thegraph.com/subgraphs/name/<your-subgraph-name>",
+  uri: "https://api.studio.thegraph.com/query/117787/lyra/version/latest",
   cache: new InMemoryCache(),
 });
 
