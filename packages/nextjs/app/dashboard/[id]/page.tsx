@@ -5,7 +5,6 @@ import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { GET_TRANSFERS } from "../../../graphql/queries";
 import { useQuery } from "@apollo/client";
-import { useWeb3Auth } from "@web3auth/modal/react";
 import { ethers, formatUnits } from "ethers";
 import { motion } from "motion/react";
 import { NextPage } from "next";
@@ -44,21 +43,17 @@ const DashboardPage: NextPage = () => {
   const { id } = useParams();
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const accountId = useAccount().address;
-  const { provider, status } = useWeb3Auth();
+  const { address: wagmiAddress } = useAccount();
 
   // New state to hold fetched balance data
   const [amount, setAmount] = useState<number>(0); // Add amount to state
   const [hasFetchedBalance, setHasFetchedBalance] = useState<boolean>(false);
 
   useEffect(() => {
-    if (status === "connected") {
-      (async () => {
-        const ethersProvider = new ethers.BrowserProvider(provider as ethers.Eip1193Provider);
-        const signer = await ethersProvider.getSigner();
-        setAddress(await signer.getAddress());
-      })();
+    if (wagmiAddress) {
+      setAddress(wagmiAddress);
     }
-  }, [status, provider]);
+  }, [wagmiAddress]);
 
   useEffect(() => {
     const contractAddress = "0xc11bd7b043736423dbc2d70ae5a0f642f9959257";

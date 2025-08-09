@@ -164,10 +164,10 @@ export const IslandView: React.FC<IslandProps> = () => {
   });
 
   useEffect(() => {
-    console.log("is", isConnected);
-    console.log("gov", isOtcGovernment);
-    console.log("mer", isOtcMerchant);
-    console.log("adad", address);
+    // console.log("is", isConnected);
+    // console.log("gov", isOtcGovernment);
+    // console.log("mer", isOtcMerchant);
+    // console.log("adad", address);
     if (isConnected) {
       if (isOtcGovernment) {
         setId("124");
