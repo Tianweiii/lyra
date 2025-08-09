@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { NetworkOptions } from "./NetworkOptions";
+import { useWeb3AuthDisconnect } from "@web3auth/modal/react";
 import { getAddress } from "viem";
 import { Address } from "viem";
 import { useAccount, useDisconnect } from "wagmi";
@@ -34,7 +35,8 @@ export const AddressInfoDropdown = ({
   displayName,
   blockExplorerAddressLink,
 }: AddressInfoDropdownProps) => {
-  const { disconnect } = useDisconnect();
+  const { disconnect: wagmiDisconnect } = useDisconnect();
+  const { disconnect: web3AuthDisconnect } = useWeb3AuthDisconnect();
   const { connector } = useAccount();
   const checkSumAddress = getAddress(address);
 
@@ -46,6 +48,23 @@ export const AddressInfoDropdown = ({
   const closeDropdown = () => {
     setSelectingNetwork(false);
     dropdownRef.current?.removeAttribute("open");
+  };
+
+  // Handle both Web3Auth and wagmi disconnection
+  const handleDisconnect = async () => {
+    try {
+      // Disconnect Web3Auth first
+      await web3AuthDisconnect();
+    } catch (error) {
+      console.warn("Web3Auth disconnect failed:", error);
+    }
+
+    try {
+      // Then disconnect wagmi
+      wagmiDisconnect();
+    } catch (error) {
+      console.warn("Wagmi disconnect failed:", error);
+    }
   };
 
   useOutsideClick(dropdownRef, closeDropdown);
@@ -124,7 +143,7 @@ export const AddressInfoDropdown = ({
             <button
               className="menu-item text-error h-8 btn-sm rounded-xl! flex gap-3 py-3"
               type="button"
-              onClick={() => disconnect()}
+              onClick={handleDisconnect}
             >
               <ArrowLeftOnRectangleIcon className="h-6 w-4 ml-2 sm:ml-0" /> <span>Disconnect</span>
             </button>
