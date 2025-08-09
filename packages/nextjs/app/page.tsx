@@ -5,28 +5,59 @@
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
+import { useWeb3Auth, useWeb3AuthConnect, useWeb3AuthUser } from "@web3auth/modal/react";
 import { motion } from "motion/react";
 import type { NextPage } from "next";
 import { useAccount } from "wagmi";
 import { BoltIcon, ChartBarSquareIcon, CubeTransparentIcon } from "@heroicons/react/24/outline";
-import { InstallPrompt, PushNotificationManager } from "~~/components/PWAComponents";
-import { RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
-import BentoGrids from "~~/components/ui/bento-grids";
-import { CanvasRevealEffect } from "~~/components/ui/canvas-reveal";
-import { Card } from "~~/components/ui/card";
-import Carousel from "~~/components/ui/carousel";
-import CustomScrollContainer from "~~/components/ui/custom-scroll-container";
-import Gallery from "~~/components/ui/gallery";
-import Island from "~~/components/ui/island";
+import { InstallPrompt, PushNotificationManager } from "/components/PWAComponents";
+import { RainbowKitCustomConnectButton } from "/components/scaffold-eth";
+import BentoGrids from "/components/ui/bento-grids";
+import { CanvasRevealEffect } from "/components/ui/canvas-reveal";
+import { Card } from "/components/ui/card";
+import Carousel from "/components/ui/carousel";
+import CustomScrollContainer from "/components/ui/custom-scroll-container";
+import Gallery from "/components/ui/gallery";
+import Island from "/components/ui/island";
+import { clearUserData } from "/utils/helper";
 
 const Home: NextPage = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [fadeOut, setFadeOut] = useState(false);
-  const { isConnected } = useAccount();
+  const { isConnected: wagmiConnected } = useAccount();
+  const { isConnected: web3AuthConnected } = useWeb3AuthConnect();
+  const { userInfo } = useWeb3AuthUser();
+  const { provider } = useWeb3Auth();
+  const [web3AuthAddress, setWeb3AuthAddress] = useState<string | null>(null);
+
+  // Get address from Web3Auth provider
+  useEffect(() => {
+    const getWeb3AuthAddress = async () => {
+      if (web3AuthConnected && provider && userInfo) {
+        try {
+          const accounts: any = await provider.request({ method: "eth_accounts" });
+          if (accounts && accounts.length > 0) {
+            setWeb3AuthAddress(accounts[0]);
+          }
+        } catch (error) {
+          console.error("Failed to get Web3Auth address:", error);
+          setWeb3AuthAddress(null);
+        }
+      } else {
+        setWeb3AuthAddress(null);
+      }
+    };
+
+    getWeb3AuthAddress();
+  }, [web3AuthConnected, provider, userInfo]);
+
+  // Prioritize Web3Auth connection over wagmi
+  const isConnected = (web3AuthConnected && userInfo && web3AuthAddress) || wagmiConnected;
 
   const router = useRouter();
 
   useEffect(() => {
+    clearUserData();
     const video = videoRef.current;
     if (!video) return;
 
@@ -83,7 +114,7 @@ const Home: NextPage = () => {
         <div className="absolute top-4 right-4 z-30">
           <div className="bg-black/70 backdrop-blur-sm rounded-lg p-4">
             <div className="flex items-center gap-3">
-              <div className={`w-3 h-3 rounded-full ${isConnected ? "bg-green-500" : "bg-red-500"}`}></div>
+              <div className={w-3 h-3 rounded-full ${isConnected ? "bg-green-500" : "bg-red-500"}}></div>
               <span className="text-white text-sm">{isConnected ? "Wallet Connected" : "Wallet Disconnected"}</span>
               <RainbowKitCustomConnectButton />
             </div>
@@ -616,5 +647,5 @@ const Globe = () => {
     },
   ];
 
-  return <World data={sampleArcs} globeConfig={globeConfig} />;
+  return <World data={sampleArcs} globeConfig={globeConfig} />;
 };

@@ -187,7 +187,7 @@ export default function OtcStatusPage() {
                 </li>
                 <li>
                   Transfer LYRA tokens to the OTC contract address:{" "}
-                  <code className="bg-gray-100 px-1 rounded">0xB919D234f9081D8c0F20ee4219C4605BA883dc32</code>
+                  <code className="bg-gray-100 px-1 rounded">0x5265BCcc8aB5A36A45ABD2E574E6Fa7F863e5C2e</code>
                 </li>
                 <li>
                   Alternatively, the owner can use the <code>withdraw</code> function to add funds

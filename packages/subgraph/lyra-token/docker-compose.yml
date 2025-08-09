@@ -19,8 +19,12 @@ services:
       postgres_pass: let-me-in
       postgres_db: graph-node
       ipfs: "ipfs:5001"
-      ethereum: "mainnet:http://host.docker.internal:8545"
+      ethereum: "polygon:wss://polygon-rpc.com"
       GRAPH_LOG: info
+      GRAPH_ETHEREUM_BLOCK_RANGE_SIZE: 50
+      GRAPH_ETHEREUM_JSON_RPC_MAX_PARALLEL_REQUESTS: 64
+      GRAPH_ETHEREUM_POLLING_INTERVAL: 500
+      GRAPH_ALLOW_NON_FATAL_ERRORS: true
   ipfs:
     image: ipfs/kubo:v0.17.0
     ports:
@@ -35,7 +39,12 @@ services:
       [
         "postgres",
         "-cshared_preload_libraries=pg_stat_statements",
-        "-cmax_connections=200",
+        "-cmax_connections=500",
+        "-cwork_mem=128MB",
+        "-cmaintenance_work_mem=256MB",
+        "-ceffective_cache_size=4GB",
+        "-cwal_level=logical",
+        "-cmax_wal_size=2GB"
       ]
     environment:
       POSTGRES_USER: graph-node

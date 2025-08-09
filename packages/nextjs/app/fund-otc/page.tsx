@@ -14,7 +14,7 @@ export default function FundOtcPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   // OTC contract address
-  const OTC_ADDRESS = "0xB919D234f9081D8c0F20ee4219C4605BA883dc32";
+  const OTC_ADDRESS = "0x5265BCcc8aB5A36A45ABD2E574E6Fa7F863e5C2e";
 
   // Read balances
   const { data: userLyraBalance } = useScaffoldReadContract({

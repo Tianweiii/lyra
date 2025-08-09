@@ -1,129 +1,205 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { AnimatePresence, motion } from "framer-motion";
-import type { NextPage } from "next";
-import { sendPaymentNotification } from "~~/components/PWAComponents";
-import { CameraScanner } from "~~/components/payment/CameraScanner";
-import PaymentStatus from "~~/components/payment/PaymentStatus";
-import { ProgressBar } from "~~/components/payment/ProgressBar";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { formatUnits, parseUnits } from "viem";
+import { useAccount, useChainId, useSwitchChain } from "wagmi";
+import { RainbowKitCustomConnectButton } from "/components/scaffold-eth";
+import { Address } from "/components/scaffold-eth/Address/Address";
+import { EtherInput } from "/components/scaffold-eth/Input/EtherInput";
+import { useScaffoldReadContract } from "/hooks/scaffold-eth/useScaffoldReadContract";
+import { useScaffoldWriteContract } from "/hooks/scaffold-eth/useScaffoldWriteContract";
 
-// Import the notification helper
+export default function PaymentPage() {
+  const { address, isConnected } = useAccount();
+  const chainId = useChainId();
+  const { switchChain } = useSwitchChain();
+  const searchParams = useSearchParams();
 
-const UserScanPage: NextPage = () => {
-  const [step, setStep] = useState(1);
-  const [status, setStatus] = useState("");
-  const [amount, setAmount] = useState<number>(0);
-  const [paymentRef, setPaymentRef] = useState<string>("");
+  const [lyraAmount, setLyraAmount] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [merchantAddress, setMerchantAddress] = useState("");
 
-  const router = useRouter();
-  const steps = ["Scan QR", "Payment Status"];
+  // Check if connected to Polygon network (chain ID 137)
+  const isPolygonNetwork = chainId === 137;
 
-  const handleScanSuccess = async (qrData: string) => {
-    // TODO: Simulate verifying QR content and extract merchant info
-    const isValid = qrData.includes("ai"); // TODO: real validation
-    console.log(qrData);
-    console.log(isValid);
+  // Get URL parameters
+  useEffect(() => {
+    const merchant = searchParams.get("merchant");
+    const amount = searchParams.get("amount");
 
-    const amountExtracted = 25; // Extract or calculate from QR
-    const ref = "0xPAYREF123456";
-    const paymentStatus = isValid ? "success" : "failed";
-
-    // TODO: Extract merchant notification endpoint from QR data or get from context
-    const merchantEndpoint = "merchant-subscription-endpoint-from-qr";
-
-    setStatus(paymentStatus);
-    setAmount(amountExtracted);
-    setPaymentRef(ref);
-
-    // Send notification to merchant when payment is successful
-    if (paymentStatus === "success") {
-      try {
-        console.log("Sending payment notification to merchant...");
-        const notificationResult = await sendPaymentNotification(merchantEndpoint, amountExtracted, ref);
-
-        if (notificationResult.success) {
-          console.log("Payment notification sent successfully");
-        } else {
-          console.error("Failed to send payment notification:", notificationResult.error);
-        }
-      } catch (error) {
-        console.error("Error sending payment notification:", error);
-      }
+    if (merchant) {
+      setMerchantAddress(merchant);
     }
+    if (amount) {
+      setLyraAmount(amount);
+    }
+  }, [searchParams]);
 
-    setStep(2);
+  // Read contract data
+  const { data: lyraBalance } = useScaffoldReadContract({
+    contractName: "LyraToken",
+    functionName: "balanceOf",
+    args: [address],
+  });
+
+  const { data: isMerchant } = useScaffoldReadContract({
+    contractName: "LyraToken",
+    functionName: "isMerchant",
+    args: [merchantAddress],
+  });
+
+  // Write contract functions
+  const { writeContractAsync: writeLyraToken } = useScaffoldWriteContract("LyraToken");
+
+  const handleSwitchToPolygon = async () => {
+    try {
+      await switchChain({ chainId: 137 });
+    } catch (error) {
+      console.error("Failed to switch to Polygon:", error);
+    }
   };
 
-  return (
-    <div className="p-10 text-white">
-      <div className="relative flex items-center justify-between px-5">
-        {/* Back Button */}
-        <motion.button
-          onClick={() => router.push("/dashboard/123")} // TODO: Route back based on the role
-          whileHover={{ x: -4 }}
-          className="flex items-center gap-2 text-white hover:text-gray-300 transition-colors border p-2 rounded-xl cursor-pointer"
-        >
-          <motion.svg
-            className="w-4 h-4 md:w-5 md:h-5"
-            initial={{ x: 0 }}
-            animate={{ x: 0 }}
-            whileHover={{ x: -4 }}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+  const handlePayment = async () => {
+    if (!lyraAmount || !merchantAddress) return;
+
+    try {
+      setIsLoading(true);
+      const lyraAmountWei = parseUnits(lyraAmount, 18);
+
+      await writeLyraToken({
+        functionName: "transfer",
+        args: [merchantAddress, lyraAmountWei],
+      });
+
+      setLyraAmount("");
+      alert("Payment successful!");
+    } catch (error) {
+      console.error("Error making payment:", error);
+      alert("Payment failed. Please check your balance and try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const isMerchantValid = isMerchant === true;
+
+  if (!isConnected) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center space-y-4">
+          <div className="flex justify-center">
+            <RainbowKitCustomConnectButton />
+          </div>
+          <h1 className="text-2xl font-bold mb-4">Payment Portal</h1>
+          <p className="text-gray-600">Please connect your wallet to make a payment.</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isPolygonNetwork) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center space-y-4">
+          <div className="flex justify-center">
+            <RainbowKitCustomConnectButton />
+          </div>
+          <h1 className="text-2xl font-bold mb-4">Wrong Network</h1>
+          <p className="text-gray-600 mb-4">Please switch to Polygon network to make payments.</p>
+          <button
+            onClick={handleSwitchToPolygon}
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-          </motion.svg>
-        </motion.button>
-
-        {/* Title and Description (centered) */}
-        <div className="absolute left-0 right-0 mx-auto text-center w-fit">
-          <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}>
-            <h1 className="text-4xl font-bold">Pay by QR</h1>
-            <p className="text-gray-400 text-sm">Position your camera over the QR code</p>
-          </motion.div>
+            Switch to Polygon
+          </button>
         </div>
       </div>
+    );
+  }
 
-      <div className="mt-10 flex flex-col items-center p-4 gap-y-6">
-        <div className="w-full max-w-screen">
-          <ProgressBar currentStep={step} steps={steps} />
-        </div>
-
-        <div className="w-full max-w-screen flex justify-center items-center p-6">
-          <AnimatePresence mode="wait">
-            {step === 1 && (
-              <motion.div
-                key="scan"
-                initial={{ x: -100, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                exit={{ x: 100, opacity: 0 }}
-                transition={{ duration: 0.5 }}
-                className="w-full"
-              >
-                <CameraScanner onScanSuccess={handleScanSuccess} />
-              </motion.div>
-            )}
-
-            {step === 2 && (
-              <motion.div
-                key="status"
-                initial={{ x: 100, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                exit={{ x: -100, opacity: 0 }}
-                transition={{ duration: 0.5 }}
-                className="w-full"
-              >
-                <PaymentStatus status={status} amount={amount} paymentRef={paymentRef} onTry={() => setStep(1)} />
-              </motion.div>
-            )}
-          </AnimatePresence>
+  if (!merchantAddress) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center space-y-4">
+          <div className="flex justify-center">
+            <RainbowKitCustomConnectButton />
+          </div>
+          <h1 className="text-2xl font-bold mb-4">Invalid Payment Link</h1>
+          <p className="text-gray-600">No merchant address provided in the payment link.</p>
         </div>
       </div>
-    </div>
-  );
-};
+    );
+  }
 
-export default UserScanPage;
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <div className="max-w-2xl mx-auto">
+        <div className="flex justify-end mb-4">
+          <RainbowKitCustomConnectButton />
+        </div>
+        <h1 className="text-3xl font-bold mb-8 text-center">Payment Portal</h1>
+
+        {/* Network Status */}
+        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded">
+          <p className="text-green-800 text-sm">✅ Connected to Polygon Network (Chain ID: {chainId})</p>
+        </div>
+
+        <div className=" rounded-lg shadow-lg p-6 mb-6">
+          <h2 className="text-xl font-semibold mb-4">Pay with LYRA</h2>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-2">Merchant Address:</label>
+            <Address address={merchantAddress} />
+            {!isMerchantValid && (
+              <p className="text-red-600 text-sm mt-1">Warning: This address is not registered as a merchant.</p>
+            )}
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-2">Your LYRA Balance:</label>
+            <p className="text-lg font-semibold">{lyraBalance ? formatUnits(lyraBalance, 18) : "Loading..."} LYRA</p>
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-2">LYRA Amount to Send:</label>
+            <EtherInput value={lyraAmount} onChange={setLyraAmount} placeholder="Enter LYRA amount" />
+          </div>
+
+          {lyraAmount && lyraBalance && (
+            <div className="mb-6 p-4  rounded">
+              <p className="text-sm text-gray-600">Payment Summary:</p>
+              <p className="text-lg font-semibold">{lyraAmount} LYRA</p>
+              {parseFloat(lyraAmount) > parseFloat(formatUnits(lyraBalance, 18)) && (
+                <p className="text-red-600 text-sm mt-1">Insufficient balance!</p>
+              )}
+            </div>
+          )}
+
+          <button
+            onClick={handlePayment}
+            disabled={
+              isLoading ||
+              !lyraAmount ||
+              !isMerchantValid ||
+              (lyraBalance && parseFloat(lyraAmount) > parseFloat(formatUnits(lyraBalance, 18)))
+            }
+            className="w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          >
+            {isLoading ? "Processing..." : "Send Payment"}
+          </button>
+        </div>
+
+        <div className=" rounded-lg shadow-lg p-6">
+          <h2 className="text-xl font-semibold mb-4">Payment Information</h2>
+          <div className="space-y-2 text-sm text-gray-600">
+            <p>• LYRA tokens can only be sent to registered merchants</p>
+            <p>• Transactions are tracked and transparent</p>
+            <p>• No fees for LYRA transfers between residents and merchants</p>
+            <p>• Make sure you have sufficient LYRA balance before making payment</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
