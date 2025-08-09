@@ -15,6 +15,23 @@ export const GET_TRANSFERS = gql`
   }
 `;
 
+export const GET_TRANSFERS_LAST_30_DAYS = gql`
+  query GetTransfersLast30Days($accountId: Bytes!, $fromTimestamp: BigInt!) {
+    transfers(
+      first: 1000
+      orderBy: blockTimestamp
+      orderDirection: desc
+      where: { from: $accountId, blockTimestamp_gte: $fromTimestamp }
+    ) {
+      id
+      from
+      to
+      value
+      blockTimestamp
+    }
+  }
+`;
+
 export const GET_ACCOUNTS = gql`
   query GetAccounts($accountId: Bytes!) {
     accounts(where: { id: $accountId }) {

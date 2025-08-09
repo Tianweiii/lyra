@@ -66,7 +66,6 @@ const DashboardPage: NextPage = () => {
     variables: {
       accountId: address || "",
     },
-    fetchPolicy: "cache-and-network",
   });
 
   const balance = accountData?.accounts[0]?.balance || 0;
@@ -105,7 +104,6 @@ const DashboardPage: NextPage = () => {
     data: transferData,
   } = useQuery(GET_TRANSFERS, {
     variables: { accountId: accountId?.toString() || "" },
-    fetchPolicy: "cache-and-network",
   });
 
   if (transferLoading)
@@ -367,7 +365,7 @@ const DashboardPage: NextPage = () => {
               {coinAmount} {coinType}s &middot; {currencyType}
             </p>
           </div>
-          <PriceChart />
+          <PriceChart accountId={accountId} />
         </div>
         {/* box 2 */}
         <div className="flex-1 lg:flex-2 flex flex-col gap-2">
