@@ -1,5 +1,6 @@
 import { Montserrat } from "next/font/google";
 import "@rainbow-me/rainbowkit/styles.css";
+import ApolloProviderWrapper from "~~/components/ApolloProviderWrapper";
 import { ScaffoldEthAppWithProviders } from "~~/components/ScaffoldEthAppWithProviders";
 import { ThemeProvider } from "~~/components/ThemeProvider";
 import "~~/styles/globals.css";
@@ -17,14 +18,18 @@ export const metadata = getMetadata({
   description: "Built with 🏗 Scaffold-ETH 2",
 });
 
-const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => (
-  <html suppressHydrationWarning className={montserrat.className}>
-    <body style={{ backgroundColor: "black" }}>
-      <ThemeProvider enableSystem>
-        <ScaffoldEthAppWithProviders>{children}</ScaffoldEthAppWithProviders>
-      </ThemeProvider>
-    </body>
-  </html>
-);
+const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <html suppressHydrationWarning className={montserrat.className}>
+      <body style={{ backgroundColor: "black" }}>
+        <ThemeProvider enableSystem>
+          <ScaffoldEthAppWithProviders>
+            <ApolloProviderWrapper>{children}</ApolloProviderWrapper>
+          </ScaffoldEthAppWithProviders>
+        </ThemeProvider>
+      </body>
+    </html>
+  );
+};
 
 export default ScaffoldEthApp;

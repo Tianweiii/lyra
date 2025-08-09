@@ -1,3 +1,4 @@
+// import { wagmiConnectors } from "./wagmiConnectors";
 import { wagmiConnectors } from "./wagmiConnectors";
 import { Chain, createClient, fallback, http } from "viem";
 import { hardhat, mainnet } from "viem/chains";

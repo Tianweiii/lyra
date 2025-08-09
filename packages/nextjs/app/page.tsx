@@ -5,26 +5,23 @@
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { Stack } from "@mui/material";
-// import { useAccount } from "wagmi";
-// import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-// import { Address } from "~~/components/scaffold-eth";
 import { motion } from "motion/react";
 import type { NextPage } from "next";
+import { useAccount } from "wagmi";
 import { BoltIcon, ChartBarSquareIcon, CubeTransparentIcon } from "@heroicons/react/24/outline";
+import { RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import BentoGrids from "~~/components/ui/bento-grids";
-// import { AuroraBackground } from "~~/components/ui/aurora-background";
 import { CanvasRevealEffect } from "~~/components/ui/canvas-reveal";
 import { Card } from "~~/components/ui/card";
 import Carousel from "~~/components/ui/carousel";
 import CustomScrollContainer from "~~/components/ui/custom-scroll-container";
 import Gallery from "~~/components/ui/gallery";
 import Island from "~~/components/ui/island";
-import { LampContainer } from "~~/components/ui/lamp";
 
 const Home: NextPage = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [fadeOut, setFadeOut] = useState(false);
+  const { isConnected } = useAccount();
 
   const router = useRouter();
 
@@ -72,19 +69,31 @@ const Home: NextPage = () => {
           loop={false}
           muted
           playsInline
-          className={`absolute top-0 left-0 w-full h-full object-cover z-0 transition-opacity duration-1000 ${fadeOut ? "opacity-0" : "opacity-100"
-            }`}
+          className={`absolute top-0 left-0 w-full h-full object-cover z-0 transition-opacity duration-1000 ${
+            fadeOut ? "opacity-0" : "opacity-100"
+          }`}
         >
           <source src="/videos/bgvideo.mp4" type="video/mp4" />
         </video>
 
         <div className="absolute inset-0 bg-black/40 z-0" />
 
+        {/* Wallet Connection Status */}
+        <div className="absolute top-4 right-4 z-30">
+          <div className="bg-black/70 backdrop-blur-sm rounded-lg p-4">
+            <div className="flex items-center gap-3">
+              <div className={`w-3 h-3 rounded-full ${isConnected ? "bg-green-500" : "bg-red-500"}`}></div>
+              <span className="text-white text-sm">{isConnected ? "Wallet Connected" : "Wallet Disconnected"}</span>
+              <RainbowKitCustomConnectButton />
+            </div>
+          </div>
+        </div>
+
         <div className="relative z-20 flex h-full px-12 gap-2 items-end pb-36">
           <div>
             <p className="text-[60px] text-white">Financing - Enhanced</p>
             <p className="text-[24px] max-w-[40vw] text-white">
-              Lorem ipsum dolor sit amet, <br /> consectetur adipisicing elit. Placeat explicabo soluta quaerat.
+              One platform for public aid and private rewards—secure, transparent, unstoppable.
             </p>
           </div>
         </div>
@@ -102,83 +111,75 @@ const Home: NextPage = () => {
       {/* carousel */}
       <Carousel />
 
-      <LampContainer className="px-[200px]">
-        <Stack className="w-screen px-[200px]" flexDirection={"row"} justifyContent={"space-between"}>
-          <motion.div
-            className="w-full"
-            initial={{
-              opacity: 0,
-              y: 30,
-            }}
-            whileInView={{
-              opacity: 1,
-              y: 0,
-            }}
-            transition={{
-              duration: 0.5,
-              delay: 0.3,
-            }}
-            viewport={{ once: true }}
-          >
-            <Card title="Some stuff here" icon={<BoltIcon />}>
-              <CanvasRevealEffect animationSpeed={5.1} containerClassName="bg-emerald-900" />
-            </Card>
-          </motion.div>
+      <div className="flex md:flex-row flex-col gap-10 justify-center my-[500px]">
+        <motion.div
+          initial={{
+            opacity: 0,
+            y: 30,
+          }}
+          whileInView={{
+            opacity: 1,
+            y: 0,
+          }}
+          transition={{
+            duration: 0.3,
+            delay: 0.3,
+          }}
+        >
+          <Card title="Fast and reliable" icon={<BoltIcon />}>
+            <CanvasRevealEffect animationSpeed={5.1} containerClassName="bg-emerald-900" />
+          </Card>
+        </motion.div>
 
-          <motion.div
-            className="w-full"
-            initial={{
-              opacity: 0,
-              y: 30,
-            }}
-            whileInView={{
-              opacity: 1,
-              y: 0,
-            }}
-            transition={{
-              duration: 0.5,
-              delay: 0.6,
-            }}
-            viewport={{ once: true }}
-          >
-            <Card title="More stuff here" icon={<CubeTransparentIcon />}>
-              <CanvasRevealEffect
-                animationSpeed={3}
-                containerClassName="bg-pink-300"
-                colors={[
-                  [236, 72, 153],
-                  [232, 121, 249],
-                ]}
-              />
-              <div className="absolute inset-0 [mask-image:radial-gradient(400px_at_center,white,transparent)] bg-black/50 dark:bg-black/90" />
-            </Card>
-          </motion.div>
+        <motion.div
+          initial={{
+            opacity: 0,
+            y: 30,
+          }}
+          whileInView={{
+            opacity: 1,
+            y: 0,
+          }}
+          transition={{
+            duration: 0.3,
+            delay: 0.6,
+          }}
+        >
+          <Card title="Private and secure" icon={<CubeTransparentIcon />}>
+            <CanvasRevealEffect
+              animationSpeed={3}
+              containerClassName="bg-pink-300"
+              colors={[
+                [236, 72, 153],
+                [232, 121, 249],
+              ]}
+            />
+            <div className="absolute inset-0 [mask-image:radial-gradient(400px_at_center,white,transparent)] bg-black/50 dark:bg-black/90" />
+          </Card>
+        </motion.div>
 
-          <motion.div
-            className="w-full"
-            initial={{
-              opacity: 0,
-              y: 30,
-            }}
-            whileInView={{
-              opacity: 1,
-              y: 0,
-            }}
-            transition={{
-              duration: 0.5,
-              delay: 0.9,
-            }}
-            viewport={{ once: true }}
-          >
-            <Card title="I dont know at this point" icon={<ChartBarSquareIcon />}>
-              <CanvasRevealEffect animationSpeed={3} containerClassName="bg-sky-600" colors={[[125, 211, 252]]} />
-            </Card>
-          </motion.div>
-        </Stack>
-        {/* <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-black z-20"></div> */}
-      </LampContainer>
+        <motion.div
+          initial={{
+            opacity: 0,
+            y: 30,
+          }}
+          whileInView={{
+            opacity: 1,
+            y: 0,
+          }}
+          transition={{
+            duration: 0.3,
+            delay: 0.9,
+          }}
+        >
+          <Card title="I dont know at this point" icon={<ChartBarSquareIcon />}>
+            <CanvasRevealEffect animationSpeed={3} containerClassName="bg-sky-600" colors={[[125, 211, 252]]} />
+          </Card>
+        </motion.div>
+      </div>
+      {/* <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-black z-20"></div> */}
 
-      <div className="flex flex-row items-center justify-center pb-20 h-screen md:h-auto dark:bg-black bg-white relative w-full mb-[100px]">
+      <div className="flex flex-row items-center justify-center pb-20 h-screen md:h-auto dark:bg-black bg-white relative w-full mb-[100px] mt-20">
         <div className="max-w-7xl mx-auto w-full relative overflow-hidden h-full md:h-[40rem] px-4">
           <motion.div
             initial={{
@@ -192,12 +193,12 @@ const Home: NextPage = () => {
             transition={{
               duration: 1,
             }}
-            className="div"
+            className="div w-full flex flex-col items-center"
           >
             <h2 className="text-center text-xl md:text-4xl font-bold text-black dark:text-white">
               Seamlessly transfer assets across the globe
             </h2>
-            <p className="text-center text-base md:text-lg font-normal text-neutral-700 dark:text-neutral-200 max-w-md mt-2 mx-auto">
+            <p className="text-center text-base md:text-lg font-normal text-neutral-700 dark:text-neutral-200 max-w-md mt-2 mx-auto w-screen">
               Experience the future of global finance with our innovative platform, enabling fast and secure asset
               transfers across continents.
             </p>
@@ -209,7 +210,10 @@ const Home: NextPage = () => {
         </div>
       </div>
 
-      <div className="h-96 border-1">footer</div>
+      <div className="flex items-start relative overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-[80%] bg-gradient-to-b from-black to-transparent z-20"></div>
+        <p className="text-[280px] text-[#4d4d4d]">LyraStudios</p>
+      </div>
     </>
   );
 };

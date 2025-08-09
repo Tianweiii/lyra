@@ -5,37 +5,16 @@ import { motion } from "framer-motion";
 
 interface PromptPaymentProps {
   walletAddress: string;
-  balance: number;
   onNext: (value: number) => void;
 }
 
-export const PromptPayment = ({ walletAddress, balance, onNext }: PromptPaymentProps) => {
+export const PromptPayment = ({ walletAddress, onNext }: PromptPaymentProps) => {
   const [value, setValue] = useState<number | undefined>();
-  const [rate, setRate] = useState<number | undefined>();
-  const [loading, setLoading] = useState(true);
   const [validationError, setValidationError] = useState("");
   const [touched, setTouched] = useState(false);
-
-  useEffect(() => {
-    const fetchRate = async () => {
-      try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_EXCHANGE_RATE_API}/USDT`);
-        const data = await response.json();
-        setRate(data.rates.MYR); // USDT to MYR rate
-      } catch (error) {
-        console.error("Error fetching rates:", error);
-        setRate(4.68); // Fallback rate
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchRate();
-  }, []);
-
-  const convertedAmount = rate ? (balance / rate).toFixed(2) : "--";
   const isValid = touched && value !== undefined && !validationError;
 
+  console.log(walletAddress);
   useEffect(() => {
     if (!touched) return;
 
@@ -43,12 +22,14 @@ export const PromptPayment = ({ walletAddress, balance, onNext }: PromptPaymentP
       setValidationError("Please enter a valid number.");
     } else if (value <= 0) {
       setValidationError("Amount must be greater than 0.");
-    } else if (value > balance) {
-      setValidationError("Amount exceeds wallet balance.");
-    } else {
+    }
+    // else if (value > balance) {
+    //   setValidationError("Amount exceeds wallet balance.");
+    // }
+    else {
       setValidationError("");
     }
-  }, [value, balance, touched]);
+  }, [value, touched]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const num = Number(e.target.value);
@@ -86,7 +67,7 @@ export const PromptPayment = ({ walletAddress, balance, onNext }: PromptPaymentP
       </motion.div>
 
       {/* Balance info */}
-      <motion.div {...fadeUp} className="space-y-3">
+      {/* <motion.div {...fadeUp} className="space-y-3">
         <h2 className="text-lg md:text-xl font-bold text-white/80">Balance in Wallet</h2>
 
         <div className="flex flex-row items-center justify-between p-4 rounded-xl bg-black/10 border border-gray-500/40 gap-4 text-sm md:text-base">
@@ -114,14 +95,14 @@ export const PromptPayment = ({ walletAddress, balance, onNext }: PromptPaymentP
             </div>
           </div>
         </div>
-      </motion.div>
+      </motion.div> */}
 
       {/* Payment input */}
       <motion.div {...fadeUp} className="space-y-3">
         <h2 className="text-lg md:text-xl font-bold text-white">Enter Payment Amount (MYR)</h2>
         <input
           type="number"
-          className={`w-full p-3 text-base rounded-lg bg-white/5 backdrop-blur-md border focus:outline-none focus:ring-2 placeholder:text-gray-400 text-white shadow-md $ ${
+          className={`w-full p-3 text-base rounded-lg bg-white/5 backdrop-blur-md border focus:outline-none focus:ring-2 placeholder:text-gray-400 text-white shadow-md border-blue-400 focus:ring-blue-500 ${
             !touched
               ? "border-blue-400 focus:ring-blue-500"
               : isValid
@@ -142,10 +123,10 @@ export const PromptPayment = ({ walletAddress, balance, onNext }: PromptPaymentP
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
           onClick={() => onNext(Number(value))}
-          disabled={!value || isNaN(value) || value <= 0 || value > balance}
+          disabled={!value || isNaN(value) || value <= 0}
           //
           className={`w-full py-2 md:py-4 rounded-xl font-semibold transition-all duration-300 ${
-            value && value > 0 && value <= balance
+            value && value > 0
               ? "bg-blue-600 hover:bg-blue-700 cursor-pointer text-white"
               : "bg-gray-600 cursor-not-allowed text-gray-300"
           }`}

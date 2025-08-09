@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { NextPage } from "next";
 import { EnvelopeIcon, LifebuoyIcon, PhoneIcon } from "@heroicons/react/24/outline";
+import Island from "~~/components/ui/island";
 
 const SupportPage: NextPage = () => {
   const fadeIn = {
@@ -42,11 +43,12 @@ const SupportPage: NextPage = () => {
 
   return (
     <motion.div
-      className="min-h-screen bg-[#111] text-white py-12 px-4 sm:px-6 lg:px-8"
+      className="min-h-screen bg-[#111] text-white py-16 px-4 sm:px-6 lg:px-8"
       initial="initial"
       animate="animate"
       variants={fadeIn}
     >
+      <Island />
       <div className="max-w-4xl mx-auto">
         <motion.div variants={item} className="flex flex-col items-center text-center mb-16">
           <LifebuoyIcon className="h-16 w-16 mx-auto text-blue-500 mb-4" />
@@ -60,10 +62,10 @@ const SupportPage: NextPage = () => {
           {/* Contact Us */}
           <motion.div
             variants={item}
-            className="bg-[#222] rounded-xl p-8 border border-zinc-700 hover:border-blue-500 transition-all"
+            className="bg-[#222] rounded-xl p-8 border border-zinc-700 hover:border-blue-500 transition-all flex flex-col justify-between items-start"
             whileHover={{ y: -5 }}
           >
-            <div className="flex items-center mb-6">
+            <div className="flex items-center mb-6 justify-center">
               <div className="bg-blue-500/20 p-3 rounded-full mr-4">
                 <EnvelopeIcon className="h-8 w-8 text-blue-500" />
               </div>
@@ -81,10 +83,10 @@ const SupportPage: NextPage = () => {
           {/* Live Support */}
           <motion.div
             variants={item}
-            className="bg-[#222] rounded-xl p-8 border border-zinc-700 hover:border-green-500 transition-all"
+            className="bg-[#222] rounded-xl p-8 border border-zinc-700 hover:border-green-500 transition-all flex flex-col justify-between items-start"
             whileHover={{ y: -5 }}
           >
-            <div className="flex items-center mb-6">
+            <div className="flex items-center mb-6 justify-center">
               <div className="bg-green-500/20 p-3 rounded-full mr-4">
                 <PhoneIcon className="h-8 w-8 text-green-500" />
               </div>

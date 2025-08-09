@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import DottedMap from "dotted-map";
 import { motion } from "motion/react";
@@ -28,7 +28,7 @@ export function WorldMap({ dots = [], lineColor = "#0ea5e9" }: MapProps) {
   // Intersection Observer to detect when component is in view
   useEffect(() => {
     const observer = new IntersectionObserver(
-      (entries) => {
+      entries => {
         const entry = entries[0];
         if (entry.isIntersecting) {
           setIsInView(true);
@@ -39,7 +39,7 @@ export function WorldMap({ dots = [], lineColor = "#0ea5e9" }: MapProps) {
       {
         threshold: 0.3, // Trigger when 30% of the component is visible
         rootMargin: "0px 0px -100px 0px", // Start animation 100px before it comes into view
-      }
+      },
     );
 
     if (containerRef.current) {
@@ -90,10 +90,7 @@ export function WorldMap({ dots = [], lineColor = "#0ea5e9" }: MapProps) {
   };
 
   return (
-    <div
-      ref={containerRef}
-      className="w-full aspect-[2/1] bg-black rounded-lg relative font-sans"
-    >
+    <div ref={containerRef} className="w-full aspect-[2/1] bg-black rounded-lg relative font-sans">
       <Image
         src={`data:image/svg+xml;utf8,${encodeURIComponent(svgMap)}`}
         className="h-full w-full [mask-image:linear-gradient(to_bottom,transparent,white_10%,white_90%,transparent)] pointer-events-none select-none"
@@ -120,11 +117,15 @@ export function WorldMap({ dots = [], lineColor = "#0ea5e9" }: MapProps) {
                 initial={{
                   pathLength: 0,
                 }}
-                animate={isInView ? {
-                  pathLength: 1,
-                } : {
-                  pathLength: 0,
-                }}
+                animate={
+                  isInView
+                    ? {
+                        pathLength: 1,
+                      }
+                    : {
+                        pathLength: 0,
+                      }
+                }
                 transition={{
                   duration: 1.2,
                   delay: isInView ? 0.3 * i : 0,
@@ -172,22 +173,8 @@ export function WorldMap({ dots = [], lineColor = "#0ea5e9" }: MapProps) {
                   opacity="0.4"
                   key={`start-pulse-${animationKey}-${i}`}
                 >
-                  <animate
-                    attributeName="r"
-                    from="3"
-                    to="12"
-                    dur="2s"
-                    begin="0s"
-                    repeatCount="indefinite"
-                  />
-                  <animate
-                    attributeName="opacity"
-                    from="0.4"
-                    to="0"
-                    dur="2s"
-                    begin="0s"
-                    repeatCount="indefinite"
-                  />
+                  <animate attributeName="r" from="3" to="12" dur="2s" begin="0s" repeatCount="indefinite" />
+                  <animate attributeName="opacity" from="0.4" to="0" dur="2s" begin="0s" repeatCount="indefinite" />
                 </circle>
               )}
             </g>
@@ -208,22 +195,8 @@ export function WorldMap({ dots = [], lineColor = "#0ea5e9" }: MapProps) {
                   opacity="0.4"
                   key={`end-pulse-${animationKey}-${i}`}
                 >
-                  <animate
-                    attributeName="r"
-                    from="3"
-                    to="12"
-                    dur="2s"
-                    begin="0s"
-                    repeatCount="indefinite"
-                  />
-                  <animate
-                    attributeName="opacity"
-                    from="0.4"
-                    to="0"
-                    dur="2s"
-                    begin="0s"
-                    repeatCount="indefinite"
-                  />
+                  <animate attributeName="r" from="3" to="12" dur="2s" begin="0s" repeatCount="indefinite" />
+                  <animate attributeName="opacity" from="0.4" to="0" dur="2s" begin="0s" repeatCount="indefinite" />
                 </circle>
               )}
             </g>
