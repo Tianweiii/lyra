@@ -20,18 +20,14 @@ interface showQRCodeProps {
 
 export default function ShowQRCode({ amount, walletAddress, onPaid, onBack }: showQRCodeProps) {
   // Use merchantAddress instead of walletAddress to match user page expectations
-  // Include merchant's push notification endpoint for payment notifications
   const paymentData = JSON.stringify({
     amount,
     merchantAddress: walletAddress,
-    // TODO: Get merchant's push notification endpoint from database or context
-    // For now, we'll use a placeholder that can be replaced with actual endpoint
-    merchantEndpoint: ${walletAddress.toLowerCase()}, // Use wallet address as endpoint identifier
   });
   const encoded = btoa(paymentData);
   const baseURL = typeof window !== "undefined" ? window.location.origin : "";
   // Point to the user payment page
-  const qrURL = ${baseURL}/payment/user?data=${encoded};
+  const qrURL = `${baseURL}/payment/user?data=${encoded}`;
 
   // console for debug
   console.log("Generated QR Data:", paymentData);
@@ -87,5 +83,5 @@ export default function ShowQRCode({ amount, walletAddress, onPaid, onBack }: sh
         </button>
       </motion.div>
     </motion.div>
-  );
+  );
 }
