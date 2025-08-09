@@ -9,13 +9,10 @@ import { BackgroundGradient } from "~~/components/ui/neon-div";
 const LoginPage = () => {
   const router = useRouter();
   const { connect, isConnected, loading: connectLoading, error: connectError } = useWeb3AuthConnect();
-  // const { disconnect, loading: disconnectLoading, error: disconnectError } = useWeb3AuthDisconnect();
-  // const { userInfo } = useWeb3AuthUser();
-  // const { address, connector } = useAccount();
 
   useEffect(() => {
     if (isConnected) {
-      router.push("/"); // Redirect to home page after login
+      router.push("/");
     }
   }, [isConnected, router]);
 
@@ -56,13 +53,6 @@ const LoginPage = () => {
               <div>
                 <p className="text-neon-blue font-bold text-[25px] leading-tight">Digital Payments</p>
               </div>
-            </div>
-
-            {/* Description */}
-            <div className="text-muted-foreground leading-relaxed text-[15px] text-[#C6C6C6] mb-6">
-              Lyra is a smart platform for governments and organizations to send USDC to users, who can spend it via QR
-              payments. With currency conversion, secure smart contracts, and merchant vouchers, Lyra simplifies digital
-              disbursements.
             </div>
 
             {/* Web3Auth Login Button */}

@@ -96,7 +96,7 @@ export const Header = () => {
       </div>
       <div className="navbar-end grow mr-4">
         <RainbowKitCustomConnectButton />
-        {isLocalNetwork && <FaucetButton />}gi
+        {isLocalNetwork && <FaucetButton />}
       </div>
     </div>
   );
