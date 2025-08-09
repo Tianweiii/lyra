@@ -20,6 +20,12 @@ interface showQRCodeProps {
 
 export default function ShowQRCode({ amount, walletAddress, onPaid, onBack }: showQRCodeProps) {
   const paymentData = JSON.stringify({ amount, walletAddress });
+  const encoded = btoa(paymentData);
+  const baseURL = typeof window !== "undefined" ? window.location.origin : "";
+  const qrURL = `${baseURL}/pay?data=${encoded}`;
+  // const baseURL = window.location.origin;
+  // const encondedData = encodeURIComponent(paymentData);
+  // const qrURL = `${baseURL}?data=${encondedData}`;
 
   // TODO: Simulate scan + success
   const simulateScan = () => {
@@ -55,11 +61,11 @@ export default function ShowQRCode({ amount, walletAddress, onPaid, onBack }: sh
 
       <motion.div className="flex justify-center py-4">
         {React.createElement(QRCodeComponent as any, {
-          value: paymentData,
+          value: qrURL,
           size: 200,
           bgColor: "#000",
           fgColor: "#ffffff",
-          level: "H",
+          level: "M",
         })}
         {/* <QRCode value={paymentData} size={200} bgColor="#000" fgColor="#ffffff" level="H" /> */}
       </motion.div>

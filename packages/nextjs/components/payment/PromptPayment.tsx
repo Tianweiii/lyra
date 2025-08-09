@@ -14,6 +14,8 @@ export const PromptPayment = ({ walletAddress, onNext }: PromptPaymentProps) => 
   const [touched, setTouched] = useState(false);
   const isValid = touched && value !== undefined && !validationError;
 
+
+  console.log(walletAddress)
   useEffect(() => {
     if (!touched) return;
 
@@ -59,6 +61,7 @@ export const PromptPayment = ({ walletAddress, onNext }: PromptPaymentProps) => 
         <h2 className="text-lg md:text-xl font-bold text-white/80">Wallet Address</h2>
         <div className="flex justify-between items-center p-4 rounded-xl bg-black/10 border border-gray-500/40 text-sm md:text-base">
           <p className="text-gray-400 select-none">
+            
             {walletAddress.length > 0 ? `${walletAddress.slice(0, 8)}****${walletAddress.slice(-4)}` : walletAddress}
           </p>
           <span className="text-xs text-gray-500">Read-only</span>

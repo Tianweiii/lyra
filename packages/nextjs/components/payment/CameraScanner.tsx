@@ -29,7 +29,7 @@ export const CameraScanner = ({ balance, onScanSuccess, validationError }: Camer
       try {
         const videoInputDevices = await BrowserQRCodeReader.listVideoInputDevices();
 
-        if (videoInputDevices.length === 0) {
+        if (!videoInputDevices.length) {
           setError("No camera found.");
           return;
         }
@@ -48,8 +48,8 @@ export const CameraScanner = ({ balance, onScanSuccess, validationError }: Camer
           previewElem,
           (result: Result | undefined, err: unknown, ctrl: ScannerControls) => {
             if (result && active) {
-              const scannedText = result.getText();
-              setQrResult(scannedText);
+              // const scannedText = result.getText();
+              setQrResult(result.getText());
 
               ctrl.stop(); // stop scanning once result is found
               onScanSuccess(result.getText());

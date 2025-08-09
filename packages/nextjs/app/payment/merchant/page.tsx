@@ -8,6 +8,9 @@ import PaymentStatus from "~~/components/payment/PaymentStatus";
 import { ProgressBar } from "~~/components/payment/ProgressBar";
 import { PromptPayment } from "~~/components/payment/PromptPayment";
 import ShowQRCode from "~~/components/payment/ShowQRCode";
+import { useAccount } from "wagmi";
+import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
+import { RainbowKitCustomConnectButton } from "~~/components/scaffold-eth/RainbowKitCustomConnectButton";
 
 const MerchantPaymentFlow: NextPage = () => {
   const [step, setStep] = useState(1);
@@ -15,11 +18,17 @@ const MerchantPaymentFlow: NextPage = () => {
   const [paymentRef, setPaymentRef] = useState<string>("");
   // const [convertedAmount, setConvertedAmount] = useState<number>(0);
   const [status, setStatus] = useState("");
-  // TODO: Wallet address will be props
-  const walletAddress = "0xABC123XXXXXXXXXXXXXXXXXXXXXDEF456";
-
-  // const router = useRouter();
+  const { address, isConnected } = useAccount();
   const steps = ["Enter Amount", "Scan QR", "Payment Status"];
+
+  // const walletAddress = "0xABC123XXXXXXXXXXXXXXXXXXXXXDEF456";
+  // const router = useRouter();
+
+  const { data: isMerchant } = useScaffoldReadContract({
+    contractName: "LyraOtcSeller",
+    functionName: "isMerchant",
+    args: [address],
+  });
 
   const handleNext = (value: number) => {
     setAmount(value);
@@ -43,6 +52,7 @@ const MerchantPaymentFlow: NextPage = () => {
     <>
       <div className="p-10 text-white">
         <h1 className="text-4xl font-bold ml-5">Payment Screen</h1>
+        <RainbowKitCustomConnectButton />
 
         {/* Progress Bar */}
         <div className="mt-10 flex flex-col items-center p-4 gap-y-6">
@@ -62,7 +72,16 @@ const MerchantPaymentFlow: NextPage = () => {
                   transition={{ duration: 0.5 }}
                   className="w-full"
                 >
-                  <PromptPayment walletAddress={walletAddress} onNext={handleNext} />
+                  {
+                  // isConnected ? (
+                  //   <p className="text-center">Please connect your wallet!</p>
+                  // ) :
+                    isMerchant ? (
+                      <p className="text-center text-red-400">You are not a registered merchant.</p>
+                    ) : (
+                      <PromptPayment walletAddress={address!} onNext={handleNext} />
+                    )
+                  }
                 </motion.div>
               )}
 
@@ -78,7 +97,7 @@ const MerchantPaymentFlow: NextPage = () => {
                   <ShowQRCode
                     amount={amount}
                     // converted={Number(convertedAmount)}
-                    walletAddress={walletAddress}
+                    walletAddress={address!}
                     onPaid={handlePaymentComplete}
                     onBack={() => setStep(1)}
                   />
