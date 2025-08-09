@@ -1,23 +1,50 @@
 "use client";
 
 import { useState } from "react";
+import React from "react";
+import { useWeb3Auth, useWeb3AuthUser } from "@web3auth/modal/react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { NextPage } from "next";
-import { useAccount } from "wagmi";
 import PaymentStatus from "~~/components/payment/PaymentStatus";
 import { ProgressBar } from "~~/components/payment/ProgressBar";
 import { PromptPayment } from "~~/components/payment/PromptPayment";
 import ShowQRCode from "~~/components/payment/ShowQRCode";
 import { RainbowKitCustomConnectButton } from "~~/components/scaffold-eth/RainbowKitCustomConnectButton";
-import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 
 const MerchantPaymentFlow: NextPage = () => {
   const [step, setStep] = useState(1);
   const [amount, setAmount] = useState<number>(0);
   const [paymentRef, setPaymentRef] = useState<string>("");
   const [status, setStatus] = useState("");
-  const { address } = useAccount();
+  const [web3AuthAddress, setWeb3AuthAddress] = useState<string | null>(null);
+
+  const { isConnected: web3AuthConnected } = useWeb3Auth();
+  const { userInfo } = useWeb3AuthUser();
+  const { provider } = useWeb3Auth();
+
   const steps = ["Enter Amount", "Scan QR", "Payment Status"];
+
+  // Get address from Web3Auth provider
+  React.useEffect(() => {
+    const getWeb3AuthAddress = async () => {
+      if (web3AuthConnected && provider && userInfo) {
+        try {
+          // Get accounts from Web3Auth provider
+          const accountsUnknown = (await provider.request({ method: "eth_accounts" })) as unknown;
+          if (Array.isArray(accountsUnknown) && accountsUnknown.length > 0 && typeof accountsUnknown[0] === "string") {
+            setWeb3AuthAddress(accountsUnknown[0] as string);
+          }
+        } catch (error) {
+          console.error("Failed to get Web3Auth address:", error);
+          setWeb3AuthAddress(null);
+        }
+      } else {
+        setWeb3AuthAddress(null);
+      }
+    };
+
+    getWeb3AuthAddress();
+  }, [web3AuthConnected, provider, userInfo]);
 
   const handleNext = (value: number) => {
     setAmount(value);
@@ -32,7 +59,7 @@ const MerchantPaymentFlow: NextPage = () => {
   };
 
   // Check if user is connected and has a valid address
-  if (!address) {
+  if (!web3AuthConnected || !web3AuthAddress) {
     return (
       <div className="p-10 text-white">
         <h1 className="text-4xl font-bold ml-5">Payment Screen</h1>
@@ -68,7 +95,7 @@ const MerchantPaymentFlow: NextPage = () => {
                   transition={{ duration: 0.5 }}
                   className="w-full"
                 >
-                  <PromptPayment walletAddress={address} onNext={handleNext} />
+                  <PromptPayment walletAddress={web3AuthAddress} onNext={handleNext} />
                 </motion.div>
               )}
 
@@ -83,7 +110,7 @@ const MerchantPaymentFlow: NextPage = () => {
                 >
                   <ShowQRCode
                     amount={amount}
-                    walletAddress={address}
+                    walletAddress={web3AuthAddress}
                     onPaid={handlePaymentComplete}
                     onBack={() => setStep(1)}
                   />
