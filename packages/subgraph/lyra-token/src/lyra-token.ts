@@ -98,18 +98,18 @@ export function handleTransfer(event: TransferEvent): void {
 
   entity.save()
 
+  const zeroAddress = Bytes.fromHexString("0x0000000000000000000000000000000000000000");
+
   // Update balances
-  let fromAccount = getOrCreateAccount(event.params.from)
-  let toAccount = getOrCreateAccount(event.params.to)
-
-  if (event.params.from.toHexString() != "0x0000000000000000000000000000000000000000") {
+  if (event.params.from != zeroAddress) {
+    let fromAccount = getOrCreateAccount(event.params.from)
     fromAccount.balance = fromAccount.balance.minus(event.params.value)
+    fromAccount.save()
   }
 
-  if (event.params.to.toHexString() != "0x0000000000000000000000000000000000000000") {
+  if (event.params.to != zeroAddress) {
+    let toAccount = getOrCreateAccount(event.params.to)
     toAccount.balance = toAccount.balance.plus(event.params.value)
+    toAccount.save()
   }
-
-  fromAccount.save()
-  toAccount.save()
 }
