@@ -47,7 +47,8 @@ const DashboardPage: NextPage = () => {
   const { isConnected, provider, status } = useWeb3Auth();
 
   // New state to hold fetched balance data
-  const [tokenData, setTokenData] = useState<any>(null);
+  const [amount, setAmount] = useState<number>(0); // Add amount to state
+  const [hasFetchedBalance, setHasFetchedBalance] = useState<boolean>(false);
 
   useEffect(() => {
     if (status === "connected") {
@@ -75,25 +76,24 @@ const DashboardPage: NextPage = () => {
         if (!res.ok) throw new Error("Network response was not ok");
 
         const json = await res.json();
-        setTokenData(json);
+
+        // Update the amount state here after a successful fetch
+        const balanceString = json.result;
+        try {
+          const formattedBalance = formatUnits(balanceString, 18);
+          setAmount(parseFloat(formattedBalance));
+          setHasFetchedBalance(true);
+        } catch (err) {
+          console.error("Error formatting balance:", err);
+          setAmount(0);
+        }
       } catch (err) {
         console.error("Error fetching token balance:", err);
       }
     };
 
     fetchBalances();
-  }, [address]);
-
-  const balanceString = tokenData?.result || "0";
-
-  let amount: number = 0;
-  try {
-    const formattedBalance = formatUnits(balanceString, 18);
-
-    amount = parseFloat(formattedBalance);
-  } catch {
-    amount = 0;
-  }
+  }, [address, hasFetchedBalance]);
 
   // converted wallet amount
   const walletAmount: number = amount;
