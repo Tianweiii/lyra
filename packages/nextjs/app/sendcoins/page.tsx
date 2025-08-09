@@ -107,16 +107,11 @@ const SendCoinPage = () => {
       const usdtAmountWei = parseUnits(usdtAmount, 6); // USDT has 6 decimals
       const minLyraOut = (lyraPerUsdt * usdtAmountWei) / BigInt(1e6); // Calculate expected LYRA output
 
-      // await writeLyraOtcSeller({
-      //   functionName: "govSwapUsdtAndSend",
-      //   args: [selectedUsers[0], usdtAmountWei, minLyraOut],
-      // });
-      for (const recipient of selectedUsers) {
-        await writeLyraOtcSeller({
-          functionName: "govSwapUsdtAndSend",
-          args: [recipient, usdtAmountWei, minLyraOut],
-        });
-      }
+      // Use the new multiple recipients function instead of looping
+      await writeLyraOtcSeller({
+        functionName: "govSwapUsdtAndSendMultiple",
+        args: [selectedUsers, usdtAmountWei, minLyraOut],
+      });
 
       // alert("USDT换LYRA交易成功！");
       setUsdtAmount("");
@@ -137,13 +132,12 @@ const SendCoinPage = () => {
       const expectedUsdtValue = (nativeAmountWei * priceUsdtPerNative) / BigInt(1e18);
       const minLyraOut = (lyraPerUsdt * expectedUsdtValue) / BigInt(1e6);
 
-      for (const recipient of selectedUsers) {
-        await writeLyraOtcSeller({
-          functionName: "govSwapNativeAndSend",
-          args: [recipient, minLyraOut],
-          value: nativeAmountWei,
-        });
-      }
+      // Use the new multiple recipients function instead of looping
+      await writeLyraOtcSeller({
+        functionName: "govSwapNativeAndSendMultiple",
+        args: [selectedUsers, minLyraOut],
+        value: nativeAmountWei,
+      });
 
       // alert("MATIC换LYRA交易成功！");
       setNativeAmount("");
