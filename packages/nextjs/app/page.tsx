@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-// import { InstallPrompt, PushNotificationManager } from "../components/PWAComponents";
+import { InstallPrompt, PushNotificationManager } from "../components/PWAComponents";
 import { RainbowKitCustomConnectButton } from "../components/scaffold-eth";
 import BentoGrids from "../components/ui/bento-grids";
 import { CanvasRevealEffect } from "../components/ui/canvas-reveal";
@@ -111,8 +111,8 @@ const Home: NextPage = () => {
           </div>
 
           {/* Push Notification Components */}
-          {/* <PushNotificationManager />
-          <InstallPrompt /> */}
+          <PushNotificationManager />
+          <InstallPrompt />
         </div>
 
         <div className="relative z-20 flex h-full px-12 gap-2 items-end pb-36">

@@ -1,5 +1,59 @@
 {
-  "name": "Scaffold-ETH 2 DApp",
-  "description": "A DApp built with Scaffold-ETH",
-  "iconPath": "logo.svg"
+  "name": "LyraStudios - Enhanced Financing Platform",
+  "short_name": "LyraStudios",
+  "description": "One platform for public aid and private rewards—secure, transparent, unstoppable.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
+  "categories": ["finance", "business", "productivity"],
+  "icons": [
+    {
+      "src": "/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Payment Merchant",
+      "short_name": "Merchant",
+      "description": "Generate QR codes for payments",
+      "url": "/payment/merchant",
+      "icons": [
+        {
+          "src": "/logo.svg",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Payment User",
+      "short_name": "Pay",
+      "description": "Scan QR codes and make payments",
+      "url": "/payment/user",
+      "icons": [
+        {
+          "src": "/logo.svg",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ]
 }

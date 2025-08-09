@@ -207,17 +207,25 @@ export function PushNotificationManager() {
 
 export function InstallPrompt() {
   const [isIOS, setIsIOS] = useState(false);
+  const [isSafari, setIsSafari] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [debugInfo, setDebugInfo] = useState<string>("");
 
   useEffect(() => {
-    setIsIOS(/iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream);
-
+    const userAgent = navigator.userAgent;
+    setIsIOS(/iPad|iPhone|iPod/.test(userAgent) && !(window as any).MSStream);
+    setIsSafari(/Safari/.test(userAgent) && !/Chrome/.test(userAgent));
     setIsStandalone(window.matchMedia("(display-mode: standalone)").matches);
 
+    // Debug info
+    setDebugInfo(`User Agent: ${userAgent}, Standalone: ${isStandalone}, Safari: ${isSafari}, iOS: ${isIOS}`);
+
     const handleBeforeInstallPrompt = (e: any) => {
+      console.log("beforeinstallprompt event fired!", e);
       e.preventDefault();
       setDeferredPrompt(e);
+      setDebugInfo(prev => prev + " - Install prompt available");
     };
 
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
@@ -229,10 +237,19 @@ export function InstallPrompt() {
 
   const handleInstallClick = async () => {
     if (deferredPrompt) {
-      deferredPrompt.prompt();
-      const choiceResult = await deferredPrompt.userChoice;
-      if (choiceResult.outcome === "accepted") {
-        setDeferredPrompt(null);
+      try {
+        deferredPrompt.prompt();
+        const choiceResult = await deferredPrompt.userChoice;
+        console.log("Install choice result:", choiceResult);
+        if (choiceResult.outcome === "accepted") {
+          setDeferredPrompt(null);
+          setDebugInfo(prev => prev + " - Install accepted");
+        } else {
+          setDebugInfo(prev => prev + " - Install declined");
+        }
+      } catch (error) {
+        console.error("Error during install:", error);
+        setDebugInfo(prev => prev + " - Install error: " + error);
       }
     }
   };
@@ -242,9 +259,20 @@ export function InstallPrompt() {
     return null;
   }
 
-  // Hide if no install prompt available and not iOS
-  if (!deferredPrompt && !isIOS) {
-    return null;
+  // Show for Safari on macOS even if no deferredPrompt
+  const shouldShow = deferredPrompt || isIOS || (isSafari && !isStandalone);
+
+  if (!shouldShow) {
+    return (
+      <div className="bg-black/70 backdrop-blur-sm rounded-lg p-4 text-white max-w-sm mt-4">
+        <h3 className="text-lg font-bold mb-2">📱 Install App</h3>
+        <div className="text-xs text-gray-300 bg-yellow-900/30 p-3 rounded">
+          <p className="font-medium mb-1">Debug Info:</p>
+          <p className="break-all">{debugInfo}</p>
+          <p className="mt-2">Install prompt not available. Try refreshing the page or using a different browser.</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -269,6 +297,31 @@ export function InstallPrompt() {
           <p>
             2. Select &quot;Add to Home Screen&quot; <span className="font-mono bg-black/50 px-1 rounded">➕</span>
           </p>
+        </div>
+      )}
+
+      {isSafari && !isIOS && (
+        <div className="text-xs text-gray-300 bg-blue-900/30 p-3 rounded">
+          <p className="font-medium mb-1">🖥️ Install on macOS Safari:</p>
+          <p>
+            1. Click &quot;Share&quot; in the Safari toolbar{" "}
+            <span className="font-mono bg-black/50 px-1 rounded">⎋</span>
+          </p>
+          <p>
+            2. Select &quot;Add to Dock&quot; or &quot;Add to Applications&quot;{" "}
+            <span className="font-mono bg-black/50 px-1 rounded">➕</span>
+          </p>
+          <p className="mt-2 text-yellow-300">
+            Note: Safari on macOS may not show the install prompt automatically. Use the Share menu instead.
+          </p>
+        </div>
+      )}
+
+      {/* Debug info for development */}
+      {process.env.NODE_ENV === "development" && (
+        <div className="text-xs text-gray-400 mt-2 p-2 bg-gray-900/30 rounded">
+          <p className="font-medium">Debug:</p>
+          <p className="break-all text-xs">{debugInfo}</p>
         </div>
       )}
     </div>
