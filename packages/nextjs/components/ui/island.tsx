@@ -158,6 +158,7 @@ export const IslandView: React.FC<IslandProps> = () => {
                 duration: 0.3,
                 delay: 0.6,
               }}
+              // ROLE: ROUTE FOR ROLE
               onClick={() => router.push("/dashboard/124")}
             >
               Dashboard

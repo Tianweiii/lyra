@@ -47,6 +47,7 @@ const DashboardPage: NextPage = () => {
 
   const { data: accountData } = useQuery(GET_ACCOUNTS, {
     variables: { accountId: accountId?.toString() || "" },
+    fetchPolicy: "cache-and-network",
   });
 
   const balance = accountData?.accounts[0]?.balance || 0;
@@ -65,12 +66,12 @@ const DashboardPage: NextPage = () => {
   const renderMap: RenderMapProps = {
     user: {
       title: "Make Payment",
-      onClick: () => router.push(""),
+      onClick: () => router.push("/payment/user"),
       iconPath: "/icons/qr-scan.svg",
     },
     merchant: {
       title: "Generate QR",
-      onClick: () => router.push(""),
+      onClick: () => router.push("/payment/merchant"),
       iconPath: "/icons/qr-scan.svg",
     },
     admin: {
@@ -87,6 +88,7 @@ const DashboardPage: NextPage = () => {
     data: transferData,
   } = useQuery(GET_TRANSFERS, {
     variables: { accountId: accountId?.toString() || "" },
+    fetchPolicy: "cache-and-network",
   });
 
   if (transferLoading) return <p>Loading...</p>;
