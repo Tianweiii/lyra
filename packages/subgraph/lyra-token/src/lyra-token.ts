@@ -1,3 +1,4 @@
+import { BigInt, Bytes } from "@graphprotocol/graph-ts"
 import {
   Approval as ApprovalEvent,
   GovernmentUpdated as GovernmentUpdatedEvent,
@@ -10,8 +11,19 @@ import {
   GovernmentUpdated,
   MerchantUpdated,
   OwnershipTransferred,
-  Transfer
+  Transfer,
+  Account
 } from "../generated/schema"
+
+function getOrCreateAccount(address: Bytes): Account {
+  let account = Account.load(address)
+  if (account == null) {
+    account = new Account(address) // now it's Bytes, not string
+    account.balance = BigInt.zero()
+    account.save()
+  }
+  return account
+}
 
 export function handleApproval(event: ApprovalEvent): void {
   let entity = new Approval(
@@ -85,4 +97,19 @@ export function handleTransfer(event: TransferEvent): void {
   entity.transactionHash = event.transaction.hash
 
   entity.save()
+
+  const zeroAddress = Bytes.fromHexString("0x0000000000000000000000000000000000000000");
+
+  // Update balances
+  if (event.params.from != zeroAddress) {
+    let fromAccount = getOrCreateAccount(event.params.from)
+    fromAccount.balance = fromAccount.balance.minus(event.params.value)
+    fromAccount.save()
+  }
+
+  if (event.params.to != zeroAddress) {
+    let toAccount = getOrCreateAccount(event.params.to)
+    toAccount.balance = toAccount.balance.plus(event.params.value)
+    toAccount.save()
+  }
 }

@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import type { NextPage } from "next";
 import { parseUnits } from "viem";
-import { useAccount, useChainId, useSwitchChain } from "wagmi";
+import { useChainId, useSwitchChain } from "wagmi";
 import { CameraScanner } from "~~/components/payment/CameraScanner";
 import PaymentStatus from "~~/components/payment/PaymentStatus";
 import { ProgressBar } from "~~/components/payment/ProgressBar";

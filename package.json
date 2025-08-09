@@ -69,6 +69,7 @@
     "@fontsource/roboto": "^5.2.6",
     "@goplus/sdk-node": "^1.1.1",
     "@mui/material": "^7.2.0",
+    "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-three/drei": "latest",
     "@react-three/fiber": "latest",
     "@supabase/supabase-js": "^2.54.0",
