@@ -40,12 +40,11 @@ const getRole = (id: string | number | undefined) => {
 
 const DashboardPage: NextPage = () => {
   const [address, setAddress] = useState<string>("");
-  const [initialized, setInitialized] = useState<boolean>(false);
   const router = useRouter();
   const { id } = useParams();
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const accountId = useAccount().address;
-  const { isConnected, provider, status } = useWeb3Auth();
+  const { provider, status } = useWeb3Auth();
 
   useEffect(() => {
     if (status === "connected") {
@@ -55,17 +54,7 @@ const DashboardPage: NextPage = () => {
         setAddress(await signer.getAddress());
       })();
     }
-
-    if (status === "ready") {
-      setInitialized(true);
-    }
   }, [status, provider]);
-
-  useEffect(() => {
-    if (initialized && !isConnected) {
-      router.push("/login");
-    }
-  }, [initialized, isConnected, router]);
 
   const { data: accountData } = useQuery(GET_ACCOUNTS, {
     variables: {
