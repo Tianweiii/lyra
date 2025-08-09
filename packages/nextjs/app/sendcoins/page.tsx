@@ -1,47 +1,28 @@
 "use client";
 
 import React, { useCallback, useMemo, useState } from "react";
-import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { useMediaQuery } from "react-responsive";
+import { formatUnits, parseUnits } from "viem";
+import { useAccount, useChainId, useSwitchChain } from "wagmi";
+import { RainbowKitCustomConnectButton } from "~~/components/scaffold-eth/RainbowKitCustomConnectButton";
 import Island from "~~/components/ui/island";
 import MultiSelectView from "~~/components/ui/multiselect";
 import { Vortex } from "~~/components/ui/vortex";
+import { useScaffoldReadContract } from "~~/hooks/scaffold-eth/useScaffoldReadContract";
+import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth/useScaffoldWriteContract";
 import { loadUserData } from "~~/utils/helper";
 
-const steps = ["Select Recipient & Amount", "Processing Payment", "Complete Payment"];
+const steps = ["Select Recipient & Amount", "Complete Payment"];
 
 const SendCoinPage = () => {
-  const [gasFee] = useState(3);
-  const [sendAmount, setSendAmount] = useState("");
   const [step, setStep] = useState(0);
-  const [direction, setDirection] = useState(1);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+  const router = useRouter();
 
   // Memoize expensive computations
   const data = useMemo(() => loadUserData(), []);
-  const isMobile = useMediaQuery({ maxWidth: 768 });
-
-  // Memoize filtered data
   const activeUsers = useMemo(() => data.filter(i => i.status === "active").map(user => user.walletAddress), [data]);
-
-  // Memoize parsed amount
-  const parsedAmount = useMemo(() => parseInt(sendAmount) || 0, [sendAmount]);
-
-  const handleNext = useCallback(() => {
-    console.log(selectedUsers);
-    if (step < steps.length - 1) {
-      setDirection(1);
-      setStep(prev => prev + 1);
-    }
-  }, [selectedUsers, step]);
-
-  const handleBack = useCallback(() => {
-    if (step > 0) {
-      setDirection(-1);
-      setStep(prev => prev - 1);
-    }
-  }, [step]);
 
   const slideVariants = {
     enter: (direction: number) => ({
@@ -60,18 +41,152 @@ const SendCoinPage = () => {
     }),
   };
 
-  const verticalContainer = useCallback((title: React.ReactNode, amount: React.ReactNode) => {
-    return (
-      <div className="flex justify-between">
-        <p className="text-sm text-gray-300">{title}</p>
-        <p className="text-sm text-white">${amount}</p>
-      </div>
-    );
-  }, []);
+  const handleSwitchToPolygon = async () => {
+    try {
+      await switchChain({ chainId: 137 });
+    } catch (error) {
+      console.error("Failed to switch to Polygon:", error);
+    }
+  };
+
+  // step 1: smart contract config set amount and receipient
+  const { address } = useAccount();
+  const chainId = useChainId();
+  const { switchChain } = useSwitchChain();
+
+  const [usdtAmount, setUsdtAmount] = useState("");
+  const [nativeAmount, setNativeAmount] = useState("");
+  const [, setIsLoading] = useState(false);
+  const [swapType, setSwapType] = useState<"usdt" | "native">("usdt");
+
+  const isPolygonNetwork = chainId === 137;
+
+  const { data: priceUsdtPerNative } = useScaffoldReadContract({
+    contractName: "LyraOtcSeller",
+    functionName: "priceUsdtPerNative",
+  });
+
+  const { data: lyraPerUsdt } = useScaffoldReadContract({
+    contractName: "LyraOtcSeller",
+    functionName: "lyraPerUsdt",
+  });
+
+  const getQuote = useCallback(() => {
+    if (!lyraPerUsdt || !priceUsdtPerNative) return "0";
+
+    if (swapType === "usdt" && usdtAmount) {
+      const usdtAmountWei = parseUnits(usdtAmount, 6);
+      const lyraOut = usdtAmountWei * (lyraPerUsdt || 0n);
+      return formatUnits(lyraOut, 18);
+    } else if (swapType === "native" && nativeAmount) {
+      const nativeAmountWei = parseUnits(nativeAmount, 18);
+      const usdtAmount = (nativeAmountWei * (priceUsdtPerNative || 0n)) / parseUnits("1", 18);
+      const lyraOut = usdtAmount * (lyraPerUsdt || 0n);
+      return formatUnits(lyraOut, 18);
+    }
+
+    return "0";
+  }, [usdtAmount, nativeAmount, swapType, lyraPerUsdt, priceUsdtPerNative]);
+
+  // step 2: approve transaction
+  const OTC_ADDRESS = "0xB919D234f9081D8c0F20ee4219C4605BA883dc32";
+  const { writeContractAsync: writeUsdt } = useScaffoldWriteContract("USDT");
+
+  const { data: usdtAllowance } = useScaffoldReadContract({
+    contractName: "USDT",
+    functionName: "allowance",
+    args: [address, OTC_ADDRESS],
+  });
+
+  const { writeContractAsync: writeLyraOtcSeller } = useScaffoldWriteContract("LyraOtcSeller");
+
+  const handleUsdtSwap = useCallback(async () => {
+    try {
+      setIsLoading(true);
+
+      const usdtAmountWei = parseUnits(usdtAmount, 6); // USDT has 6 decimals
+      const minLyraOut = (lyraPerUsdt * usdtAmountWei) / BigInt(1e6); // Calculate expected LYRA output
+
+      // await writeLyraOtcSeller({
+      //   functionName: "govSwapUsdtAndSend",
+      //   args: [selectedUsers[0], usdtAmountWei, minLyraOut],
+      // });
+      for (const recipient of selectedUsers) {
+        await writeLyraOtcSeller({
+          functionName: "govSwapUsdtAndSend",
+          args: [recipient, usdtAmountWei, minLyraOut],
+        });
+      }
+
+      // alert("USDT换LYRA交易成功！");
+      setUsdtAmount("");
+      setSelectedUsers([]);
+    } catch (error) {
+      console.error("USDT swap error:", error);
+      // alert("交易失败，请检查余额和网络连接");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [usdtAmount, lyraPerUsdt, writeLyraOtcSeller, selectedUsers]);
+
+  const handleNativeSwap = useCallback(async () => {
+    try {
+      setIsLoading(true);
+
+      const nativeAmountWei = parseUnits(nativeAmount, 18);
+      const expectedUsdtValue = (nativeAmountWei * priceUsdtPerNative) / BigInt(1e18);
+      const minLyraOut = (lyraPerUsdt * expectedUsdtValue) / BigInt(1e6);
+
+      for (const recipient of selectedUsers) {
+        await writeLyraOtcSeller({
+          functionName: "govSwapNativeAndSend",
+          args: [recipient, minLyraOut],
+          value: nativeAmountWei,
+        });
+      }
+
+      // alert("MATIC换LYRA交易成功！");
+      setNativeAmount("");
+      setSelectedUsers([]);
+    } catch (error) {
+      console.error("Native swap error:", error);
+      // alert("交易失败，请检查余额和网络连接");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [nativeAmount, priceUsdtPerNative, lyraPerUsdt, writeLyraOtcSeller, selectedUsers]);
+
+  const handleNextWithApprove = useCallback(async () => {
+    try {
+      setIsLoading(true);
+
+      // Check current allowance
+      const hasUsdtAllowance = usdtAllowance && usdtAllowance > parseUnits("1000", 6);
+
+      if (!hasUsdtAllowance) {
+        const approveAmount = parseUnits("1000000", 6);
+        await writeUsdt({
+          functionName: "approve",
+          args: [OTC_ADDRESS, approveAmount],
+        });
+      }
+
+      if (swapType === "usdt") {
+        await handleUsdtSwap();
+      } else {
+        await handleNativeSwap();
+      }
+
+      setStep(1);
+    } catch (error) {
+      console.error("Error in approval process:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [handleNativeSwap, handleUsdtSwap, swapType, usdtAllowance, writeUsdt]);
 
   const stepComponents = useMemo(
     () => [
-      // Step 1: Select Recipient & Amount
       <motion.div
         key="step1"
         className="flex flex-col gap-6"
@@ -101,6 +216,32 @@ const SendCoinPage = () => {
           </div>
         </motion.div>
 
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-2">Swap Type</label>
+          <div className="flex space-x-4">
+            <label className="flex items-center">
+              <input
+                type="radio"
+                value="usdt"
+                checked={swapType === "usdt"}
+                onChange={e => setSwapType(e.target.value as "usdt" | "native")}
+                className="mr-2"
+              />
+              USDT to LYRA
+            </label>
+            <label className="flex items-center">
+              <input
+                type="radio"
+                value="native"
+                checked={swapType === "native"}
+                onChange={e => setSwapType(e.target.value as "usdt" | "native")}
+                className="mr-2"
+              />
+              MATIC to LYRA
+            </label>
+          </div>
+        </div>
+
         <motion.div
           className="flex flex-col gap-2"
           initial={{ opacity: 0, y: 20 }}
@@ -109,91 +250,40 @@ const SendCoinPage = () => {
         >
           <p className="text-gray-400 text-sm">Each user will receive</p>
           <div className="relative inline-block">
-            <input
-              type="number"
-              value={sendAmount}
-              onChange={e => setSendAmount(e.target.value)}
-              placeholder="0.00"
-              className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-blue-500 focus:outline-none transition-colors box-border [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-            />
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="gray"
-              className="w-5 h-5 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none"
-            >
-              <Image width={30} height={30} src={"/icons/usdc.svg"} alt="" style={{ zIndex: 999 }} />
-            </svg>
+            {swapType === "usdt" ? (
+              <input
+                type="number"
+                value={usdtAmount}
+                onChange={e => setUsdtAmount(e.target.value)}
+                placeholder="0.00"
+                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-blue-500 focus:outline-none transition-colors box-border [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              />
+            ) : (
+              <input
+                type="number"
+                value={nativeAmount}
+                onChange={e => setNativeAmount(e.target.value)}
+                placeholder="0.00"
+                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-blue-500 focus:outline-none transition-colors box-border [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              />
+            )}
           </div>
         </motion.div>
 
         <motion.div
-          className="flex flex-col gap-2"
+          className="mb-6 p-4 bg-base-200 rounded"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          <p className="text-gray-400 text-sm">You will send (approx.)</p>
-          <input
-            type="number"
-            value={Number(sendAmount) * selectedUsers.length}
-            disabled
-            onChange={e => setSendAmount(e.target.value)}
-            placeholder="0.00"
-            className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-blue-500 focus:outline-none transition-colors"
-          />
-        </motion.div>
-
-        <motion.div
-          className="border border-gray-600 w-full rounded-lg flex flex-col gap-4 p-5 bg-gray-800/50"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-        >
-          {verticalContainer("You will pay", Number(sendAmount) * selectedUsers.length)}
-          {verticalContainer("Lyra Fees", gasFee)}
-          <div className="h-px bg-gray-600 my-2"></div>
-          {verticalContainer("Total", Number(sendAmount) * selectedUsers.length + gasFee)}
+          <p className="text-sm text-gray-600">Estimated LYRA Output:</p>
+          <p className="text-lg font-semibold">{getQuote()} LYRA</p>
         </motion.div>
       </motion.div>,
 
-      // Step 2: Processing Payment
+      // Step 2: Complete Payment
       <motion.div
         key="step2"
-        className="flex flex-col items-center justify-center h-full gap-6"
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.8 }}
-        transition={{ duration: 0.4 }}
-      >
-        <motion.div
-          className="w-20 h-20 border-4 border-blue-500 border-t-transparent rounded-full"
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-        />
-        <motion.h2
-          className="text-2xl font-bold text-white text-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-        >
-          Processing Payment
-        </motion.h2>
-        <motion.p
-          className="text-gray-400 text-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          Please wait while we process your transaction...
-        </motion.p>
-      </motion.div>,
-
-      // Step 3: Complete Payment
-      <motion.div
-        key="step3"
         className="flex flex-col items-center justify-center h-full gap-6"
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -241,7 +331,7 @@ const SendCoinPage = () => {
         </motion.div>
       </motion.div>,
     ],
-    [sendAmount, activeUsers, parsedAmount, verticalContainer],
+    [activeUsers, swapType, usdtAmount, getQuote, nativeAmount],
   );
 
   // Memoize StepContent to prevent unnecessary re-renders
@@ -249,8 +339,29 @@ const SendCoinPage = () => {
     return stepComponents[step];
   }, [stepComponents, step]);
 
+  if (!isPolygonNetwork) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center space-y-4">
+          <div className="flex justify-center">
+            <RainbowKitCustomConnectButton />
+          </div>
+          <h1 className="text-2xl font-bold mb-4">Wrong Network</h1>
+          <p className="text-gray-600 mb-4">Please switch to Polygon network to access the government portal.</p>
+          <button
+            onClick={handleSwitchToPolygon}
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >
+            Switch to Polygon
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-[calc(100%-4rem)] mx-auto rounded-md overflow-hidden flex justify-center items-center min-h-screen">
+      <RainbowKitCustomConnectButton />
       <Vortex
         backgroundColor="black"
         className="flex items-center flex-col justify-center px-2 md:px-10 py-4 w-full h-full"
@@ -258,8 +369,7 @@ const SendCoinPage = () => {
         <div className="w-full flex items-center justify-center p-4">
           <Island />
           <motion.div
-            // className="bg-gradient-to-br from-gray-900 to-gray-800 md:w-[70vw] w-[90vw] rounded-2xl p-8 flex flex-col gap-6 border border-gray-700"
-            className="border-white/30 bg-gray-900/20 backdrop-blur-md md:w-[70vw] w-[90vw] rounded-2xl p-8 flex flex-col gap-6 border"
+            className="border-white/30 bg-gray-900/20 backdrop-blur-md md:w-[70vw] w-[80vw] rounded-2xl p-8 flex flex-col gap-6 border"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -269,113 +379,46 @@ const SendCoinPage = () => {
               <div className="h-px bg-gradient-to-r from-blue-500 to-purple-500 mt-2"></div>
             </motion.div>
 
-            <div className="flex md:flex-row flex-col h-full gap-8">
-              {/* Stepper */}
-              <motion.div
-                className={`${isMobile ? "flex justify-between mb-6" : "flex flex-col"} flex-1`}
-                initial={{ opacity: 0, x: -30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3 }}
-              >
-                {steps.map((stepLabel, index) => (
+            {/* Content Area */}
+            <div className="flex-2 flex flex-col">
+              <div className="bg-gray-800/30 rounded-xl p-6 backdrop-blur-sm border border-gray-700/50 flex-1 overflow-hidden">
+                <AnimatePresence mode="wait">
                   <motion.div
-                    key={stepLabel}
-                    className="flex flex-col"
-                    whileHover={{ scale: 1.02 }}
-                    transition={{ type: "spring", stiffness: 400 }}
+                    key={step}
+                    variants={slideVariants}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    transition={{
+                      x: { type: "spring", stiffness: 300, damping: 30 },
+                      opacity: { duration: 0.2 },
+                    }}
+                    className="h-full"
                   >
-                    <div className="flex gap-3 items-center">
-                      <motion.div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 ${
-                          index <= step
-                            ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg"
-                            : "bg-gray-700 text-gray-400 border border-gray-600"
-                        }`}
-                        animate={index === step ? { scale: [1, 1.1, 1] } : {}}
-                        transition={{ duration: 0.3 }}
-                      >
-                        {index + 1}
-                      </motion.div>
-                      <span
-                        className={`${isMobile ? "text-xs" : "text-sm"} font-medium transition-colors duration-300 ${
-                          index <= step ? "text-white" : "text-gray-400"
-                        }`}
-                      >
-                        {stepLabel}
-                      </span>
-                    </div>
-                    {!isMobile && index < steps.length - 1 && (
-                      <motion.div
-                        className={`w-px h-14 ml-5 transition-colors duration-300 ${
-                          index < step ? "bg-gradient-to-b from-blue-500 to-purple-600" : "bg-gray-600"
-                        }`}
-                        initial={{ scaleY: 0 }}
-                        animate={{ scaleY: index < step ? 1 : 0.3 }}
-                        transition={{ duration: 0.3 }}
-                      />
-                    )}
+                    {StepContent}
                   </motion.div>
-                ))}
-              </motion.div>
-
-              {/* Content Area */}
-              <div className="flex-2 flex flex-col">
-                <div className="bg-gray-800/30 rounded-xl p-6 backdrop-blur-sm border border-gray-700/50 flex-1 overflow-hidden">
-                  <AnimatePresence mode="wait" custom={direction}>
-                    <motion.div
-                      key={step}
-                      custom={direction}
-                      variants={slideVariants}
-                      initial="enter"
-                      animate="center"
-                      exit="exit"
-                      transition={{
-                        x: { type: "spring", stiffness: 300, damping: 30 },
-                        opacity: { duration: 0.2 },
-                      }}
-                      className="h-full"
-                    >
-                      {StepContent}
-                    </motion.div>
-                  </AnimatePresence>
-                </div>
-
-                {/* Navigation Buttons */}
-                <motion.div
-                  className="flex gap-4 mt-6"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6 }}
-                >
-                  <motion.button
-                    disabled={step === 0}
-                    onClick={handleBack}
-                    className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all duration-300 ${
-                      step === 0
-                        ? "bg-gray-800 text-gray-500 cursor-not-allowed"
-                        : "bg-gray-700 hover:bg-gray-600 text-white border border-gray-600"
-                    }`}
-                    whileHover={step !== 0 ? { scale: 1.02 } : {}}
-                    whileTap={step !== 0 ? { scale: 0.98 } : {}}
-                  >
-                    Back
-                  </motion.button>
-                  <motion.button
-                    disabled={step === 2}
-                    onClick={handleNext}
-                    className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all duration-300 ${
-                      step === steps.length - 1
-                        ? "bg-gray-800 text-gray-500 cursor-not-allowed"
-                        : "bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg"
-                    }`}
-                    whileHover={step !== steps.length - 1 ? { scale: 1.02, y: -2 } : {}}
-                    whileTap={step !== steps.length - 1 ? { scale: 0.98 } : {}}
-                  >
-                    {step === steps.length - 1 ? "Complete" : "Next"}
-                  </motion.button>
-                </motion.div>
+                </AnimatePresence>
               </div>
+
+              {/* Navigation Buttons */}
+              <motion.div
+                className="flex gap-4 mt-6"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+              >
+                <motion.button
+                  // disabled={isLoading}
+                  onClick={step == 0 ? handleNextWithApprove : () => router.back()}
+                  className="flex-1 py-3 px-6 rounded-xl font-semibold transition-all duration-300 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg"
+                  whileHover={step !== steps.length - 1 ? { scale: 1.02, y: -2 } : {}}
+                  whileTap={step !== steps.length - 1 ? { scale: 0.98 } : {}}
+                >
+                  {step === steps.length - 1 ? "Complete" : "Make Payment"}
+                </motion.button>
+              </motion.div>
             </div>
+            {/* </div> */}
           </motion.div>
         </div>
       </Vortex>

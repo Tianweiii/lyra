@@ -44,23 +44,20 @@ const DashboardPage: NextPage = () => {
   const { id } = useParams();
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const accountId = useAccount().address;
-  const { isConnected, provider } = useWeb3Auth();
+  const { isConnected, provider, status } = useWeb3Auth();
 
   useEffect(() => {
-    if (!isConnected) {
+    if (status === "connected") {
+      // fetch address
+      (async () => {
+        const ethersProvider = new ethers.BrowserProvider(provider as ethers.Eip1193Provider);
+        const signer = await ethersProvider.getSigner();
+        setAddress(await signer.getAddress());
+      })();
+    } else if (status === "ready" && !isConnected) {
       router.push("/login");
     }
-    const getWalletAddress = async () => {
-      if (provider) {
-        const ethersProvider = new ethers.BrowserProvider(provider);
-        const signer = await ethersProvider.getSigner();
-        const address = await signer.getAddress();
-        setAddress(address);
-      }
-    };
-
-    getWalletAddress();
-  });
+  }, [status, isConnected, provider, router]);
 
   const { data: accountData } = useQuery(GET_ACCOUNTS, {
     variables: {

@@ -18,6 +18,7 @@ import Carousel from "~~/components/ui/carousel";
 import CustomScrollContainer from "~~/components/ui/custom-scroll-container";
 import Gallery from "~~/components/ui/gallery";
 import Island from "~~/components/ui/island";
+import { clearUserData } from "~~/utils/helper";
 
 const Home: NextPage = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -33,7 +34,7 @@ const Home: NextPage = () => {
     const getWeb3AuthAddress = async () => {
       if (web3AuthConnected && provider && userInfo) {
         try {
-          const accounts = await provider.request({ method: "eth_accounts" });
+          const accounts: any = await provider.request({ method: "eth_accounts" });
           if (accounts && accounts.length > 0) {
             setWeb3AuthAddress(accounts[0]);
           }
@@ -55,6 +56,7 @@ const Home: NextPage = () => {
   const router = useRouter();
 
   useEffect(() => {
+    clearUserData();
     const video = videoRef.current;
     if (!video) return;
 
