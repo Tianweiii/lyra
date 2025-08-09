@@ -1,80 +1,113 @@
-# 🏗 Scaffold-ETH 2
+# LYRA – Blockchain-Powered Aid Distribution That Works
 
-<h4 align="center">
-  <a href="https://docs.scaffoldeth.io">Documentation</a> |
-  <a href="https://scaffoldeth.io">Website</a>
-</h4>
+## 🚀 Overview
+The **LYRA QR Merchant Payment System** is a blockchain-powered payment solution enabling merchants to receive **LYRA token** payments instantly via QR codes.  
 
-🧪 An open-source, up-to-date toolkit for building decentralized applications (dapps) on the Ethereum blockchain. It's designed to make it easier for developers to create and deploy smart contracts and build user interfaces that interact with those contracts.
+The **Lyra token** will be disbursed by the federal government to all registered users.  
+Merchants generate QR codes with payment details, and users scan them to initiate secure, on-chain transfers — no centralized payment gateways required.
 
-⚙️ Built using NextJS, RainbowKit, Foundry, Wagmi, Viem, and Typescript.
+The system is designed for the **Polygon network (Chain ID: 137)** and integrates with the **LyraToken** and **LyraOtcSeller** smart contracts for merchant verification, token transfers, and swaps.
 
-- ✅ **Contract Hot Reload**: Your frontend auto-adapts to your smart contract as you edit it.
-- 🪝 **[Custom hooks](https://docs.scaffoldeth.io/hooks/)**: Collection of React hooks wrapper around [wagmi](https://wagmi.sh/) to simplify interactions with smart contracts with typescript autocompletion.
-- 🧱 [**Components**](https://docs.scaffoldeth.io/components/): Collection of common web3 components to quickly build your frontend.
-- 🔥 **Burner Wallet & Local Faucet**: Quickly test your application with a burner wallet and local faucet.
-- 🔐 **Integration with Wallet Providers**: Connect to different wallet providers and interact with the Ethereum network.
+---
 
-![Debug Contracts tab](https://github.com/scaffold-eth/scaffold-eth-2/assets/55535804/b237af0c-5027-4849-a5c1-2e31495cccb1)
+## ✨ Features
 
-## Requirements
+### **Merchant QR Code Generation**  
+Merchants can generate QR codes containing:
+- Merchant wallet address
+- Payment amount
+- Additional metadata
 
-Before you begin, you need to install the following tools:
+### **User Payment via QR Scan**  
+Users scan the merchant’s QR code, verify details, and pay using LYRA tokens directly on-chain.
 
-- [Node (>= v20.18.3)](https://nodejs.org/en/download/)
-- Yarn ([v1](https://classic.yarnpkg.com/en/docs/install/) or [v2+](https://yarnpkg.com/getting-started/install))
-- [Git](https://git-scm.com/downloads)
+### **Government Token Disbursement**  
+The government can distribute LYRA tokens directly to citizens’ wallets through the system.
 
-## Quickstart
+### **Blockchain Smart Contract Integration**  
+Seamless interaction with:
+- **`LyraOtcSeller`** for merchant verification, token swaps, and transfers
+- **`LyraToken`** ERC-20 contract for token balance management
 
-To get started with Scaffold-ETH 2, follow the steps below:
+### **Multi-Network Ready**  
+Currently deployed on Polygon (Chain ID: 137) but adaptable to other EVM-compatible networks.
 
-1. Install dependencies if it was skipped in CLI:
+### **Real-Time Balance Conversion**  
+Wallet balances are shown in **MYR** and **USD** using live exchange rate APIs.
 
+---
+
+## 🛠 Tech Stack
+
+- **Frontend:** Next.js 14 (App Router), TailwindCSS, Framer Motion, Material UI, PWA Notifications
+- **Blockchain:** Polygon (EVM), Scaffold-ETH, Wagmi, Viem
+- **Wallet:** RainbowKit, Web3Auth
+- **QR Code:** `react-qr-code` (generation), `@zxing/browser` (scanning)
+- **Smart Contracts:**
+  - `LyraOtcSeller` – merchant verification & OTC swaps
+  - `LyraToken` – ERC-20 LYRA token
+
+---
+
+## ⚙️ Installation & Setup
+
+### 1️⃣ Prerequisites
+- **Node.js** v18+
+- **Yarn** or **npm**
+- Browser with **MetaMask** or **WalletConnect**
+- Access to **Polygon Network (Chain ID: 137)**
+
+---
+
+### 2️⃣ Clone the Repository
+```bash
+git clone https://github.com/Tianweiii/lyra.git
+cd lyra
 ```
-cd my-dapp-example
+
+### 3️⃣ Install Dependencies
+```bash
 yarn install
+# or
+npm install
 ```
 
-2. Run a local network in the first terminal:
-
-```
-yarn chain
-```
-
-This command starts a local Ethereum network using Foundry. The network runs on your local machine and can be used for testing and development. You can customize the network configuration in `packages/foundry/foundry.toml`.
-
-3. On a second terminal, deploy the test contract:
-
-```
-yarn deploy
+### 4️⃣ Environment Variables
+- Create a `.env.local` file in the root directory:
+```env
+WEB3_AUTH_CLIENT_ID = WEB3_AUTH_CLIENT_ID_EXAMPLE
+NEXT_PUBLIC_VAPID_PUBLIC_KEY = NEXT_PUBLIC_VAPID_PUBLIC_KEY_EXAMPLE
+VAPID_PRIVATE_KEY = VAPID_PRIVATE_KEY_EXAMPLE
+NEXT_PUBLIC_SUPABASE_URL = https://example.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY = NEXT_PUBLIC_SUPABASE_ANON_KEY_EXAMPLE
 ```
 
-This command deploys a test smart contract to the local network. The contract is located in `packages/foundry/contracts` and can be modified to suit your needs. The `yarn deploy` command uses the deploy script located in `packages/foundry/script` to deploy the contract to the network. You can also customize the deploy script.
-
-4. On a third terminal, start your NextJS app:
-
+### 5️⃣ Run the development server
 ```
 yarn start
 ```
 
-Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page. You can tweak the app config in `packages/nextjs/scaffold.config.ts`.
 
-Run smart contract test with `yarn foundry:test`
+## 🔗 Smart Contract Integration
+**Read Functions** 📖
+- `isMerchant(address merchant)` → Checks if the address is registered as a merchant.  
+- `priceUsdtPerNative()` → Returns MATIC price in USDT.  
+- `lyraPerUsdt()` → Returns LYRA price in USDT.  
+- `balanceOf(address account)` → Returns LYRA token balance for an address.
 
-- Edit your smart contracts in `packages/foundry/contracts`
-- Edit your frontend homepage at `packages/nextjs/app/page.tsx`. For guidance on [routing](https://nextjs.org/docs/app/building-your-application/routing/defining-routes) and configuring [pages/layouts](https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts) checkout the Next.js documentation.
-- Edit your deployment scripts in `packages/foundry/script`
+**Write Functions** 📝
+- `transfer(address to, uint256 amount)` → Transfers LYRA tokens.  
+- `merchantSwapLyraToUsdt(uint256 lyraAmount, uint256 minUsdt)` → Swaps LYRA for USDT.  
+- `merchantSwapLyraToNative(uint256 lyraAmount, uint256 minNative)` → Swaps LYRA for MATIC.
 
 
-## Documentation
+## 🤝 Contributing
+We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
-Visit our [docs](https://docs.scaffoldeth.io) to learn how to start building with Scaffold-ETH 2.
 
-To know more about its features, check out our [website](https://scaffoldeth.io).
+## 📝 License
+This project is licensed under the MIT License - see [LICENSE](LICENCE) for details.
 
-## Contributing to Scaffold-ETH 2
-
-We welcome contributions to Scaffold-ETH 2!
-
-Please see [CONTRIBUTING.MD](https://github.com/scaffold-eth/scaffold-eth-2/blob/main/CONTRIBUTING.md) for more information and guidelines for contributing to Scaffold-ETH 2.
+## 📬 References & Support
+🌐 **Website:** [Lyra]() <br>
+🐞 **GitHub Issues:** [Report Issues](https://github.com/Tianweiii/lyra/issues)
