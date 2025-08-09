@@ -15,9 +15,8 @@ const MerchantPaymentFlow: NextPage = () => {
   const [paymentRef, setPaymentRef] = useState<string>("");
   // const [convertedAmount, setConvertedAmount] = useState<number>(0);
   const [status, setStatus] = useState("");
-  // TODO: Both wallet address and wallet balance will be props
+  // TODO: Wallet address will be props
   const walletAddress = "0xABC123XXXXXXXXXXXXXXXXXXXXXDEF456";
-  const walletBalance = 50.23;
 
   // const router = useRouter();
   const steps = ["Enter Amount", "Scan QR", "Payment Status"];
@@ -63,7 +62,7 @@ const MerchantPaymentFlow: NextPage = () => {
                   transition={{ duration: 0.5 }}
                   className="w-full"
                 >
-                  <PromptPayment walletAddress={walletAddress} balance={walletBalance} onNext={handleNext} />
+                  <PromptPayment walletAddress={walletAddress} onNext={handleNext} />
                 </motion.div>
               )}
 
@@ -95,7 +94,13 @@ const MerchantPaymentFlow: NextPage = () => {
                   transition={{ duration: 0.5 }}
                   className="w-full"
                 >
-                  <PaymentStatus status={status} amount={amount} paymentRef={paymentRef} onTry={() => setStep(1)} />
+                  <PaymentStatus
+                    status={status}
+                    amount={amount}
+                    paymentRef={paymentRef}
+                    onTry={() => setStep(1)}
+                    role={"merchant"}
+                  />
                 </motion.div>
               )}
             </AnimatePresence>

@@ -13,22 +13,50 @@ const UserScanPage: NextPage = () => {
   const [status, setStatus] = useState("");
   const [amount, setAmount] = useState<number>(0);
   const [paymentRef, setPaymentRef] = useState<string>("");
+  const [validationError, setValidationError] = useState("");
 
   const router = useRouter();
   const steps = ["Scan QR", "Payment Status"];
+  // TODO: Wallet balance will be props
+  const walletBalance = 50.23;
 
   const handleScanSuccess = (qrData: string) => {
     // TODO: Simulate verifying QR content
-    const isValid = qrData.includes("ai"); // TODO: real validation
-    console.log(qrData);
-    console.log(isValid);
-    const amountExtracted = 25; // Extract or calculate from QR
-    const ref = "0xPAYREF123456";
+    // const isValid = qrData.includes("ai"); // TODO: real validation
+    // const qrData.amount = 25; // Extract or calculate from QR
+    // const ref = "0xPAYREF123456";
 
-    setStatus(isValid ? "success" : "failed");
-    setAmount(amountExtracted);
-    setPaymentRef(ref);
-    setStep(2);
+    // TODO: FETCH JSON
+
+    qrData = `{"amount": 25, "ref": "0xPAYREF123456", "merchant": "Coffee Shop"}`;
+
+    try {
+      const data = JSON.parse(qrData);
+
+      if (typeof data.amount !== "number") {
+        setValidationError("Invalid QR code: Missing or invalid amount.");
+        return;
+      }
+
+      if (data.amount > walletBalance) {
+        setValidationError(`Insufficient balance. Required: RM ${data.amount.toFixed(2)}`);
+        return;
+      }
+
+      // If all good → proceed to status page
+      setValidationError("");
+      setStatus("success");
+      setAmount(data.amount);
+      setPaymentRef(data.ref || "0xPAYREF123456");
+      setStep(2);
+    } catch {
+      setValidationError("Invalid QR code format.");
+    }
+
+    // setStatus(isValid ? "success" : "failed");
+    // setAmount(amountExtracted);
+    // setPaymentRef(ref);
+    // setStep(2);
   };
 
   return (
@@ -36,7 +64,7 @@ const UserScanPage: NextPage = () => {
       <div className="relative flex items-center justify-between px-5">
         {/* Back Button */}
         <motion.button
-          onClick={() => router.push("/dashboard/123")} // TODO: Route back based on the role
+          onClick={() => router.push("/dashboard/125")}
           whileHover={{ x: -4 }}
           className="flex items-center gap-2 text-white hover:text-gray-300 transition-colors border p-2 rounded-xl cursor-pointer"
         >
@@ -54,7 +82,7 @@ const UserScanPage: NextPage = () => {
           {/* Back */}
         </motion.button>
 
-        {/* Title and Description (centered) */}
+        {/* Title and Description */}
         <div className="absolute left-0 right-0 mx-auto text-center w-fit">
           <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}>
             <h1 className="text-4xl font-bold">Pay by QR</h1>
@@ -79,7 +107,11 @@ const UserScanPage: NextPage = () => {
                 transition={{ duration: 0.5 }}
                 className="w-full"
               >
-                <CameraScanner onScanSuccess={handleScanSuccess} />
+                <CameraScanner
+                  onScanSuccess={handleScanSuccess}
+                  balance={walletBalance}
+                  validationError={validationError}
+                />
               </motion.div>
             )}
 
@@ -92,7 +124,13 @@ const UserScanPage: NextPage = () => {
                 transition={{ duration: 0.5 }}
                 className="w-full"
               >
-                <PaymentStatus status={status} amount={amount} paymentRef={paymentRef} onTry={() => setStep(1)} />
+                <PaymentStatus
+                  status={status}
+                  amount={amount}
+                  paymentRef={paymentRef}
+                  onTry={() => setStep(1)}
+                  role={"user"}
+                />
               </motion.div>
             )}
           </AnimatePresence>

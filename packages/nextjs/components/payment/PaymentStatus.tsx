@@ -9,9 +9,10 @@ interface PaymentStatusProps {
   amount: number;
   paymentRef: string;
   onTry: () => void;
+  role: "merchant" | "user";
 }
 
-export default function PaymentStatus({ status, amount, paymentRef, onTry }: PaymentStatusProps) {
+export default function PaymentStatus({ status, amount, paymentRef, onTry, role }: PaymentStatusProps) {
   // status = "success";
   const success = status === "success";
 
@@ -20,6 +21,14 @@ export default function PaymentStatus({ status, amount, paymentRef, onTry }: Pay
   const fadeInUp = {
     initial: { opacity: 0, y: 40 },
     animate: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+  };
+
+  const goToHistory = () => {
+    if (role === "merchant") {
+      router.push("/dashboard/123");
+    } else if (role === "user") {
+      router.push("/dashboard/125");
+    }
   };
 
   return (
@@ -69,7 +78,8 @@ export default function PaymentStatus({ status, amount, paymentRef, onTry }: Pay
             whileTap={{ scale: 0.95 }}
             className="mt-8 px-6 py-3 rounded-2xl border-2 border-gray-300 focus:bg-white focus:text-black hover:bg-white hover:text-black transition duration-300 cursor-pointer"
             onClick={() => {
-              router.push("/dashboard/123"); // TODO: Route back to respective role
+              goToHistory();
+              // router.push("/dashboard/123"); // TODO: Route back to respective role
             }}
           >
             View History
