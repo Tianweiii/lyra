@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { formatUnits, parseUnits } from "viem";
 import { useAccount, useChainId, useSwitchChain } from "wagmi";
+import { SecurityCheck } from "~~/components/SecurityCheck";
 import { RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import { AddressInput } from "~~/components/scaffold-eth/Input/AddressInput";
 import { EtherInput } from "~~/components/scaffold-eth/Input/EtherInput";
@@ -10,7 +11,7 @@ import { useScaffoldReadContract } from "~~/hooks/scaffold-eth/useScaffoldReadCo
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth/useScaffoldWriteContract";
 
 export default function GovernmentPage() {
-  const { address, isConnected } = useAccount();
+  const { address } = useAccount();
   const chainId = useChainId();
   const { switchChain } = useSwitchChain();
 
@@ -19,6 +20,11 @@ export default function GovernmentPage() {
   const [nativeAmount, setNativeAmount] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [swapType, setSwapType] = useState<"usdt" | "native">("usdt");
+
+  // Security check states
+  const [isAddressSuspicious, setIsAddressSuspicious] = useState(false);
+  const [securityRisks, setSecurityRisks] = useState<Array<{ key: string; label: string; value: string }>>([]);
+  const [showSecurityWarning, setShowSecurityWarning] = useState(false);
 
   // Check if connected to Polygon network (chain ID 137)
   const isPolygonNetwork = chainId === 137;
@@ -43,6 +49,14 @@ export default function GovernmentPage() {
   // Write contract functions
   const { writeContractAsync: writeLyraOtcSeller } = useScaffoldWriteContract("LyraOtcSeller");
 
+  const handleSecurityUpdate = (isSuspicious: boolean, risks: Array<{ key: string; label: string; value: string }>) => {
+    setIsAddressSuspicious(isSuspicious);
+    setSecurityRisks(risks);
+    if (isSuspicious) {
+      setShowSecurityWarning(true);
+    }
+  };
+
   const handleSwitchToPolygon = async () => {
     try {
       await switchChain({ chainId: 137 });
@@ -52,37 +66,67 @@ export default function GovernmentPage() {
   };
 
   const handleUsdtSwap = async () => {
-    if (!usdtAmount || !recipientAddress) return;
+    if (!recipientAddress || !usdtAmount) {
+      alert("请填写收件人地址和USDT金额");
+      return;
+    }
+
+    // Security warning for suspicious addresses
+    if (isAddressSuspicious && showSecurityWarning) {
+      const confirmed = window.confirm(
+        `⚠️ 安全警告！\n\n检测到收件人地址存在以下安全风险：\n${securityRisks.map(r => `• ${r.label}`).join("\n")}\n\n您确定要继续交易吗？`,
+      );
+      if (!confirmed) {
+        return;
+      }
+      setShowSecurityWarning(false); // Don't show warning again for this transaction
+    }
 
     try {
       setIsLoading(true);
-      const usdtAmountWei = parseUnits(usdtAmount, 6);
-      const lyraOut = usdtAmountWei * (lyraPerUsdt || 0n);
-      const minLyraOut = (lyraOut * 99n) / 100n; // 1% slippage
+
+      const usdtAmountWei = parseUnits(usdtAmount, 6); // USDT has 6 decimals
+      const minLyraOut = (lyraPerUsdt * usdtAmountWei) / BigInt(1e6); // Calculate expected LYRA output
 
       await writeLyraOtcSeller({
         functionName: "govSwapUsdtAndSend",
         args: [recipientAddress, usdtAmountWei, minLyraOut],
       });
 
+      alert("USDT换LYRA交易成功！");
       setUsdtAmount("");
       setRecipientAddress("");
     } catch (error) {
-      console.error("Error swapping USDT:", error);
+      console.error("USDT swap error:", error);
+      alert("交易失败，请检查余额和网络连接");
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleNativeSwap = async () => {
-    if (!nativeAmount || !recipientAddress) return;
+    if (!recipientAddress || !nativeAmount) {
+      alert("请填写收件人地址和MATIC金额");
+      return;
+    }
+
+    // Security warning for suspicious addresses
+    if (isAddressSuspicious && showSecurityWarning) {
+      const confirmed = window.confirm(
+        `⚠️ 安全警告！\n\n检测到收件人地址存在以下安全风险：\n${securityRisks.map(r => `• ${r.label}`).join("\n")}\n\n您确定要继续交易吗？`,
+      );
+      if (!confirmed) {
+        return;
+      }
+      setShowSecurityWarning(false); // Don't show warning again for this transaction
+    }
 
     try {
       setIsLoading(true);
+
       const nativeAmountWei = parseUnits(nativeAmount, 18);
-      const usdtAmount = (nativeAmountWei * (priceUsdtPerNative || 0n)) / parseUnits("1", 18);
-      const lyraOut = usdtAmount * (lyraPerUsdt || 0n);
-      const minLyraOut = (lyraOut * 99n) / 100n; // 1% slippage
+      const expectedUsdtValue = (nativeAmountWei * priceUsdtPerNative) / BigInt(1e18);
+      const minLyraOut = (lyraPerUsdt * expectedUsdtValue) / BigInt(1e6);
 
       await writeLyraOtcSeller({
         functionName: "govSwapNativeAndSend",
@@ -90,33 +134,18 @@ export default function GovernmentPage() {
         value: nativeAmountWei,
       });
 
+      alert("MATIC换LYRA交易成功！");
       setNativeAmount("");
       setRecipientAddress("");
     } catch (error) {
-      console.error("Error swapping native:", error);
+      console.error("Native swap error:", error);
+      alert("交易失败，请检查余额和网络连接");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const getQuote = () => {
-    if (!usdtAmount && !nativeAmount) return "0";
-
-    if (swapType === "usdt" && usdtAmount) {
-      const usdtAmountWei = parseUnits(usdtAmount, 6);
-      const lyraOut = usdtAmountWei * (lyraPerUsdt || 0n);
-      return formatUnits(lyraOut, 18);
-    } else if (swapType === "native" && nativeAmount) {
-      const nativeAmountWei = parseUnits(nativeAmount, 18);
-      const usdtAmount = (nativeAmountWei * (priceUsdtPerNative || 0n)) / parseUnits("1", 18);
-      const lyraOut = usdtAmount * (lyraPerUsdt || 0n);
-      return formatUnits(lyraOut, 18);
-    }
-
-    return "0";
-  };
-
-  if (!isConnected) {
+  if (!address) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center space-y-4">
@@ -190,6 +219,13 @@ export default function GovernmentPage() {
             />
           </div>
 
+          {/* Security Check */}
+          {recipientAddress && (
+            <div className="mb-4">
+              <SecurityCheck address={recipientAddress} chainId="137" onSecurityUpdate={handleSecurityUpdate} />
+            </div>
+          )}
+
           <div className="mb-4">
             <label className="block text-sm font-medium mb-2">Swap Type</label>
             <div className="flex space-x-4">
@@ -220,82 +256,51 @@ export default function GovernmentPage() {
             <div className="mb-4">
               <label className="block text-sm font-medium mb-2">USDT Amount</label>
               <EtherInput value={usdtAmount} onChange={setUsdtAmount} placeholder="Enter USDT amount" />
+              {usdtAmount && lyraPerUsdt && (
+                <p className="text-sm text-gray-600 mt-1">
+                  Expected LYRA output: ~{formatUnits(BigInt(usdtAmount || "0") * lyraPerUsdt, 18)} LYRA
+                </p>
+              )}
             </div>
           ) : (
             <div className="mb-4">
               <label className="block text-sm font-medium mb-2">MATIC Amount</label>
               <EtherInput value={nativeAmount} onChange={setNativeAmount} placeholder="Enter MATIC amount" />
+              {nativeAmount && lyraPerUsdt && priceUsdtPerNative && (
+                <p className="text-sm text-gray-600 mt-1">
+                  Expected LYRA output: ~
+                  {formatUnits(
+                    (parseUnits(nativeAmount, 18) * priceUsdtPerNative * lyraPerUsdt) / BigInt(1e18) / BigInt(1e6),
+                    18,
+                  )}{" "}
+                  LYRA
+                </p>
+              )}
             </div>
           )}
 
-          <div className="mb-6 p-4 bg-base-200 rounded">
-            <p className="text-sm text-gray-600">Estimated LYRA Output:</p>
-            <p className="text-lg font-semibold">{getQuote()} LYRA</p>
-          </div>
-
           <button
             onClick={swapType === "usdt" ? handleUsdtSwap : handleNativeSwap}
-            disabled={isLoading || (!usdtAmount && !nativeAmount) || !recipientAddress}
+            disabled={isLoading || !recipientAddress || (!usdtAmount && !nativeAmount)}
             className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
-            {isLoading ? "Processing..." : `Swap & Send LYRA`}
+            {isLoading ? "Processing..." : `Swap ${swapType.toUpperCase()} to LYRA & Send`}
           </button>
         </div>
 
+        {/* Exchange Rates */}
         <div className="bg-base-100 rounded-lg shadow-lg p-6">
-          <h2 className="text-xl font-semibold mb-4">Current Prices</h2>
+          <h3 className="text-lg font-semibold mb-4">Current Exchange Rates</h3>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="text-sm text-blue-600">MATIC Price (USDT)</p>
-              <p className="text-lg font-semibold">
+              <p className="text-sm text-gray-600">USDT per MATIC</p>
+              <p className="text-lg font-medium">
                 {priceUsdtPerNative ? formatUnits(priceUsdtPerNative, 6) : "Loading..."} USDT
               </p>
             </div>
             <div>
-              <p className="text-sm text-blue-600">LYRA Price (USDT)</p>
-              <p className="text-lg font-semibold">{lyraPerUsdt ? formatUnits(lyraPerUsdt, 12) : "Loading..."} USDT</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-6 bg-base-100 rounded-lg shadow-lg p-6">
-          <h2 className="text-xl font-semibold mb-4">Instructions</h2>
-          <div className="space-y-3 text-sm">
-            <p>
-              <strong>Government Portal Features:</strong>
-            </p>
-            <ul className="list-disc list-inside space-y-1">
-              <li>Swap USDT or MATIC to LYRA tokens</li>
-              <li>Send LYRA directly to recipient addresses</li>
-              <li>Automatic 0.1% MATIC fee sent to recipient for gas costs</li>
-              <li>Real-time price calculations</li>
-            </ul>
-
-            <div className="mt-4 p-4 bg-base-200 rounded">
-              <h3 className="font-semibold mb-2">How it works:</h3>
-              <ol className="list-decimal list-inside space-y-1">
-                <li>Enter the recipient&apos;s wallet address</li>
-                <li>Choose swap type (USDT or MATIC)</li>
-                <li>Enter the amount to swap</li>
-                <li>Review the estimated LYRA output</li>
-                <li>Click &quot;Swap & Send LYRA&quot; to execute</li>
-              </ol>
-            </div>
-
-            <div className="mt-4 p-4 rounded">
-              <h3 className="font-semibold mb-2">Important Notes:</h3>
-              <ul className="list-disc list-inside space-y-1">
-                <li>Only government users can access this portal</li>
-                <li>Recipients receive LYRA tokens + 0.1% MATIC fee</li>
-                <li>Ensure you have sufficient USDT/MATIC balance</li>
-                <li>
-                  Check the{" "}
-                  <a href="/otc-status" className="text-blue-600 underline">
-                    OTC Status
-                  </a>{" "}
-                  page for contract balances
-                </li>
-              </ul>
+              <p className="text-sm text-gray-600">LYRA per USDT</p>
+              <p className="text-lg font-medium">{lyraPerUsdt ? formatUnits(lyraPerUsdt, 12) : "Loading..."} LYRA</p>
             </div>
           </div>
         </div>
