@@ -258,7 +258,9 @@ export default function GovernmentPage() {
               <EtherInput value={usdtAmount} onChange={setUsdtAmount} placeholder="Enter USDT amount" />
               {usdtAmount && lyraPerUsdt && (
                 <p className="text-sm text-gray-600 mt-1">
-                  Expected LYRA output: ~{formatUnits(BigInt(usdtAmount || "0") * lyraPerUsdt, 18)} LYRA
+                  Expected LYRA output: ~
+                  {formatUnits(((usdtAmount ? parseUnits(usdtAmount, 6) : BigInt(0)) * lyraPerUsdt) / BigInt(1e6), 18)}{" "}
+                  LYRA
                 </p>
               )}
             </div>

@@ -38,10 +38,12 @@ export const loadUserData = (): UserDataProps[] => {
   const stored = localStorage.getItem(STORAGE_KEY);
   if (stored) return JSON.parse(stored);
 
-  const generated = Array.from({ length: 15 }, () => ({
-    walletAddress: `0x${Math.random().toString(16).slice(2, 42)}`,
-    status: (Math.random() > 0.5 ? "active" : "inactive") as "active" | "inactive",
-  }));
+  const generated: UserDataProps[] = [
+    { walletAddress: "0xee95B5e54b3eA3F0168752b16acA951AA009dd19", status: "active" },
+    { walletAddress: "0x34944dA1e57645FA66c9F9A18691B5390B277dBe", status: "active" },
+    { walletAddress: "0x7644bb1a2a9c64Aa029d2E969a6bfE90672752b7", status: "active" },
+    { walletAddress: "0x14EEaE1Ea8361BD709fcA99f64aeCE239615CdF2", status: "active" },
+  ];
 
   localStorage.setItem(STORAGE_KEY, JSON.stringify(generated));
   return generated;
