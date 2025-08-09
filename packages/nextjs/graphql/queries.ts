@@ -5,10 +5,8 @@ export const GET_TRANSFERS = gql`
   query GetTransfers($accountId: Bytes!) {
     transfers(first: 50, orderBy: blockTimestamp, orderDirection: desc, where: { from: $accountId }) {
       id
-      from
       to
       value
-      blockNumber
       blockTimestamp
       transactionHash
     }
