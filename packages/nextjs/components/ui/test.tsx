@@ -7,7 +7,7 @@ export const Test = () => {
   const [scope, animate] = useAnimate();
 
   const onPress = () => {
-    animate("#mainContainer", { height: 100, }, { duration: 0.5 });
+    animate("#mainContainer", { height: 100 }, { duration: 0.5 });
   };
 
   return (

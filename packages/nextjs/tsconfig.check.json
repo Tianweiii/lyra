@@ -1,0 +1,38 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "next-env.d.ts",
+    "types/**/*.d.ts",
+    "app/government/page.tsx",
+    "app/merchant/page.tsx",
+    "app/payment/page.tsx",
+    "app/otc-status/page.tsx",
+    "app/fund-otc/page.tsx",
+    "app/fund-matic/page.tsx",
+    "app/setup-contracts/page.tsx",
+    "app/otc-swap/page.tsx",
+    "components/scaffold-eth/**/*.ts",
+    "components/scaffold-eth/**/*.tsx",
+    "hooks/**/*.ts",
+    "hooks/**/*.tsx",
+    "contracts/**/*.ts",
+    "services/**/*.ts",
+    "services/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next",
+    "components/ui/**",
+    "components/payment/**",
+    "graphql/**",
+    "styles/**",
+    "utils/**",
+    "app/page.tsx",
+    "app/(auth)/**",
+    "app/dashboard/**",
+    "app/sendcoins/**",
+    "app/support/**",
+    "app/payment/**/page.tsx",
+    "components/**/*.stories.tsx"
+  ]
+}

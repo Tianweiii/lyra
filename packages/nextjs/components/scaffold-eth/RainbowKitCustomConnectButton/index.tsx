@@ -1,34 +1,47 @@
 "use client";
 
-// @refresh reset
-import { Balance } from "../Balance";
+import Image from "next/image";
 import { AddressInfoDropdown } from "./AddressInfoDropdown";
-import { AddressQRCodeModal } from "./AddressQRCodeModal";
-import { RevealBurnerPKModal } from "./RevealBurnerPKModal";
 import { WrongNetworkDropdown } from "./WrongNetworkDropdown";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { Address } from "viem";
-import { useNetworkColor } from "~~/hooks/scaffold-eth";
-import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
-import { getBlockExplorerAddressLink } from "~~/utils/scaffold-eth";
+import { useAccount } from "wagmi";
+import { getTargetNetworks } from "~~/utils/scaffold-eth";
 
 /**
- * Custom Wagmi Connect Button (watch balance + custom design)
+ * Custom Connect Button for RainbowKit
  */
 export const RainbowKitCustomConnectButton = () => {
-  const networkColor = useNetworkColor();
-  const { targetNetwork } = useTargetNetwork();
+  const { isConnected, address } = useAccount();
+  const targetNetworks = getTargetNetworks();
+
+  // Only render AddressInfoDropdown if we have a valid address
+  if (isConnected && address && address !== "0x0000000000000000000000000000000000000000") {
+    return (
+      <AddressInfoDropdown
+        address={address}
+        blockExplorerAddressLink={`${targetNetworks[0].blockExplorers?.default.url}/address/${address}`}
+        displayName={address}
+      />
+    );
+  }
 
   return (
     <ConnectButton.Custom>
-      {({ account, chain, openConnectModal, mounted }) => {
-        const connected = mounted && account && chain;
-        const blockExplorerAddressLink = account
-          ? getBlockExplorerAddressLink(targetNetwork, account.address)
-          : undefined;
+      {({ account, chain, openAccountModal, openChainModal, openConnectModal, mounted }) => {
+        const ready = mounted;
+        const connected = ready && account && chain;
 
         return (
-          <>
+          <div
+            {...(!ready && {
+              "aria-hidden": true,
+              style: {
+                opacity: 0,
+                pointerEvents: "none",
+                userSelect: "none",
+              },
+            })}
+          >
             {(() => {
               if (!connected) {
                 return (
@@ -38,30 +51,50 @@ export const RainbowKitCustomConnectButton = () => {
                 );
               }
 
-              if (chain.unsupported || chain.id !== targetNetwork.id) {
+              if (chain.unsupported) {
                 return <WrongNetworkDropdown />;
               }
 
               return (
-                <>
-                  <div className="flex flex-col items-center mr-1">
-                    <Balance address={account.address as Address} className="min-h-0 h-auto" />
-                    <span className="text-xs" style={{ color: networkColor }}>
+                <div className="flex flex-col gap-3 lg:flex-row lg:gap-2">
+                  <button
+                    className="btn btn-secondary btn-sm dropdown-toggle gap-1 h-8 w-full lg:w-52"
+                    onClick={openChainModal}
+                    type="button"
+                  >
+                    <span>
+                      {chain.hasIcon && (
+                        <div
+                          style={{
+                            background: chain.iconBackground,
+                            width: 12,
+                            height: 12,
+                            borderRadius: 999,
+                            overflow: "hidden",
+                            marginRight: 4,
+                          }}
+                        >
+                          {chain.iconUrl && (
+                            <Image alt={chain.name ?? "Chain icon"} src={chain.iconUrl} width={12} height={12} />
+                          )}
+                        </div>
+                      )}
                       {chain.name}
                     </span>
-                  </div>
-                  <AddressInfoDropdown
-                    address={account.address as Address}
-                    displayName={account.displayName}
-                    ensAvatar={account.ensAvatar}
-                    blockExplorerAddressLink={blockExplorerAddressLink}
-                  />
-                  <AddressQRCodeModal address={account.address as Address} modalId="qrcode-modal" />
-                  <RevealBurnerPKModal />
-                </>
+                  </button>
+
+                  <button
+                    className="btn btn-primary btn-sm h-8 w-full lg:w-auto"
+                    onClick={openAccountModal}
+                    type="button"
+                  >
+                    {account.displayName}
+                    {account.displayBalance ? ` (${account.displayBalance})` : ""}
+                  </button>
+                </div>
               );
             })()}
-          </>
+          </div>
         );
       }}
     </ConnectButton.Custom>

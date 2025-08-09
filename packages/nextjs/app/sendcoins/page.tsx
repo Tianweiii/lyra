@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useMemo, useState } from "react";
+import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { useMediaQuery } from "react-responsive";
 import Island from "~~/components/ui/island";
@@ -11,6 +12,7 @@ import { loadUserData } from "~~/utils/helper";
 const steps = ["Select Recipient & Amount", "Processing Payment", "Complete Payment"];
 
 const SendCoinPage = () => {
+  const [gasFee] = useState(3);
   const [sendAmount, setSendAmount] = useState("");
   const [step, setStep] = useState(0);
   const [direction, setDirection] = useState(1);
@@ -93,14 +95,10 @@ const SendCoinPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <p className="text-gray-400 text-sm">You will send</p>
-          <input
-            type="number"
-            value={sendAmount}
-            onChange={e => setSendAmount(e.target.value)}
-            placeholder="0.00"
-            className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-blue-500 focus:outline-none transition-colors"
-          />
+          <div className="flex flex-col gap-2">
+            <p className="text-[#8c8c8c] text-[12px]">Recipients</p>
+            <MultiSelectView data={activeUsers} callback={setSelectedUsers} />
+          </div>
         </motion.div>
 
         <motion.div
@@ -109,14 +107,26 @@ const SendCoinPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <p className="text-gray-400 text-sm">Each recipient will get</p>
-          <input
-            type="number"
-            value={sendAmount}
-            onChange={e => setSendAmount(e.target.value)}
-            placeholder="0.00"
-            className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-blue-500 focus:outline-none transition-colors"
-          />
+          <p className="text-gray-400 text-sm">Each user will receive</p>
+          <div className="relative inline-block">
+            <input
+              type="number"
+              value={sendAmount}
+              onChange={e => setSendAmount(e.target.value)}
+              placeholder="0.00"
+              className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-blue-500 focus:outline-none transition-colors box-border [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="gray"
+              className="w-5 h-5 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none"
+            >
+              <Image width={30} height={30} src={"/icons/usdc.svg"} alt="" style={{ zIndex: 999 }} />
+            </svg>
+          </div>
         </motion.div>
 
         <motion.div
@@ -125,10 +135,15 @@ const SendCoinPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          <div className="flex flex-col gap-2">
-            <p className="text-[#8c8c8c] text-[12px]">Recipients</p>
-            <MultiSelectView data={activeUsers} callback={setSelectedUsers} />
-          </div>
+          <p className="text-gray-400 text-sm">You will send (approx.)</p>
+          <input
+            type="number"
+            value={Number(sendAmount) * selectedUsers.length}
+            disabled
+            onChange={e => setSendAmount(e.target.value)}
+            placeholder="0.00"
+            className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-blue-500 focus:outline-none transition-colors"
+          />
         </motion.div>
 
         <motion.div
@@ -137,10 +152,10 @@ const SendCoinPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
         >
-          {verticalContainer("Lyra Fees", 0)}
-          {verticalContainer("You will pay", parsedAmount)}
+          {verticalContainer("You will pay", Number(sendAmount) * selectedUsers.length)}
+          {verticalContainer("Lyra Fees", gasFee)}
           <div className="h-px bg-gray-600 my-2"></div>
-          {verticalContainer("Total", parsedAmount)}
+          {verticalContainer("Total", Number(sendAmount) * selectedUsers.length + gasFee)}
         </motion.div>
       </motion.div>,
 
@@ -243,7 +258,8 @@ const SendCoinPage = () => {
         <div className="w-full flex items-center justify-center p-4">
           <Island />
           <motion.div
-            className="bg-gradient-to-br from-gray-900 to-gray-800 md:w-[70vw] w-[90vw] rounded-2xl p-8 flex flex-col gap-6 border border-gray-700"
+            // className="bg-gradient-to-br from-gray-900 to-gray-800 md:w-[70vw] w-[90vw] rounded-2xl p-8 flex flex-col gap-6 border border-gray-700"
+            className="border-white/30 bg-gray-900/20 backdrop-blur-md md:w-[70vw] w-[90vw] rounded-2xl p-8 flex flex-col gap-6 border"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -345,7 +361,7 @@ const SendCoinPage = () => {
                     Back
                   </motion.button>
                   <motion.button
-                    disabled={step === steps.length - 1}
+                    disabled={step === 2}
                     onClick={handleNext}
                     className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all duration-300 ${
                       step === steps.length - 1

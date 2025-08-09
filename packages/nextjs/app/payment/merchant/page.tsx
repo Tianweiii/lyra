@@ -42,7 +42,7 @@ const MerchantPaymentFlow: NextPage = () => {
 
   return (
     <>
-      <div className="mt-10 text-white">
+      <div className="p-10 text-white">
         <h1 className="text-4xl font-bold ml-5">Payment Screen</h1>
 
         {/* Progress Bar */}
