@@ -42,8 +42,8 @@ const DashboardPage: NextPage = () => {
   const router = useRouter();
   const { id } = useParams();
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const accountId = useAccount().address;
   const { address: wagmiAddress } = useAccount();
+  const accountId = "0x5265BCcc8aB5A36A45ABD2E574E6Fa7F863e5C2e";
 
   // New state to hold fetched balance data
   const [amount, setAmount] = useState<number>(0); // Add amount to state
@@ -119,7 +119,7 @@ const DashboardPage: NextPage = () => {
     error: transferError,
     data: transferData,
   } = useQuery(GET_TRANSFERS, {
-    variables: { accountId: accountId?.toString() || "" },
+    variables: { accountId },
   });
 
   if (transferLoading)
