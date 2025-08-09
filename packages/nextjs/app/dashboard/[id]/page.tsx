@@ -65,12 +65,12 @@ const DashboardPage: NextPage = () => {
   const renderMap: RenderMapProps = {
     user: {
       title: "Make Payment",
-      onClick: () => router.push(""),
+      onClick: () => router.push("/payment/user"),
       iconPath: "/icons/qr-scan.svg",
     },
     merchant: {
       title: "Generate QR",
-      onClick: () => router.push(""),
+      onClick: () => router.push("/payment/merchant"),
       iconPath: "/icons/qr-scan.svg",
     },
     admin: {

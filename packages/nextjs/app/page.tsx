@@ -72,8 +72,9 @@ const Home: NextPage = () => {
           loop={false}
           muted
           playsInline
-          className={`absolute top-0 left-0 w-full h-full object-cover z-0 transition-opacity duration-1000 ${fadeOut ? "opacity-0" : "opacity-100"
-            }`}
+          className={`absolute top-0 left-0 w-full h-full object-cover z-0 transition-opacity duration-1000 ${
+            fadeOut ? "opacity-0" : "opacity-100"
+          }`}
         >
           <source src="/videos/bgvideo.mp4" type="video/mp4" />
         </video>
@@ -84,7 +85,7 @@ const Home: NextPage = () => {
           <div>
             <p className="text-[60px] text-white">Financing - Enhanced</p>
             <p className="text-[24px] max-w-[40vw] text-white">
-              Lorem ipsum dolor sit amet, <br /> consectetur adipisicing elit. Placeat explicabo soluta quaerat.
+              One platform for public aid and private rewards—secure, transparent, unstoppable.
             </p>
           </div>
         </div>
