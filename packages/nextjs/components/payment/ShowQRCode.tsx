@@ -56,10 +56,11 @@ export default function ShowQRCode({ amount, walletAddress, onPaid, onBack }: sh
       <motion.div className="flex justify-center py-4">
         {React.createElement(QRCodeComponent as any, {
           value: paymentData,
-          size: 200,
+          size: 270,
           bgColor: "#000",
           fgColor: "#ffffff",
           level: "H",
+          style: { display: "block" },
         })}
         {/* <QRCode value={paymentData} size={200} bgColor="#000" fgColor="#ffffff" level="H" /> */}
       </motion.div>
