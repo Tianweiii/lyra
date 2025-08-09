@@ -1,56 +1,103 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { formatUnits, parseUnits } from "viem";
+import { useRouter, useSearchParams } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
+import type { NextPage } from "next";
+import { parseUnits } from "viem";
 import { useAccount, useChainId, useSwitchChain } from "wagmi";
+import { CameraScanner } from "~~/components/payment/CameraScanner";
+import PaymentStatus from "~~/components/payment/PaymentStatus";
+import { ProgressBar } from "~~/components/payment/ProgressBar";
 import { RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
-import { Address } from "~~/components/scaffold-eth/Address/Address";
-import { EtherInput } from "~~/components/scaffold-eth/Input/EtherInput";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth/useScaffoldReadContract";
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth/useScaffoldWriteContract";
 
-export default function PaymentPage() {
-  const { address, isConnected } = useAccount();
+const CHAIN_ID_POLYGON = 137 as const;
+
+const UserScanPage: NextPage = () => {
+  const [step, setStep] = useState(1);
+  const [status, setStatus] = useState("");
+  const [amount, setAmount] = useState<number>(0);
   const chainId = useChainId();
   const { switchChain } = useSwitchChain();
-  const searchParams = useSearchParams();
-
-  const [lyraAmount, setLyraAmount] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [merchantAddress, setMerchantAddress] = useState("");
-
+  const [paymentRef, setPaymentRef] = useState<string>("");
+  const [validationError, setValidationError] = useState("");
+  const [merchantAddress, setMerchantAddress] = useState<string>("");
   // Check if connected to Polygon network (chain ID 137)
   const isPolygonNetwork = chainId === 137;
 
-  // Get URL parameters
-  useEffect(() => {
-    const merchant = searchParams.get("merchant");
-    const amount = searchParams.get("amount");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const steps = ["Scan QR", "Confirm & Pay", "Payment Status"];
 
-    if (merchant) {
-      setMerchantAddress(merchant);
-    }
-    if (amount) {
-      setLyraAmount(amount);
+  // Check merchant status for current merchant address (Polygon)
+  const { data: isMerchant } = useScaffoldReadContract({
+    contractName: "LyraOtcSeller",
+    functionName: "isMerchant",
+    args: [merchantAddress || "0x0000000000000000000000000000000000000000"],
+    chainId: CHAIN_ID_POLYGON,
+  });
+
+  // Read token decimals once (Polygon)
+  const { data: lyraDecimals } = useScaffoldReadContract({
+    contractName: "LyraToken",
+    functionName: "decimals",
+    args: [],
+    chainId: CHAIN_ID_POLYGON,
+  });
+
+  // Write to LyraToken (Polygon)
+  const { writeContractAsync: writeLyraTokenAsync } = useScaffoldWriteContract({
+    contractName: "LyraToken",
+    chainId: CHAIN_ID_POLYGON,
+  });
+
+  // If page accessed by URL /payment/user?data=
+  useEffect(() => {
+    const urlData = searchParams.get("data");
+    if (urlData) {
+      handleScanSuccess(`${window.location.origin}/payment/user?data=${urlData}`);
     }
   }, [searchParams]);
 
-  // Read contract data
-  const { data: lyraBalance } = useScaffoldReadContract({
-    contractName: "LyraToken",
-    functionName: "balanceOf",
-    args: [address],
-  });
+  const handleScanSuccess = (qrData: string) => {
+    try {
+      let data;
+      if (qrData.startsWith("http")) {
+        const url = new URL(qrData);
+        const encodedData = url.searchParams.get("data");
+        if (!encodedData) throw new Error("Missing data parameter in QR code URL.");
+        try {
+          data = JSON.parse(atob(encodedData));
+        } catch {
+          try {
+            data = JSON.parse(decodeURIComponent(encodedData));
+          } catch {
+            throw new Error("Invalid QR code data format.");
+          }
+        }
+      } else {
+        data = JSON.parse(qrData);
+      }
 
-  const { data: isMerchant } = useScaffoldReadContract({
-    contractName: "LyraToken",
-    functionName: "isMerchant",
-    args: [merchantAddress],
-  });
+      if (typeof data.amount !== "number" || isNaN(data.amount)) {
+        setValidationError("Invalid QR code: Missing or invalid amount.");
+        return;
+      }
+      if (!data.merchantAddress || typeof data.merchantAddress !== "string") {
+        setValidationError("Invalid QR code: Missing merchant address.");
+        return;
+      }
 
-  // Write contract functions
-  const { writeContractAsync: writeLyraToken } = useScaffoldWriteContract("LyraToken");
+      setValidationError("");
+      setMerchantAddress(data.merchantAddress);
+      setAmount(data.amount);
+      setStep(2);
+    } catch (error) {
+      setValidationError(`Invalid QR code format: ${error instanceof Error ? error.message : "Unknown error"}`);
+    }
+  };
 
   const handleSwitchToPolygon = async () => {
     try {
@@ -60,146 +107,172 @@ export default function PaymentPage() {
     }
   };
 
-  const handlePayment = async () => {
-    if (!lyraAmount || !merchantAddress) return;
+  const handlePay = async () => {
+    if (!merchantAddress || amount <= 0) return;
 
     try {
-      setIsLoading(true);
-      const lyraAmountWei = parseUnits(lyraAmount, 18);
-
-      await writeLyraToken({
+      setValidationError("");
+      const decimals = typeof lyraDecimals === "number" ? lyraDecimals : 18;
+      const amountInBase = parseUnits(amount.toString(), decimals);
+      const tx = await writeLyraTokenAsync({
         functionName: "transfer",
-        args: [merchantAddress, lyraAmountWei],
+        args: [merchantAddress, amountInBase],
       });
-
-      setLyraAmount("");
-      alert("Payment successful!");
-    } catch (error) {
-      console.error("Error making payment:", error);
-      alert("Payment failed. Please check your balance and try again.");
-    } finally {
-      setIsLoading(false);
+      setStatus("success");
+      setPaymentRef(typeof tx === "string" ? tx : "");
+      setStep(3);
+    } catch {
+      setStatus("failed");
+      setValidationError("Transfer failed. Please try again.");
+      setStep(3);
     }
   };
 
-  const isMerchantValid = isMerchant === true;
-
-  if (!isConnected) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center space-y-4">
-          <div className="flex justify-center">
-            <RainbowKitCustomConnectButton />
-          </div>
-          <h1 className="text-2xl font-bold mb-4">Payment Portal</h1>
-          <p className="text-gray-600">Please connect your wallet to make a payment.</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!isPolygonNetwork) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center space-y-4">
-          <div className="flex justify-center">
-            <RainbowKitCustomConnectButton />
-          </div>
-          <h1 className="text-2xl font-bold mb-4">Wrong Network</h1>
-          <p className="text-gray-600 mb-4">Please switch to Polygon network to make payments.</p>
-          <button
-            onClick={handleSwitchToPolygon}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          >
-            Switch to Polygon
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  if (!merchantAddress) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center space-y-4">
-          <div className="flex justify-center">
-            <RainbowKitCustomConnectButton />
-          </div>
-          <h1 className="text-2xl font-bold mb-4">Invalid Payment Link</h1>
-          <p className="text-gray-600">No merchant address provided in the payment link.</p>
-        </div>
-      </div>
-    );
-  }
+  const fadeUp = {
+    initial: { opacity: 0, y: 30 },
+    animate: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+  } as const;
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-2xl mx-auto">
-        <div className="flex justify-end mb-4">
-          <RainbowKitCustomConnectButton />
-        </div>
-        <h1 className="text-3xl font-bold mb-8 text-center">Payment Portal</h1>
-
-        {/* Network Status */}
-        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded">
-          <p className="text-green-800 text-sm">✅ Connected to Polygon Network (Chain ID: {chainId})</p>
-        </div>
-
-        <div className=" rounded-lg shadow-lg p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-4">Pay with LYRA</h2>
-
-          <div className="mb-4">
-            <label className="block text-sm font-medium mb-2">Merchant Address:</label>
-            <Address address={merchantAddress} />
-            {!isMerchantValid && (
-              <p className="text-red-600 text-sm mt-1">Warning: This address is not registered as a merchant.</p>
-            )}
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-sm font-medium mb-2">Your LYRA Balance:</label>
-            <p className="text-lg font-semibold">{lyraBalance ? formatUnits(lyraBalance, 18) : "Loading..."} LYRA</p>
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-sm font-medium mb-2">LYRA Amount to Send:</label>
-            <EtherInput value={lyraAmount} onChange={setLyraAmount} placeholder="Enter LYRA amount" />
-          </div>
-
-          {lyraAmount && lyraBalance && (
-            <div className="mb-6 p-4  rounded">
-              <p className="text-sm text-gray-600">Payment Summary:</p>
-              <p className="text-lg font-semibold">{lyraAmount} LYRA</p>
-              {parseFloat(lyraAmount) > parseFloat(formatUnits(lyraBalance, 18)) && (
-                <p className="text-red-600 text-sm mt-1">Insufficient balance!</p>
-              )}
-            </div>
-          )}
-
-          <button
-            onClick={handlePayment}
-            disabled={
-              isLoading ||
-              !lyraAmount ||
-              !isMerchantValid ||
-              (lyraBalance && parseFloat(lyraAmount) > parseFloat(formatUnits(lyraBalance, 18)))
-            }
-            className="w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+    <div className="p-10 text-white">
+      <div className="relative flex items-center justify-between px-5">
+        <motion.button
+          onClick={() => router.push("/dashboard/125")}
+          whileHover={{ x: -4 }}
+          className="flex items-center gap-2 text-white hover:text-gray-300 transition-colors border p-2 rounded-xl cursor-pointer"
+        >
+          <motion.svg
+            className="w-4 h-4 md:w-5 md:h-5"
+            initial={{ x: 0 }}
+            animate={{ x: 0 }}
+            whileHover={{ x: -4 }}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
           >
-            {isLoading ? "Processing..." : "Send Payment"}
-          </button>
-        </div>
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </motion.svg>
+        </motion.button>
 
-        <div className=" rounded-lg shadow-lg p-6">
-          <h2 className="text-xl font-semibold mb-4">Payment Information</h2>
-          <div className="space-y-2 text-sm text-gray-600">
-            <p>• LYRA tokens can only be sent to registered merchants</p>
-            <p>• Transactions are tracked and transparent</p>
-            <p>• No fees for LYRA transfers between residents and merchants</p>
-            <p>• Make sure you have sufficient LYRA balance before making payment</p>
-          </div>
+        <div className="absolute left-0 right-0 mx-auto text-center w-fit">
+          <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}>
+            <h1 className="text-4xl font-bold">Pay by QR</h1>
+            <p className="text-gray-400 text-sm">Position your camera over the QR code</p>
+          </motion.div>
         </div>
       </div>
-    </div>
-  );
-}
+
+      <div className="mt-10 flex flex-col items-center p-4 gap-y-6">
+        <div className="w-full max-w-screen">
+          <ProgressBar currentStep={step} steps={steps} />
+        </div>
+
+        <div className="w-full max-w-screen flex justify-center items-center p-6">
+          <AnimatePresence mode="wait">
+            {step === 1 && (
+              <motion.div
+                key="scan"
+                initial={{ x: -100, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: 100, opacity: 0 }}
+                transition={{ duration: 0.5 }}
+                className="w-full"
+              >
+                <CameraScanner onScanSuccess={handleScanSuccess} balance={0} validationError={validationError} />
+              </motion.div>
+            )}
+
+            {step === 2 && (
+              <motion.div
+                key="confirm"
+                initial={{ x: 100, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: -100, opacity: 0 }}
+                transition={{ duration: 0.5 }}
+                className="w-full"
+              >
+                <motion.div
+                  {...fadeUp}
+                  className="p-6 md:p-10 bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl border border-white/20 w-full max-w-3xl mx-auto space-y-6 text-white"
+                >
+                  <div className="space-y-3">
+                    <>
+                      {!isPolygonNetwork && (
+                        <div className="flex items-center justify-center min-h-screen">
+                          <div className="text-center space-y-4">
+                            <div className="flex justify-center">
+                              <RainbowKitCustomConnectButton />
+                            </div>
+                            <h1 className="text-2xl font-bold mb-4">Wrong Network</h1>
+                            <p className="text-gray-600 mb-4">
+                              Please switch to Polygon network to access the government portal.
+                            </p>
+                            <button
+                              onClick={handleSwitchToPolygon}
+                              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                            >
+                              Switch to Polygon
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                    <h2 className="text-lg md:text-xl font-bold text-white/80">Confirm Payment</h2>
+                    <div className="flex justify-between items-center p-4 rounded-xl bg-black/10 border border-gray-500/40 text-sm md:text-base">
+                      <span className="text-gray-400">Merchant</span>
+                      <span className="text-gray-200">
+                        {merchantAddress.slice(0, 8)}****{merchantAddress.slice(-4)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center p-4 rounded-xl bg-black/10 border border-gray-500/40 text-sm md:text-base">
+                      <span className="text-gray-400">Amount</span>
+                      <span className="text-gray-200">{amount} LYRA</span>
+                    </div>
+                    {isMerchant === false && (
+                      <span className="text-xs text-red-500">
+                        Warning: The scanned address is not a registered merchant.
+                      </span>
+                    )}
+                    {validationError && <span className="text-xs text-red-500">{validationError}</span>}
+                  </div>
+                  <div className="flex gap-3">
+                    <button className="flex-1 py-3 rounded-xl bg-gray-600 hover:bg-gray-700" onClick={() => setStep(1)}>
+                      Back
+                    </button>
+                    <button
+                      className="flex-1 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600"
+                      onClick={handlePay}
+                    >
+                      Pay
+                    </button>
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+
+            {step === 3 && (
+              <motion.div
+                key="status"
+                initial={{ x: 100, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: -100, opacity: 0 }}
+                transition={{ duration: 0.5 }}
+                className="w-full"
+              >
+                <PaymentStatus
+                  status={status}
+                  amount={amount}
+                  paymentRef={paymentRef}
+                  onTry={() => setStep(1)}
+                  role={"user"}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default UserScanPage;
