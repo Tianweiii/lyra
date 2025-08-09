@@ -4,48 +4,78 @@ import { motion } from "motion/react";
 
 export const BentoGridsView = () => {
   return (
-    <div className="grid px-[200px] gap-8 h-[90vh]">
+    <div className="grid px-[200px] gap-8 h-[100vh]">
       <div className="grid grid-cols-1 xl:grid-cols-[60%_40%] gap-8">
+        {/* OneClick Login */}
         <motion.div
-          className="border-white/40 border rounded-2xl h-full"
+          className="border-white/20 border rounded-2xl h-full p-8 flex flex-col justify-start bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('/images/BentoGrid-1.png')" }}
           initial={{ opacity: 0, x: -100 }}
           whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0 }}
           viewport={{ once: true }}
         >
-          <p>User Authentication with Sui&apos;s zkLogin, made for better security and privacy.</p>
+          <div className="text-white text-2xl font-bold mb-4">
+            One-Click Login,
+            <br />
+            Any Device
+          </div>
+          <div className="text-gray-300 text-base leading-relaxed">
+            Sign in using Google, Facebook, <br />
+            MetaMask, or your existing wallet
+            <br /> — no seed phrases required.
+          </div>
         </motion.div>
 
+        {/* Unlock Funds */}
         <motion.div
-          className="border-white/40 border rounded-2xl relative flex flex-col justify-end p-10 overflow-hidden h-full"
+          className="border-white/20 border rounded-2xl relative flex flex-col justify-start p-8 overflow-hidden h-full bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('/images/BentoGrid-2.png')" }}
           initial={{ opacity: 0, x: 100 }}
           whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
           viewport={{ once: true }}
         >
-          <p>Send, receive and convert both fiat currencies and stablecoins from anywhere, anytime</p>
+          <div className="text-white text-2xl font-bold mt-20 mb-4">Unlock Funds, Your Way</div>
+          <div className="text-gray-300 text-base leading-relaxed">
+            Empower users with flexible payment options beyond traditional banks or Web 3 wallets, enabling instant,
+            privacy-secure transactions with approved merchants.
+          </div>
           <Meteors number={20} />
         </motion.div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-[40%_60%] gap-8">
+      <div className="grid grid-cols-1 xl:grid-cols-[40%_60%] gap-8 h-[50vh]">
+        {/* Fast, Secure Payments */}
         <motion.div
-          className="border-white/40 border rounded-2xl h-full"
+          className="border-white/20 border rounded-2xl h-full p-8 flex flex-col justify-start bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('/images/BentoGrid-3.png')" }}
           initial={{ opacity: 0, x: -100 }}
           whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
           viewport={{ once: true }}
         >
-          <p>Always receive the latest transaction rates with real-time market update support</p>
+          <div className="text-white text-2xl font-bold mb-4">Fast, Secure Payments</div>
+          <div className="text-gray-300 text-base leading-relaxed">
+            Eliminate delays and protect privacy with quick, secure transactions for merchants and schools.
+          </div>
         </motion.div>
 
+        {/* Transparent Fund Tracking */}
         <motion.div
-          className="border-white/40 border rounded-2xl h-full"
+          className="border-white/20 border rounded-2xl h-full p-8 flex flex-col justify-start bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('/images/BentoGrid-4.png')" }}
           initial={{ opacity: 0, x: 100 }}
           whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
           viewport={{ once: true }}
-        />
+        >
+          <div className="text-white text-2xl font-bold mb-4">Transparent Fund Tracking for Gov</div>
+          <div className="text-gray-300 text-base leading-relaxed">
+            Ensure real-time visibility and accountability of public funds, enabling direct, middleman-free payments to
+            designated recipients, with full tracking of spending.
+          </div>
+        </motion.div>
       </div>
     </div>
   );
