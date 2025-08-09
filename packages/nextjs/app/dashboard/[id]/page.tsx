@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import { GET_ACCOUNTS, GET_TRANSFERS } from "../../../graphql/queries";
+import { GET_TRANSFERS } from "../../../graphql/queries";
 import { useQuery } from "@apollo/client";
 import { useWeb3Auth } from "@web3auth/modal/react";
 import { ethers, formatUnits } from "ethers";
@@ -46,6 +46,9 @@ const DashboardPage: NextPage = () => {
   const accountId = useAccount().address;
   const { isConnected, provider } = useWeb3Auth();
 
+  // New state to hold fetched balance data
+  const [tokenData, setTokenData] = useState<any>(null);
+
   useEffect(() => {
     if (!isConnected) {
       router.push("/login");
@@ -62,14 +65,38 @@ const DashboardPage: NextPage = () => {
     getWalletAddress();
   });
 
-  const { data: accountData } = useQuery(GET_ACCOUNTS, {
-    variables: {
-      accountId: address || "",
-    },
-  });
+  useEffect(() => {
+    const contractAddress = "0xc11bd7b043736423dbc2d70ae5a0f642f9959257";
+    const apiKey = "NBXFCCHJ8RSXX3X86E4QU1FTJK7JG5ZTD5";
 
-  const balance = accountData?.accounts[0]?.balance || 0;
-  const amount: number = parseFloat(formatUnits(balance, 18)); // in wei
+    const fetchBalances = async () => {
+      try {
+        const res = await fetch(
+          `https://api.etherscan.io/v2/api?module=account&action=tokenbalance&contractaddress=${contractAddress}&address=${address}&tag=latest&apikey=${apiKey}&chainid=137`,
+        );
+
+        if (!res.ok) throw new Error("Network response was not ok");
+
+        const json = await res.json();
+        setTokenData(json);
+      } catch (err) {
+        console.error("Error fetching token balance:", err);
+      }
+    };
+
+    fetchBalances();
+  }, [address]);
+
+  const balanceString = tokenData?.result || "0";
+
+  let amount: number = 0;
+  try {
+    const formattedBalance = formatUnits(balanceString, 18);
+
+    amount = parseFloat(formattedBalance);
+  } catch {
+    amount = 0;
+  }
 
   // converted wallet amount
   const walletAmount: number = amount;
