@@ -171,7 +171,7 @@ export const IslandView: React.FC<IslandProps> = () => {
                 exit={{ opacity: 0 }}
                 transition={{ delay: 0.1 }}
                 className="absolute right-0 top-1/2 -translate-y-1/2 mr-2 h-[80%] px-4 rounded-full border border-white/50 flex justify-center items-center text-white hover:cursor-pointer"
-                onClick={e => {
+                onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                   e.stopPropagation();
                   if (!isConnected) {
                     router.push("/login");
