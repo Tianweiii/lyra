@@ -65,7 +65,7 @@ export const PromptPayment = ({ walletAddress, onNext }: PromptPaymentProps) => 
 
       {/* Payment input */}
       <motion.div {...fadeUp} className="space-y-3">
-        <h2 className="text-lg md:text-xl font-bold text-white">Enter Payment Amount (MYR)</h2>
+        <h2 className="text-lg md:text-xl font-bold text-white">Enter Payment Amount (LYRA)</h2>
         <input
           type="number"
           className={`w-full p-3 text-base rounded-lg bg-white/5 backdrop-blur-md border focus:outline-none focus:ring-2 placeholder:text-gray-400 text-white shadow-md border-blue-400 focus:ring-blue-500 ${

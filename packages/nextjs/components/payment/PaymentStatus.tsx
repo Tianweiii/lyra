@@ -1,8 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { CheckCircleIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import { CheckCircleIcon, ClipboardIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline";
 
 interface PaymentStatusProps {
   status: string;
@@ -15,6 +16,7 @@ interface PaymentStatusProps {
 export default function PaymentStatus({ status, amount, paymentRef, onTry, role }: PaymentStatusProps) {
   // status = "success";
   const success = status === "success";
+  const [copied, setCopied] = useState(false);
 
   const router = useRouter();
 
@@ -29,6 +31,13 @@ export default function PaymentStatus({ status, amount, paymentRef, onTry, role 
     } else if (role === "user") {
       router.push("/dashboard/125");
     }
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(paymentRef).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000); // reset after 2s
+    });
   };
 
   return (
@@ -54,18 +63,30 @@ export default function PaymentStatus({ status, amount, paymentRef, onTry, role 
           <div className="w-full space-y-3 text-left text-sm md:text-base">
             <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-1 md:gap-0">
               <span className="text-gray-400">Amount Paid:</span>
-              <span className="font-medium">RM {amount.toFixed(2)}</span>
+              <span className="font-medium"> {amount.toFixed(2)} LYRA</span>
             </div>
             <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-1 md:gap-0">
               <span className="text-gray-400">Payment Method:</span>
               <span className="font-medium">QR Pay</span>
             </div>
             <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-1 md:gap-0">
-              <span className="text-gray-400">Payment Reference ID:</span>
-              <span className="font-medium truncate max-w-[150px] md:max-w-none" title={paymentRef}>
-                {paymentRef.slice(0, 8)}
-                {paymentRef.length > 8 ? "*****" : ""}
-              </span>
+              <span className="text-gray-400">Transaction ID:</span>
+              <div className="flex items-center gap-2">
+                <span className="font-medium truncate max-w-[150px] md:max-w-none" title={paymentRef}>
+                  {paymentRef.slice(0, 8)}
+                  {paymentRef.length > 8 ? "*****" : ""}
+                </span>
+
+                <button
+                  onClick={copyToClipboard}
+                  className="text-blue-500 hover:text-blue-700"
+                  title="Copy Transaction ID"
+                >
+                  <ClipboardIcon className="w-4 h-4" />
+                </button>
+
+                {copied && <span className="text-green-500 text-xs">Copied!</span>}
+              </div>
             </div>
             <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-1 md:gap-0">
               <span className="text-gray-400">Date & Time:</span>
