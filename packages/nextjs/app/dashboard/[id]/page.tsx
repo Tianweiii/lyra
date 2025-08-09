@@ -66,13 +66,8 @@ const DashboardPage: NextPage = () => {
     variables: {
       accountId: address || "",
     },
+    fetchPolicy: "cache-and-network",
   });
-
-  // const { data: transactionHistory } = useQuery(GET_TRANSFERS, {
-  //   variables: {
-  //     accountId: address || "",
-  //   },
-  // });
 
   const balance = accountData?.accounts[0]?.balance || 0;
   const amount: number = parseFloat(formatUnits(balance, 18)); // in wei
@@ -110,6 +105,7 @@ const DashboardPage: NextPage = () => {
     data: transferData,
   } = useQuery(GET_TRANSFERS, {
     variables: { accountId: accountId?.toString() || "" },
+    fetchPolicy: "cache-and-network",
   });
 
   if (transferLoading)
