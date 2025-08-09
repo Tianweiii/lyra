@@ -2,22 +2,36 @@
 
 import React, { memo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useWeb3AuthDisconnect, useWeb3AuthUser } from "@web3auth/modal/react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useAccount } from "wagmi";
 import { Bars3Icon } from "@heroicons/react/24/outline";
 
 export type IslandProps = {
   leftOnPress?: () => void;
-  rightOnPress?: () => void;
 };
 
-export const IslandView: React.FC<IslandProps> = ({ rightOnPress }) => {
+export const IslandView: React.FC<IslandProps> = () => {
   const [hover, setHover] = useState(false);
   const [showButtons, setShowButtons] = useState(false);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
+  const { userInfo } = useWeb3AuthUser();
+  const { isConnected } = useAccount();
+  const { disconnect } = useWeb3AuthDisconnect();
+
   const onPressButton = (e: any) => {
     e.stopPropagation();
     setIsExpanded(!isExpanded);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await disconnect();
+      setIsExpanded(false);
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
   };
 
   const router = useRouter();
@@ -61,21 +75,41 @@ export const IslandView: React.FC<IslandProps> = ({ rightOnPress }) => {
               >
                 <Bars3Icon className="h-6 w-6 text-white" />
               </motion.button>
+
+              {/* Profile/Login Button */}
               <motion.button
                 key="profile-btn"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ delay: 0.1 }}
-                className="absolute right-0 top-1/2 -translate-y-1/2 mr-2 h-[80%] px-10 rounded-full border border-white/50 flex justify-center items-center text-white"
-                onClick={rightOnPress}
+                className="absolute right-0 top-1/2 -translate-y-1/2 mr-2 h-[80%] px-4 rounded-full border border-white/50 flex justify-center items-center text-white"
+                onClick={() => {
+                  if (!isConnected) {
+                    router.push("/login");
+                  }
+                }}
               >
-                <p className="text-sm">Login</p>
+                {isConnected && userInfo && userInfo.profileImage ? (
+                  <div className="w-8 h-8 rounded-full border-2 border-gray-400 overflow-hidden">
+                    <img src={userInfo.profileImage} alt="Profile" className="w-full h-full object-cover" />
+                  </div>
+                ) : isConnected ? (
+                  // Show a default avatar
+                  <div className="w-8 h-8 rounded-full border-2 border-gray-400 bg-gray-600 flex items-center justify-center">
+                    <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                    </svg>
+                  </div>
+                ) : (
+                  <p className="text-sm px-6">Login</p>
+                )}
               </motion.button>
             </>
           )}
         </AnimatePresence>
       </motion.div>
+
       <motion.div
         key="container2"
         className={`
@@ -163,23 +197,26 @@ export const IslandView: React.FC<IslandProps> = ({ rightOnPress }) => {
             >
               FAQ
             </motion.p>
-            <motion.p
-              className="text-3xl text-white cursor-pointer hover:underline"
-              initial={{
-                opacity: 0,
-                y: 20,
-              }}
-              whileInView={{
-                opacity: 1,
-                y: 0,
-              }}
-              transition={{
-                duration: 0.3,
-                delay: 1.2,
-              }}
-            >
-              Logout
-            </motion.p>
+            {isConnected && (
+              <motion.p
+                className="text-3xl text-white cursor-pointer hover:underline"
+                initial={{
+                  opacity: 0,
+                  y: 20,
+                }}
+                whileInView={{
+                  opacity: 1,
+                  y: 0,
+                }}
+                transition={{
+                  duration: 0.3,
+                  delay: 1.2,
+                }}
+                onClick={handleLogout}
+              >
+                Logout
+              </motion.p>
+            )}
           </>
         )}
       </motion.div>

@@ -1,5 +1,6 @@
 import { Montserrat } from "next/font/google";
 import { headers } from "next/headers";
+import ApolloProviderWrapper from "../components/ApolloProviderWrapper";
 import Provider from "../components/Provider";
 import "@rainbow-me/rainbowkit/styles.css";
 import { cookieToWeb3AuthState } from "@web3auth/modal";
@@ -28,7 +29,9 @@ const ScaffoldEthApp = async ({ children }: { children: React.ReactNode }) => {
     <html suppressHydrationWarning className={montserrat.className}>
       <body style={{ backgroundColor: "black" }}>
         <ThemeProvider enableSystem>
-          <Provider web3authInitialState={web3authInitialState}>{children}</Provider>
+          <Provider web3authInitialState={web3authInitialState}>
+            <ApolloProviderWrapper>{children}</ApolloProviderWrapper>
+          </Provider>
         </ThemeProvider>
       </body>
     </html>
