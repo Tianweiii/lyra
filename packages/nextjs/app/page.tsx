@@ -3,12 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { useWeb3Auth, useWeb3AuthConnect, useWeb3AuthUser } from "@web3auth/modal/react";
-import { motion } from "framer-motion";
-import type { NextPage } from "next";
-import { useAccount } from "wagmi";
-import { BoltIcon, ChartBarSquareIcon, CubeTransparentIcon } from "@heroicons/react/24/outline";
-import { InstallPrompt, PushNotificationManager } from "../components/PWAComponents";
+// import { InstallPrompt, PushNotificationManager } from "../components/PWAComponents";
 import { RainbowKitCustomConnectButton } from "../components/scaffold-eth";
 import BentoGrids from "../components/ui/bento-grids";
 import { CanvasRevealEffect } from "../components/ui/canvas-reveal";
@@ -18,6 +13,11 @@ import CustomScrollContainer from "../components/ui/custom-scroll-container";
 import Gallery from "../components/ui/gallery";
 import Island from "../components/ui/island";
 import { clearUserData } from "../utils/helper";
+import { useWeb3Auth, useWeb3AuthConnect, useWeb3AuthUser } from "@web3auth/modal/react";
+import { motion } from "framer-motion";
+import type { NextPage } from "next";
+import { useAccount } from "wagmi";
+import { BoltIcon, ChartBarSquareIcon, CubeTransparentIcon } from "@heroicons/react/24/outline";
 
 const Home: NextPage = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -103,15 +103,16 @@ const Home: NextPage = () => {
         <div className="absolute top-4 right-4 z-30">
           <div className="bg-black/70 backdrop-blur-sm rounded-lg p-4">
             <div className="flex items-center gap-3">
-              <div className={`w-3 h-3 rounded-full ${isConnected ? "bg-green-500" : "bg-red-500"}`}></div> {/* Fixed template literal */}
+              <div className={`w-3 h-3 rounded-full ${isConnected ? "bg-green-500" : "bg-red-500"}`}></div>{" "}
+              {/* Fixed template literal */}
               <span className="text-white text-sm">{isConnected ? "Wallet Connected" : "Wallet Disconnected"}</span>
               <RainbowKitCustomConnectButton />
             </div>
           </div>
 
           {/* Push Notification Components */}
-          <PushNotificationManager />
-          <InstallPrompt />
+          {/* <PushNotificationManager />
+          <InstallPrompt /> */}
         </div>
 
         <div className="relative z-20 flex h-full px-12 gap-2 items-end pb-36">
