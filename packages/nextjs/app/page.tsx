@@ -1,25 +1,23 @@
 "use client";
 
-// import Link from "next/link";
-// import { useEffect, useRef, useState } from "react";
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useWeb3Auth, useWeb3AuthConnect, useWeb3AuthUser } from "@web3auth/modal/react";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import type { NextPage } from "next";
 import { useAccount } from "wagmi";
 import { BoltIcon, ChartBarSquareIcon, CubeTransparentIcon } from "@heroicons/react/24/outline";
-import { InstallPrompt, PushNotificationManager } from "/components/PWAComponents";
-import { RainbowKitCustomConnectButton } from "/components/scaffold-eth";
-import BentoGrids from "/components/ui/bento-grids";
-import { CanvasRevealEffect } from "/components/ui/canvas-reveal";
-import { Card } from "/components/ui/card";
-import Carousel from "/components/ui/carousel";
-import CustomScrollContainer from "/components/ui/custom-scroll-container";
-import Gallery from "/components/ui/gallery";
-import Island from "/components/ui/island";
-import { clearUserData } from "/utils/helper";
+import { InstallPrompt, PushNotificationManager } from "../components/PWAComponents";
+import { RainbowKitCustomConnectButton } from "../components/scaffold-eth";
+import BentoGrids from "../components/ui/bento-grids";
+import { CanvasRevealEffect } from "../components/ui/canvas-reveal";
+import { Card } from "../components/ui/card";
+import Carousel from "../components/ui/carousel";
+import CustomScrollContainer from "../components/ui/custom-scroll-container";
+import Gallery from "../components/ui/gallery";
+import Island from "../components/ui/island";
+import { clearUserData } from "../utils/helper";
 
 const Home: NextPage = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -82,15 +80,6 @@ const Home: NextPage = () => {
     };
   }, [fadeOut]);
 
-  // async function getPrices() {
-  //   const options: RequestInit = { method: "GET", headers: { accepted: "application.json" } };
-  //   // const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd');
-  //   const res = await fetch("https://api.coingecko.com/api/v3/simple/exchanges", options);
-  //   const data = await res.json();
-  //   console.log(data);
-  // }
-  // getPrices();
-
   return (
     <>
       <Island leftOnPress={() => router.push("/dashboard/123")} />
@@ -114,7 +103,7 @@ const Home: NextPage = () => {
         <div className="absolute top-4 right-4 z-30">
           <div className="bg-black/70 backdrop-blur-sm rounded-lg p-4">
             <div className="flex items-center gap-3">
-              <div className={w-3 h-3 rounded-full ${isConnected ? "bg-green-500" : "bg-red-500"}}></div>
+              <div className={`w-3 h-3 rounded-full ${isConnected ? "bg-green-500" : "bg-red-500"}`}></div> {/* Fixed template literal */}
               <span className="text-white text-sm">{isConnected ? "Wallet Connected" : "Wallet Disconnected"}</span>
               <RainbowKitCustomConnectButton />
             </div>
@@ -213,7 +202,6 @@ const Home: NextPage = () => {
           </Card>
         </motion.div>
       </div>
-      {/* <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-black z-20"></div> */}
 
       <div className="flex flex-row items-center justify-center pb-20 h-screen md:h-auto dark:bg-black bg-white relative w-full mb-[100px] mt-20">
         <div className="max-w-7xl mx-auto w-full relative overflow-hidden h-full md:h-[40rem] px-4">
@@ -647,5 +635,5 @@ const Globe = () => {
     },
   ];
 
-  return <World data={sampleArcs} globeConfig={globeConfig} />;
+  return <World data={sampleArcs} globeConfig={globeConfig} />;
 };
