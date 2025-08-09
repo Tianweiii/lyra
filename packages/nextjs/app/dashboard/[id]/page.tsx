@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { GET_TRANSFERS } from "../../../graphql/queries";
 import { useQuery } from "@apollo/client";
-import { ethers, formatUnits } from "ethers";
+import { formatUnits } from "ethers";
 import { motion } from "motion/react";
 import { NextPage } from "next";
 import { useMediaQuery } from "react-responsive";
@@ -394,7 +394,7 @@ const DashboardPage: NextPage = () => {
             <BackgroundGradient
               containerClassName="rounded-lg flex-1"
               className="w-full h-full bg-[#1e1e1e] p-4 flex flex-col justify-between rounded-lg hover:cursor-pointer"
-              onClick={() => router.push("/payment/user")}
+              onClick={renderMap[role].onClick}
             >
               <>
                 <div className="self-end md:p-4 p-2 bg-[#757575] rounded-full">
