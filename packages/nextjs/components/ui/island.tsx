@@ -6,18 +6,20 @@ import { useWeb3Auth, useWeb3AuthConnect, useWeb3AuthDisconnect, useWeb3AuthUser
 import { AnimatePresence, motion } from "framer-motion";
 import { useAccount, useDisconnect } from "wagmi";
 import { Bars3Icon } from "@heroicons/react/24/outline";
+import { useScaffoldReadContract } from "~~/hooks/scaffold-eth/useScaffoldReadContract";
 
 interface IslandProps {
   leftOnPress?: () => void;
 }
 
 export const IslandView: React.FC<IslandProps> = () => {
+  const [id, setId] = useState("");
   const [hover, setHover] = useState(false);
   const [showButtons, setShowButtons] = useState(false);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState(false);
 
-  const { isConnected: wagmiConnected } = useAccount();
+  const { isConnected: wagmiConnected, address } = useAccount();
   const { disconnect: wagmiDisconnect } = useDisconnect();
   const { isConnected: web3AuthConnected } = useWeb3AuthConnect();
   const { userInfo } = useWeb3AuthUser();
@@ -148,6 +150,37 @@ export const IslandView: React.FC<IslandProps> = () => {
     };
   }, [isMobile, hover, isExpanded]);
 
+  const OTC_ADDRESS = "0xB919D234f9081D8c0F20ee4219C4605BA883dc32";
+  const { data: isOtcMerchant } = useScaffoldReadContract({
+    contractName: "LyraToken",
+    functionName: "isMerchant",
+    args: [OTC_ADDRESS],
+  });
+
+  const { data: isOtcGovernment } = useScaffoldReadContract({
+    contractName: "LyraOtcSeller",
+    functionName: "isGovernment",
+    args: [address],
+  });
+
+  useEffect(() => {
+    console.log("is", isConnected);
+    console.log("gov", isOtcGovernment);
+    console.log("mer", isOtcMerchant);
+    console.log("adad", address);
+    if (isConnected) {
+      if (isOtcGovernment) {
+        setId("124");
+      } else if (isOtcMerchant) {
+        setId("123");
+      } else {
+        setId("125");
+      }
+    } else {
+      setId("125");
+    }
+  }, [isConnected, isOtcMerchant, isOtcGovernment]);
+
   return (
     <AnimatePresence>
       <motion.div
@@ -270,7 +303,7 @@ export const IslandView: React.FC<IslandProps> = () => {
                 delay: 0.6,
               }}
               // ROLE: ROUTE FOR ROLE
-              onClick={() => router.push("/dashboard/124")}
+              onClick={() => router.push(`/dashboard/${id}`)}
             >
               Dashboard
             </motion.p>

@@ -361,7 +361,7 @@ const SendCoinPage = () => {
 
   return (
     <div className="w-[calc(100%-4rem)] mx-auto rounded-md overflow-hidden flex justify-center items-center min-h-screen">
-      <RainbowKitCustomConnectButton />
+      {/* <RainbowKitCustomConnectButton /> */}
       <Vortex
         backgroundColor="black"
         className="flex items-center flex-col justify-center px-2 md:px-10 py-4 w-full h-full"

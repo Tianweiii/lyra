@@ -5908,6 +5908,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash@npm:^4":
+  version: 4.17.20
+  resolution: "@types/lodash@npm:4.17.20"
+  checksum: dc7bb4653514dd91117a4c4cec2c37e2b5a163d7643445e4757d76a360fabe064422ec7a42dde7450c5e7e0e7e678d5e6eae6d2a919abcddf581d81e63e63839
+  languageName: node
+  linkType: hard
+
 "@types/ms@npm:*":
   version: 2.1.0
   resolution: "@types/ms@npm:2.1.0"
@@ -18180,11 +18187,13 @@ __metadata:
     "@emotion/react": ^11.14.0
     "@emotion/styled": ^11.14.1
     "@fontsource/roboto": ^5.2.6
+    "@goplus/sdk-node": ^1.1.1
     "@mui/material": ^7.2.0
     "@react-three/drei": latest
     "@react-three/fiber": latest
     "@tailwindcss/cli": ^4.1.11
     "@tailwindcss/postcss": ^4.1.11
+    "@types/lodash": ^4
     "@types/react": ^19.1.9
     "@types/react-dom": ^19.1.7
     "@types/three": latest
@@ -18200,6 +18209,7 @@ __metadata:
     graphql: ^16.11.0
     husky: ~9.1.6
     lint-staged: ~13.2.2
+    lodash: ^4.17.21
     motion: ^12.23.12
     postcss: ^8.5.6
     react-qr-code: ^2.0.18

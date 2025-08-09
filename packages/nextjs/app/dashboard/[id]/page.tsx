@@ -40,6 +40,7 @@ const getRole = (id: string | number | undefined) => {
 
 const DashboardPage: NextPage = () => {
   const [address, setAddress] = useState<string>("");
+  const [initialized, setInitialized] = useState<boolean>(false);
   const router = useRouter();
   const { id } = useParams();
   const isMobile = useMediaQuery({ maxWidth: 768 });
@@ -48,16 +49,23 @@ const DashboardPage: NextPage = () => {
 
   useEffect(() => {
     if (status === "connected") {
-      // fetch address
       (async () => {
         const ethersProvider = new ethers.BrowserProvider(provider as ethers.Eip1193Provider);
         const signer = await ethersProvider.getSigner();
         setAddress(await signer.getAddress());
       })();
-    } else if (status === "ready" && !isConnected) {
+    }
+
+    if (status === "ready") {
+      setInitialized(true);
+    }
+  }, [status, provider]);
+
+  useEffect(() => {
+    if (initialized && !isConnected) {
       router.push("/login");
     }
-  }, [status, isConnected, provider, router]);
+  }, [initialized, isConnected, router]);
 
   const { data: accountData } = useQuery(GET_ACCOUNTS, {
     variables: {

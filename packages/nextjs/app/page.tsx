@@ -208,7 +208,7 @@ const Home: NextPage = () => {
             delay: 0.9,
           }}
         >
-          <Card title="I dont know at this point" icon={<ChartBarSquareIcon />}>
+          <Card title="Quick and easy" icon={<ChartBarSquareIcon />}>
             <CanvasRevealEffect animationSpeed={3} containerClassName="bg-sky-600" colors={[[125, 211, 252]]} />
           </Card>
         </motion.div>
