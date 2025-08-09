@@ -1,0 +1,79 @@
+type GovSwapNativeSent @entity(immutable: true) {
+  id: Bytes!
+  gov: Bytes! # address
+  recipient: Bytes! # address
+  nativeIn: BigInt! # uint256
+  lyraOut: BigInt! # uint256
+  nativeFee: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type GovSwapUsdtSent @entity(immutable: true) {
+  id: Bytes!
+  gov: Bytes! # address
+  recipient: Bytes! # address
+  usdtIn: BigInt! # uint256
+  lyraOut: BigInt! # uint256
+  nativeFee: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type GovUpdated @entity(immutable: true) {
+  id: Bytes!
+  who: Bytes! # address
+  enabled: Boolean! # bool
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type MerchantSwapLyraToNative @entity(immutable: true) {
+  id: Bytes!
+  merchant: Bytes! # address
+  lyraIn: BigInt! # uint256
+  nativeOut: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type MerchantSwapLyraToUsdt @entity(immutable: true) {
+  id: Bytes!
+  merchant: Bytes! # address
+  lyraIn: BigInt! # uint256
+  usdtOut: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type MerchantUpdated @entity(immutable: true) {
+  id: Bytes!
+  who: Bytes! # address
+  enabled: Boolean! # bool
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type OwnershipTransferred @entity(immutable: true) {
+  id: Bytes!
+  previousOwner: Bytes! # address
+  newOwner: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type PricesUpdated @entity(immutable: true) {
+  id: Bytes!
+  priceUsdtPerNative: BigInt! # uint256
+  lyraPerUsdt: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}

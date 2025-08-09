@@ -1,13 +1,13 @@
 {
-  "name": "lyra-subgraph",
+  "name": "lyra-swap",
   "license": "UNLICENSED",
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "deploy": "graph deploy --node https://api.studio.thegraph.com/deploy/ lyra-subgraph",
-    "create-local": "graph create --node http://localhost:8020/ lyra-subgraph",
-    "remove-local": "graph remove --node http://localhost:8020/ lyra-subgraph",
-    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 lyra-subgraph",
+    "deploy": "graph deploy --node https://api.studio.thegraph.com/deploy/ lyra-swap",
+    "create-local": "graph create --node http://localhost:8020/ lyra-swap",
+    "remove-local": "graph remove --node http://localhost:8020/ lyra-swap",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 lyra-swap",
     "test": "graph test"
   },
   "dependencies": {
