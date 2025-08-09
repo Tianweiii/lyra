@@ -2,43 +2,58 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-// import { useRouter } from "next/navigation";
 import type { NextPage } from "next";
+import { sendPaymentNotification } from "~~/components/PWAComponents";
 import PaymentStatus from "~~/components/payment/PaymentStatus";
 import { ProgressBar } from "~~/components/payment/ProgressBar";
 import { PromptPayment } from "~~/components/payment/PromptPayment";
 import ShowQRCode from "~~/components/payment/ShowQRCode";
 
+// Import the notification helper
+
 const MerchantPaymentFlow: NextPage = () => {
   const [step, setStep] = useState(1);
   const [amount, setAmount] = useState<number>(0);
   const [paymentRef, setPaymentRef] = useState<string>("");
-  // const [convertedAmount, setConvertedAmount] = useState<number>(0);
   const [status, setStatus] = useState("");
+
   // TODO: Both wallet address and wallet balance will be props
   const walletAddress = "0xABC123XXXXXXXXXXXXXXXXXXXXXDEF456";
   const walletBalance = 50.23;
 
-  // const router = useRouter();
+  // TODO: This should come from user context/props - merchant's notification endpoint
+  const merchantNotificationEndpoint = "merchant-subscription-endpoint";
+
   const steps = ["Enter Amount", "Scan QR", "Payment Status"];
 
   const handleNext = (value: number) => {
     setAmount(value);
-    // setConvertedAmount(handleConversion(value));
     setStep(2);
   };
 
-  const handlePaymentComplete = (status: string) => {
+  const handlePaymentComplete = async (status: string) => {
     setStatus(status);
-    setPaymentRef("0xA1B2C3D4E5aaaaa"); // TODO: Replace with the correct payment ref
+    const newPaymentRef = "0xA1B2C3D4E5aaaaa"; // TODO: Replace with the correct payment ref
+    setPaymentRef(newPaymentRef);
+
+    // Send notification to merchant when payment is successful
+    if (status === "success") {
+      try {
+        console.log("Sending payment notification to merchant...");
+        const notificationResult = await sendPaymentNotification(merchantNotificationEndpoint, amount, newPaymentRef);
+
+        if (notificationResult.success) {
+          console.log("Payment notification sent successfully");
+        } else {
+          console.error("Failed to send payment notification:", notificationResult.error);
+        }
+      } catch (error) {
+        console.error("Error sending payment notification:", error);
+      }
+    }
+
     setStep(3);
   };
-
-  // const handleConversion = (fiat: number) => {
-  //   // fiat;
-  //   // TODO: Convert from normal currency -> Sui coin/credit
-  //   return fiat + 0;
-  // };
 
   return (
     <>
@@ -78,7 +93,6 @@ const MerchantPaymentFlow: NextPage = () => {
                 >
                   <ShowQRCode
                     amount={amount}
-                    // converted={Number(convertedAmount)}
                     walletAddress={walletAddress}
                     onPaid={handlePaymentComplete}
                     onBack={() => setStep(1)}

@@ -9,6 +9,7 @@ import { motion } from "motion/react";
 import type { NextPage } from "next";
 import { useAccount } from "wagmi";
 import { BoltIcon, ChartBarSquareIcon, CubeTransparentIcon } from "@heroicons/react/24/outline";
+import { InstallPrompt, PushNotificationManager } from "~~/components/PWAComponents";
 import { RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import BentoGrids from "~~/components/ui/bento-grids";
 import { CanvasRevealEffect } from "~~/components/ui/canvas-reveal";
@@ -87,6 +88,10 @@ const Home: NextPage = () => {
               <RainbowKitCustomConnectButton />
             </div>
           </div>
+
+          {/* Push Notification Components */}
+          <PushNotificationManager />
+          <InstallPrompt />
         </div>
 
         <div className="relative z-20 flex h-full px-12 gap-2 items-end pb-36">

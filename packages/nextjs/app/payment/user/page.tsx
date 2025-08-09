@@ -4,9 +4,12 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import type { NextPage } from "next";
+import { sendPaymentNotification } from "~~/components/PWAComponents";
 import { CameraScanner } from "~~/components/payment/CameraScanner";
 import PaymentStatus from "~~/components/payment/PaymentStatus";
 import { ProgressBar } from "~~/components/payment/ProgressBar";
+
+// Import the notification helper
 
 const UserScanPage: NextPage = () => {
   const [step, setStep] = useState(1);
@@ -17,17 +20,39 @@ const UserScanPage: NextPage = () => {
   const router = useRouter();
   const steps = ["Scan QR", "Payment Status"];
 
-  const handleScanSuccess = (qrData: string) => {
-    // TODO: Simulate verifying QR content
+  const handleScanSuccess = async (qrData: string) => {
+    // TODO: Simulate verifying QR content and extract merchant info
     const isValid = qrData.includes("ai"); // TODO: real validation
     console.log(qrData);
     console.log(isValid);
+
     const amountExtracted = 25; // Extract or calculate from QR
     const ref = "0xPAYREF123456";
+    const paymentStatus = isValid ? "success" : "failed";
 
-    setStatus(isValid ? "success" : "failed");
+    // TODO: Extract merchant notification endpoint from QR data or get from context
+    const merchantEndpoint = "merchant-subscription-endpoint-from-qr";
+
+    setStatus(paymentStatus);
     setAmount(amountExtracted);
     setPaymentRef(ref);
+
+    // Send notification to merchant when payment is successful
+    if (paymentStatus === "success") {
+      try {
+        console.log("Sending payment notification to merchant...");
+        const notificationResult = await sendPaymentNotification(merchantEndpoint, amountExtracted, ref);
+
+        if (notificationResult.success) {
+          console.log("Payment notification sent successfully");
+        } else {
+          console.error("Failed to send payment notification:", notificationResult.error);
+        }
+      } catch (error) {
+        console.error("Error sending payment notification:", error);
+      }
+    }
+
     setStep(2);
   };
 
@@ -51,7 +76,6 @@ const UserScanPage: NextPage = () => {
           >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
           </motion.svg>
-          {/* Back */}
         </motion.button>
 
         {/* Title and Description (centered) */}
