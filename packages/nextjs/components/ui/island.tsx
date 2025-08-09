@@ -1,6 +1,6 @@
 "use client";
 
-import React, { memo, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useWeb3AuthDisconnect, useWeb3AuthUser } from "@web3auth/modal/react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -19,6 +19,22 @@ export const IslandView: React.FC<IslandProps> = () => {
   const { userInfo } = useWeb3AuthUser();
   const { isConnected } = useAccount();
   const { disconnect } = useWeb3AuthDisconnect();
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && isExpanded) {
+        setIsExpanded(false);
+      }
+    };
+
+    if (isExpanded) {
+      document.addEventListener("keydown", handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isExpanded]);
 
   const onPressButton = (e: any) => {
     e.stopPropagation();
@@ -41,7 +57,7 @@ export const IslandView: React.FC<IslandProps> = () => {
       <motion.div
         key="container1"
         className={`
-          fixed top-[100px] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[20vw] h-[50px] rounded-full flex justify-center items-center border border-white/30 bg-white/10 backdrop-blur-md shadow-lg z-[100]
+          fixed top-[50px] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[20vw] h-[50px] rounded-full flex justify-center items-center border border-white/30 bg-white/10 backdrop-blur-md shadow-lg z-[100]
         `}
         whileHover={{ width: "40vw" }}
         transition={{
@@ -114,7 +130,7 @@ export const IslandView: React.FC<IslandProps> = () => {
         key="container2"
         className={`
           bg-white/10 backdrop-blur-md fixed transform flex justify-center items-center flex-col gap-10 z-50
-          ${isExpanded ? "inset-0 w-screen h-screen top-0 left-0 bottom-0 -translate-x-0 -translate-y-0" : "w-10 h-10 top-[100px] left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-4xl"}
+          ${isExpanded ? "inset-0 w-screen h-screen top-0 left-0 bottom-0 -translate-x-0 -translate-y-0" : "w-10 h-10 top-[50px] left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-4xl"}
         `}
         transition={{
           type: "spring",
@@ -163,7 +179,7 @@ export const IslandView: React.FC<IslandProps> = () => {
             >
               Dashboard
             </motion.p>
-            <motion.p
+            {/* <motion.p
               className="text-3xl text-white cursor-pointer hover:underline"
               initial={{
                 opacity: 0,
@@ -179,7 +195,7 @@ export const IslandView: React.FC<IslandProps> = () => {
               }}
             >
               Profile
-            </motion.p>
+            </motion.p> */}
             <motion.p
               className="text-3xl text-white cursor-pointer hover:underline"
               initial={{
@@ -192,8 +208,9 @@ export const IslandView: React.FC<IslandProps> = () => {
               }}
               transition={{
                 duration: 0.3,
-                delay: 1.0,
+                delay: 0.8,
               }}
+              onClick={() => router.push("/support")}
             >
               FAQ
             </motion.p>
@@ -210,7 +227,7 @@ export const IslandView: React.FC<IslandProps> = () => {
                 }}
                 transition={{
                   duration: 0.3,
-                  delay: 1.2,
+                  delay: 1.0,
                 }}
                 onClick={handleLogout}
               >

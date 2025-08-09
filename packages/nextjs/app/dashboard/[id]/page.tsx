@@ -6,6 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import { GET_ACCOUNTS, GET_TRANSFERS } from "../../../graphql/queries";
 import { useQuery } from "@apollo/client";
 import { formatUnits } from "ethers";
+import { motion } from "motion/react";
 import { NextPage } from "next";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
@@ -89,7 +90,16 @@ const DashboardPage: NextPage = () => {
     variables: { accountId: accountId?.toString() || "" },
   });
 
-  if (transferLoading) return <p>Loading...</p>;
+  if (transferLoading)
+    return (
+      <div className="h-screen w-screen flex justify-center items-center">
+        <motion.div
+          className="w-20 h-20 border-4 border-blue-500 border-t-transparent rounded-full"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+        />
+      </div>
+    );
   if (transferError) return <p>Error: {transferError.message}</p>;
 
   // Transform the data into the format expected by CoinTable
@@ -324,7 +334,7 @@ const DashboardPage: NextPage = () => {
   const userData: UserDataProps[] = loadUserData();
 
   return (
-    <div className="flex flex-col md:px-24 px-5 py-12 gap-2 mt-10 relative antialiased">
+    <div className="flex flex-col md:px-24 px-5 py-16 gap-2 relative antialiased">
       <Island />
       <div className="flex md:flex-row flex-col h-[45vh] gap-2 z-[10]">
         {/* box 1 */}

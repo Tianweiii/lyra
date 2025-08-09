@@ -32,7 +32,7 @@ const UserScanPage: NextPage = () => {
   };
 
   return (
-    <div className="mt-10 text-white">
+    <div className="p-10 text-white">
       <div className="relative flex items-center justify-between px-5">
         {/* Back Button */}
         <motion.button

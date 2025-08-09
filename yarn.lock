@@ -2080,19 +2080,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@inquirer/editor@npm:^4.2.15":
-  version: 4.2.15
-  resolution: "@inquirer/editor@npm:4.2.15"
+"@inquirer/editor@npm:^4.2.16":
+  version: 4.2.16
+  resolution: "@inquirer/editor@npm:4.2.16"
   dependencies:
     "@inquirer/core": ^10.1.15
+    "@inquirer/external-editor": ^1.0.0
     "@inquirer/type": ^3.0.8
-    external-editor: ^3.1.0
   peerDependencies:
     "@types/node": ">=18"
   peerDependenciesMeta:
     "@types/node":
       optional: true
-  checksum: a4352a3a82de27dbcd0f4e0e6889f9bd077e28dfd8d1d7001c8c4bb328c8c9cbd80c3075a0b1f73fd6f5924883a6cba5f7100d600afa9a9482fc2da6d6f55694
+  checksum: 80b9b3b7577636846537e6b457a9b0e91367f1942e3603474d70838e3a572e2207953c6312899aab9f180e9f340f9ef849f66d00bedbbff7c6072fafcf3c17b0
   languageName: node
   linkType: hard
 
@@ -2121,6 +2121,18 @@ __metadata:
     "@types/node":
       optional: true
   checksum: 05a4e1f7b809e121da0f82b31749549b3d6fafd4eed6355f88b9f2636220d0878c2714e192cf848bf9d6085be299475f30f4e020c58d2cfd9b5027e6d21ca1cd
+  languageName: node
+  linkType: hard
+
+"@inquirer/external-editor@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@inquirer/external-editor@npm:1.0.0"
+  dependencies:
+    chardet: ^2.1.0
+    iconv-lite: ^0.6.3
+  peerDependencies:
+    "@types/node": ">=18"
+  checksum: d441a3e4370adc4edabec8c9d4495ac3794cc5a9d0065744f19705568c793aad3f977fe1adbfa768e0caa88650a670dfe7901501935a84d8ff8753015ecb2419
   languageName: node
   linkType: hard
 
@@ -2218,12 +2230,12 @@ __metadata:
   linkType: hard
 
 "@inquirer/prompts@npm:^7.8.0":
-  version: 7.8.0
-  resolution: "@inquirer/prompts@npm:7.8.0"
+  version: 7.8.1
+  resolution: "@inquirer/prompts@npm:7.8.1"
   dependencies:
     "@inquirer/checkbox": ^4.2.0
     "@inquirer/confirm": ^5.1.14
-    "@inquirer/editor": ^4.2.15
+    "@inquirer/editor": ^4.2.16
     "@inquirer/expand": ^4.0.17
     "@inquirer/input": ^4.2.1
     "@inquirer/number": ^3.0.17
@@ -2236,7 +2248,7 @@ __metadata:
   peerDependenciesMeta:
     "@types/node":
       optional: true
-  checksum: 173020ff7dce363ca060360b5ffe8d254a32bcd9757659ea24c5e3f607b91dbea7f7c98ecf2e7b558c016a700f20deee12c6e294c053cd57c19c904bf0c9963d
+  checksum: c7291ddbb842d352ec610b2412e7740a383687f3a3bbc0f064e870c4a943089cc18382c1ec15b672dca7c697d154f7765d3a1844ae84a1d2fee322752d49cd66
   languageName: node
   linkType: hard
 
@@ -7937,93 +7949,12 @@ __metadata:
 "@whatwg-node/disposablestack@npm:^0.0.6":
   version: 0.0.6
   resolution: "@whatwg-node/disposablestack@npm:0.0.6"
-
   dependencies:
     "@whatwg-node/promise-helpers": ^1.0.0
     tslib: ^2.6.3
   checksum: dae7f8f05b56409858156cdb092345ecefa170a899e27750e17f7800b9489021b4865f40b427fc7f5c979d668a8ffef5ac0adaa284e7f56222127bbe4ee9b114
   languageName: node
   linkType: hard
-
-"@whatwg-node/fetch@npm:^0.10.1":
-  version: 0.10.10
-  resolution: "@whatwg-node/fetch@npm:0.10.10"
-  dependencies:
-    "@whatwg-node/node-fetch": ^0.7.25
-    urlpattern-polyfill: ^10.0.0
-  checksum: 6697c1dfced14f8094cabcd178337732d32a07a5095a60a725ddef321858da2143d29cf99a350c5e6430ed582635041421fd12c7cfa21c278732294368adfced
-  languageName: node
-  linkType: hard
-
-"@whatwg-node/node-fetch@npm:^0.7.25":
-  version: 0.7.25
-  resolution: "@whatwg-node/node-fetch@npm:0.7.25"
-  dependencies:
-    "@fastify/busboy": ^3.1.1
-    "@whatwg-node/disposablestack": ^0.0.6
-    "@whatwg-node/promise-helpers": ^1.3.2
-    tslib: ^2.6.3
-  checksum: 36eb7518acb7d91a141cab215b3a054407f8150a7b0c0ef2102d9218d4b530bf3ea6d861b1f4a2c4c7ce808e87b9ed619c8f4e901c3b4853fb116da322e29254
-  languageName: node
-  linkType: hard
-
-"@whatwg-node/promise-helpers@npm:^1.0.0, @whatwg-node/promise-helpers@npm:^1.3.2":
-  version: 1.3.2
-  resolution: "@whatwg-node/promise-helpers@npm:1.3.2"
-  dependencies:
-    tslib: ^2.6.3
-  checksum: 62efb129a2c1f36ee3ea63cf65dbd517fab13e8dd6968e32a29219558a76a7725bbff646f4fc9fb80f793466659a8e6b9e70cf5de258ddaa60c5a7bd762630a4
-  languageName: node
-  linkType: hard
-
-"@xrplf/isomorphic@npm:^1.0.0":
-  version: 1.0.1
-  resolution: "@xrplf/isomorphic@npm:1.0.1"
-  dependencies:
-    "@whatwg-node/promise-helpers": ^1.0.0
-    tslib: ^2.6.3
-  checksum: dae7f8f05b56409858156cdb092345ecefa170a899e27750e17f7800b9489021b4865f40b427fc7f5c979d668a8ffef5ac0adaa284e7f56222127bbe4ee9b114
-  languageName: node
-  linkType: hard
-
-"@zxing/browser@npm:^0.1.5":
-  version: 0.1.5
-  resolution: "@zxing/browser@npm:0.1.5"
-  dependencies:
-    "@zxing/text-encoding": ^0.9.0
-  peerDependencies:
-    "@zxing/library": ^0.21.0
-  dependenciesMeta:
-    "@zxing/text-encoding":
-      optional: true
-  checksum: 27bfddd707e8e643624b432666a956f1e7e283e20963243f7050c781fd80daad9f54408acdf46d809c64586983f7b02a4981c1d3b0251519e0566c165f6b3924
-  languageName: node
-  linkType: hard
-
-"@zxing/library@npm:^0.21.3":
-  version: 0.21.3
-  resolution: "@zxing/library@npm:0.21.3"
-  dependencies:
-    "@zxing/text-encoding": ~0.9.0
-    ts-custom-error: ^3.2.1
-  dependenciesMeta:
-    "@zxing/text-encoding":
-      optional: true
-  checksum: 934e86129b8bb89896884e3cc6805965998ff545edbca2a0ad560d51f9614f2c852dbd437814f1f9b15bcdfca34c958815dc7b676ee6b8b1b0917b41d5effca4
-  languageName: node
-  linkType: hard
-
-"@zxing/text-encoding@npm:^0.9.0, @zxing/text-encoding@npm:~0.9.0":
-  version: 0.9.0
-  resolution: "@zxing/text-encoding@npm:0.9.0"
-  checksum: c23b12aee7639382e4949961304a1294776afaffa40f579e09ffecd0e5e68cf26ef3edd75009de46da8a536e571448755ca68b3e2ea707d53793c0edb2e2c34a
-  languageName: node
-  linkType: hard
-
-"abbrev@npm:1":
-  version: 1.1.1
-  resolution: "abbrev@npm:1.1.1"
-  checksum: a4a97ec07d7ea112c517036882b2ac22f3109b7b19077dc656316d07d308438aac28e4d9746dc4d84bf6b1e75b4a7b0a5f3cb30592419f128ca9a8cee3bcfa17
 
 "@whatwg-node/fetch@npm:^0.10.1":
   version: 0.10.10
@@ -8100,6 +8031,40 @@ __metadata:
     eventemitter3: 5.0.1
     ws: ^8.13.0
   checksum: 767f8804e4b3a6893643811be327db0d912623a00a3830a742b67dd72695fee5c570a832b5c33a276d6e073c6b5c439d707adee7d61b94df1a8f30defe4c5714
+  languageName: node
+  linkType: hard
+
+"@zxing/browser@npm:^0.1.5":
+  version: 0.1.5
+  resolution: "@zxing/browser@npm:0.1.5"
+  dependencies:
+    "@zxing/text-encoding": ^0.9.0
+  peerDependencies:
+    "@zxing/library": ^0.21.0
+  dependenciesMeta:
+    "@zxing/text-encoding":
+      optional: true
+  checksum: 27bfddd707e8e643624b432666a956f1e7e283e20963243f7050c781fd80daad9f54408acdf46d809c64586983f7b02a4981c1d3b0251519e0566c165f6b3924
+  languageName: node
+  linkType: hard
+
+"@zxing/library@npm:^0.21.3":
+  version: 0.21.3
+  resolution: "@zxing/library@npm:0.21.3"
+  dependencies:
+    "@zxing/text-encoding": ~0.9.0
+    ts-custom-error: ^3.2.1
+  dependenciesMeta:
+    "@zxing/text-encoding":
+      optional: true
+  checksum: 934e86129b8bb89896884e3cc6805965998ff545edbca2a0ad560d51f9614f2c852dbd437814f1f9b15bcdfca34c958815dc7b676ee6b8b1b0917b41d5effca4
+  languageName: node
+  linkType: hard
+
+"@zxing/text-encoding@npm:^0.9.0, @zxing/text-encoding@npm:~0.9.0":
+  version: 0.9.0
+  resolution: "@zxing/text-encoding@npm:0.9.0"
+  checksum: c23b12aee7639382e4949961304a1294776afaffa40f579e09ffecd0e5e68cf26ef3edd75009de46da8a536e571448755ca68b3e2ea707d53793c0edb2e2c34a
   languageName: node
   linkType: hard
 
@@ -9394,6 +9359,13 @@ __metadata:
   version: 0.7.0
   resolution: "chardet@npm:0.7.0"
   checksum: 6fd5da1f5d18ff5712c1e0aed41da200d7c51c28f11b36ee3c7b483f3696dabc08927fc6b227735eb8f0e1215c9a8abd8154637f3eff8cada5959df7f58b024d
+  languageName: node
+  linkType: hard
+
+"chardet@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "chardet@npm:2.1.0"
+  checksum: 491f8ea54ed3693598c98cb8785531b94b71e59b04ef8dd2b6fea4947f785297fb5c2ae1109adca6fdd453a8a7181cfc4a85c07dbbe96a156d0908f4188a6b9a
   languageName: node
   linkType: hard
 
@@ -15477,121 +15449,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash.camelcase@npm:^4.3.0":
-  version: 4.3.0
-  resolution: "lodash.camelcase@npm:4.3.0"
-  checksum: cb9227612f71b83e42de93eccf1232feeb25e705bdb19ba26c04f91e885bfd3dd5c517c4a97137658190581d3493ea3973072ca010aab7e301046d90740393d1
-  languageName: node
-  linkType: hard
-
-"lodash.debounce@npm:^4.0.8":
-  version: 4.0.8
-  resolution: "lodash.debounce@npm:4.0.8"
-  checksum: a3f527d22c548f43ae31c861ada88b2637eb48ac6aa3eb56e82d44917971b8aa96fbb37aa60efea674dc4ee8c42074f90f7b1f772e9db375435f6c83a19b3bc6
-
-"lodash.trimstart@npm:^4.5.1":
-  version: 4.5.1
-  resolution: "lodash.trimstart@npm:4.5.1"
-  checksum: 4b2d37505ac15f501f4f2378928455a40e858fa56c924494dbc21d5d828c55e821cda8543f25fe265e3d552937e915264a2567ba9291a172262c24c33e9ad6b0
-  languageName: node
-  linkType: hard
-
-"lodash.uppercase@npm:^4.3.0":
-  version: 4.3.0
-  resolution: "lodash.uppercase@npm:4.3.0"
-  checksum: 0a435cccd3acfe732c968deb4897d6237051d69f58f18e55e7faa781b1731176012e3286505780e93a4e0acb93a6799e39908c7ea3367678bdd2aecb963f469d
-  languageName: node
-  linkType: hard
-
-"lodash.kebabcase@npm:^4.1.1":
-  version: 4.1.1
-  resolution: "lodash.kebabcase@npm:4.1.1"
-  checksum: 5a6c59161914e1bae23438a298c7433e83d935e0f59853fa862e691164696bc07f6dfa4c313d499fbf41ba8d53314e9850416502376705a357d24ee6ca33af78
-  languageName: node
-  linkType: hard
-
-"lodash.lowercase@npm:^4.3.0":
-  version: 4.3.0
-  resolution: "lodash.lowercase@npm:4.3.0"
-  checksum: 463d7e50db29aea736563352f05adcff1f7c60574fe201f47ad98d2834f3dc64bee84a31702e1661d0f94913e89a46ded04befd425bbd3b95d23697689118f98
-  languageName: node
-  linkType: hard
-
-"lodash.lowerfirst@npm:^4.3.1":
-  version: 4.3.1
-  resolution: "lodash.lowerfirst@npm:4.3.1"
-  checksum: e1688e18873777d394db4994d150dfc14cf01bf450169cf8296af4d84ecd7c3c4ae4dab3746f77f8719a093e4fff58bee3ae73ae7e23ef508b7d970b189d9952
-  languageName: node
-  linkType: hard
-
-"lodash.merge@npm:^4.6.2":
-  version: 4.6.2
-  resolution: "lodash.merge@npm:4.6.2"
-  checksum: ad580b4bdbb7ca1f7abf7e1bce63a9a0b98e370cf40194b03380a46b4ed799c9573029599caebc1b14e3f24b111aef72b96674a56cfa105e0f5ac70546cdc005
-
-"lodash.upperfirst@npm:^4.3.1":
-  version: 4.3.1
-  resolution: "lodash.upperfirst@npm:4.3.1"
-  checksum: cadec6955900afe1928cc60cdc4923a79c2ef991e42665419cc81630ed9b4f952a1093b222e0141ab31cbc4dba549f97ec28ff67929d71e01861c97188a5fa83
-  languageName: node
-  linkType: hard
-
-"lodash.pad@npm:^4.5.1":
-  version: 4.5.1
-  resolution: "lodash.pad@npm:4.5.1"
-  checksum: 325805c929dad67d61470348046bc92bdad017a9edbda11322cc8945da92a10f943f935d24c340aa6d47cd9a3ff8f5ed6f4a77283266a54e32afae09be0c41ff
-  languageName: node
-  linkType: hard
-
-"lodash.padend@npm:^4.6.1":
-  version: 4.6.1
-  resolution: "lodash.padend@npm:4.6.1"
-  checksum: c2e6e789debf83b98f5c085305cdcfff1067e7a31bda2a110fd765d3c11a99edfbeef570d9ef737ab3212006bdb8114e77622e518c18c1fce52b8fdfd9dab685
-  languageName: node
-  linkType: hard
-
-"lodash.padstart@npm:^4.6.1":
-  version: 4.6.1
-  resolution: "lodash.padstart@npm:4.6.1"
-  checksum: 0d6ad92c626d351db85de539e41df3238d7d36c5fbfc5f57c4f060c90c73ad9f1db566463487795fdf0bf290a8f133189a0bd91d051032f6eb2d15b7e1863b5e
-  languageName: node
-  linkType: hard
-
-"lodash.repeat@npm:^4.1.0":
-  version: 4.1.0
-  resolution: "lodash.repeat@npm:4.1.0"
-  checksum: dac15fc59ed783678e1a9f986fefa180bfdbf95280852165965ecc8e15b871c6f0eaf7b325768a176014594d5186f1d6558fb72a18527bddd82539fb3ef8a4d3
-  languageName: node
-  linkType: hard
-
-"lodash.snakecase@npm:^4.1.1":
-  version: 4.1.1
-  resolution: "lodash.snakecase@npm:4.1.1"
-  checksum: 1685ed3e83dda6eae5a4dcaee161a51cd210aabb3e1c09c57150e7dd8feda19e4ca0d27d0631eabe8d0f4eaa51e376da64e8c018ae5415417c5890d42feb72a8
-  languageName: node
-  linkType: hard
-
-"lodash.startcase@npm:^4.4.0":
-  version: 4.4.0
-  resolution: "lodash.startcase@npm:4.4.0"
-  checksum: c03a4a784aca653845fe09d0ef67c902b6e49288dc45f542a4ab345a9c406a6dc194c774423fa313ee7b06283950301c1221dd2a1d8ecb2dac8dfbb9ed5606b5
-  languageName: node
-  linkType: hard
-
-"lodash.trim@npm:^4.5.1":
-  version: 4.5.1
-  resolution: "lodash.trim@npm:4.5.1"
-  checksum: 64b08e97d94d4c7620159371e6fe6cbb706514a41d737db2f189d9ec738305eb08cb772a9bbd2459e90f1c22f96174ec1047ceb8272f2f6040cb5bd63d8f9f2b
-  languageName: node
-  linkType: hard
-
-"lodash.trimend@npm:^4.5.1":
-  version: 4.5.1
-  resolution: "lodash.trimend@npm:4.5.1"
-  checksum: 8d0c013e95529f6b8af0cbe987a730a4befdd1ab3674ae72199731109929d3ed9892217fdb282361a4cdd78c3a1d3aa7d6aadd313dd3c38b61248fb60e2f6627
-  languageName: node
-  linkType: hard
-
 "lodash.trimstart@npm:^4.5.1":
   version: 4.5.1
   resolution: "lodash.trimstart@npm:4.5.1"
@@ -20550,9 +20407,9 @@ __metadata:
   linkType: hard
 
 "tmp@npm:^0.2.0":
-  version: 0.2.4
-  resolution: "tmp@npm:0.2.4"
-  checksum: fde5fcdbd741c957458d6f7310750879172b399ac62b468c6707cef6fd0e77d0e632dd05471f607530a248c483abaa00187a6eee8561030268ac98bfb5e41720
+  version: 0.2.5
+  resolution: "tmp@npm:0.2.5"
+  checksum: 9d18e58060114154939930457b9e198b34f9495bcc05a343bc0a0a29aa546d2c1c2b343dae05b87b17c8fde0af93ab7d8fe8574a8f6dc2cd8fd3f2ca1ad0d8e1
   languageName: node
   linkType: hard
 

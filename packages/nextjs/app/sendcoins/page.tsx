@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useMemo, useState } from "react";
+import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { useMediaQuery } from "react-responsive";
 import Island from "~~/components/ui/island";
@@ -11,6 +12,7 @@ import { loadUserData } from "~~/utils/helper";
 const steps = ["Select Recipient & Amount", "Processing Payment", "Complete Payment"];
 
 const SendCoinPage = () => {
+  const [gasFee] = useState(3);
   const [sendAmount, setSendAmount] = useState("");
   const [step, setStep] = useState(0);
   const [direction, setDirection] = useState(1);
@@ -93,14 +95,26 @@ const SendCoinPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <p className="text-gray-400 text-sm">You will send</p>
-          <input
-            type="number"
-            value={sendAmount}
-            onChange={e => setSendAmount(e.target.value)}
-            placeholder="0.00"
-            className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-blue-500 focus:outline-none transition-colors"
-          />
+          <p className="text-gray-400 text-sm">Each user will receive</p>
+          <div className="relative inline-block">
+            <input
+              type="number"
+              value={sendAmount}
+              onChange={e => setSendAmount(e.target.value)}
+              placeholder="0.00"
+              className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-blue-500 focus:outline-none transition-colors box-border [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="gray"
+              className="w-5 h-5 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none"
+            >
+              <Image width={30} height={30} src={"/icons/usdc.svg"} alt="" style={{ zIndex: 999 }} />
+            </svg>
+          </div>
         </motion.div>
 
         <motion.div
@@ -109,10 +123,11 @@ const SendCoinPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <p className="text-gray-400 text-sm">Each recipient will get</p>
+          <p className="text-gray-400 text-sm">You will send (approx.)</p>
           <input
             type="number"
-            value={sendAmount}
+            value={Number(sendAmount) * selectedUsers.length}
+            disabled
             onChange={e => setSendAmount(e.target.value)}
             placeholder="0.00"
             className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-blue-500 focus:outline-none transition-colors"
@@ -137,10 +152,10 @@ const SendCoinPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
         >
-          {verticalContainer("Lyra Fees", 0)}
-          {verticalContainer("You will pay", parsedAmount)}
+          {verticalContainer("You will pay", Number(sendAmount) * selectedUsers.length)}
+          {verticalContainer("Lyra Fees", gasFee)}
           <div className="h-px bg-gray-600 my-2"></div>
-          {verticalContainer("Total", parsedAmount)}
+          {verticalContainer("Total", Number(sendAmount) * selectedUsers.length + gasFee)}
         </motion.div>
       </motion.div>,
 
@@ -345,7 +360,7 @@ const SendCoinPage = () => {
                     Back
                   </motion.button>
                   <motion.button
-                    disabled={step === steps.length - 1}
+                    disabled={step === 2}
                     onClick={handleNext}
                     className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all duration-300 ${
                       step === steps.length - 1

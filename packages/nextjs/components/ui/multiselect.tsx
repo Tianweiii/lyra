@@ -30,10 +30,21 @@ export const MultiSelectView: React.FC<MultiSelectViewProps> = ({ data, callback
     setSelected(typeof value === "string" ? value.split(",") : value);
   };
 
+  // const handleSelectAll = () => {
+  //   const isAllSelected = selected.length === data.length;
+  //   const newSelected = isAllSelected ? [] : [...data];
+  //   setSelected(newSelected);
+  //   callback?.(newSelected);
+  // };
+
   const handleDelete = (id: string) => {
-    setSelected?.(prev => prev.filter(i => i !== id));
-    setSelected(prev => prev.filter(i => i !== id));
+    const newSelected = selected.filter(i => i !== id);
+    setSelected(newSelected);
+    callback?.(newSelected);
   };
+
+  // const isAllSelected = selected.length === data.length;
+  // const isIndeterminate = selected.length > 0 && selected.length < data.length;
 
   return (
     <div>
@@ -69,6 +80,13 @@ export const MultiSelectView: React.FC<MultiSelectViewProps> = ({ data, callback
             },
           }}
         >
+          {/* <MenuItem value="1" onClick={handleSelectAll}>
+            <Checkbox
+              checked={isAllSelected}
+              indeterminate={isIndeterminate}
+            />
+            <ListItemText primary="Select All" />
+          </MenuItem> */}
           {data.map(address => (
             <MenuItem key={address} value={address}>
               <Checkbox checked={selected.includes(address)} />

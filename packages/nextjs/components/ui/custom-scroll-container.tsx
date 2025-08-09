@@ -69,8 +69,9 @@ export const CustomScrollContainerView: React.FC<CustomScrollContainerProps> = (
       <div ref={containerRef} className="sticky top-0 h-screen w-screen bg-black overflow-hidden">
         <div className="flex justify-center h-screen items-center gap-10">
           <div className="flex w-[30vw] h-[40%]  items-center justify-center">
-            {/* TODO: CHANGE IMAGE IF NEED */}
-            <img src="/images/nasa-nature-night.avif" alt="Image" />
+            {}
+            <div className="h-screen border-1"></div>
+            {/* <img src="/images/nasa-nature-night.avif" alt="Image" /> */}
           </div>
           <div
             ref={carouselRef}
@@ -79,7 +80,7 @@ export const CustomScrollContainerView: React.FC<CustomScrollContainerProps> = (
             {custItem.map((item, i) => (
               <div
                 key={i}
-                className="min-w-[25vw] min-h-screen border border-white flex flex-col items-center justify-center text-4xl font-bold px-[100px]"
+                className="min-w-[25vw] min-h-screen flex flex-col items-center justify-center text-4xl font-bold px-[100px]"
               >
                 <Typography fontSize={32} fontWeight={700} mb={3} textAlign={"center"}>
                   {item.title}
