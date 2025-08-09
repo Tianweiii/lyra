@@ -10,6 +10,8 @@ const useWalletChartData = (accountId: string | undefined) => {
     return [];
   }
 
+  console.log(data);
+
   return data;
 };
 
