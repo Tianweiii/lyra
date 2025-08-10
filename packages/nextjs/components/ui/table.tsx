@@ -34,12 +34,12 @@ const DarkTableContainer = styled(TableContainer)(() => ({
 }));
 
 const CustomTableCell = styled(TableCell, {
-  shouldForwardProp: prop => prop !== "isMobile",
-})<CustomCellProps>(props => ({
+  shouldForwardProp: (prop: any) => prop !== "isMobile",
+})(({ isMobile }: CustomCellProps) => ({
   color: "#8c8c8c",
   borderBottom: "1px solid #333",
-  fontSize: props.isMobile ? 12 : 18,
-}));
+  fontSize: isMobile ? 12 : 18,
+})) as typeof TableCell & ((props: CustomCellProps) => JSX.Element);
 
 export const CoinTable: React.FC<TableProps> = ({ data }) => {
   const isMobile = useMediaQuery({ maxWidth: 768 });

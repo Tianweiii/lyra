@@ -93,7 +93,7 @@ const DashboardPage: NextPage = () => {
   const coinAmount: number = amount;
   const coinType: string = "LYRA";
   const role = getRole(id?.toString());
-  const accountId = role === "admin" ?  "0x5265BCcc8aB5A36A45ABD2E574E6Fa7F863e5C2e": useAccount().address || "";
+  const accountId = role === "admin" ? "0x5265BCcc8aB5A36A45ABD2E574E6Fa7F863e5C2e" : wagmiAddress || "";
 
   const renderMap: RenderMapProps = {
     user: {
