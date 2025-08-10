@@ -38,7 +38,7 @@ const CustomTableCell = styled(TableCell, {
 })(({ isMobile }: CustomCellProps) => ({
   color: "#8c8c8c",
   borderBottom: "1px solid #333",
-  fontSize: isMobile ? 12 : 18,
+  fontSize: isMobile ? 12 : 14,
 })) as typeof TableCell & ((props: CustomCellProps) => JSX.Element);
 
 export const CoinTable: React.FC<TableProps> = ({ data }) => {
@@ -76,14 +76,14 @@ export const CoinTable: React.FC<TableProps> = ({ data }) => {
             <TableRow key={data.id}>
               <CustomTableCell isMobile={isMobile}>
                 <div className="flex flex-col gap-1">
-                  <p>REF #{data.id}</p>
+                  <p>{data.id}</p>
                   <p>{data.date.toLocaleDateString()}</p>
                 </div>
               </CustomTableCell>
               <CustomTableCell isMobile={isMobile}>
                 <div className="flex gap-3 items-center">
-                  <Image alt={data.coin.icon.alt} src={"/icons/usdc.svg"} width={30} height={30} />
-                  <p className="font-bold">{data.coin.name}</p>
+                  <Image alt={data.coin.icon.alt} src={"/icons/usdc.svg"} width={20} height={20} />
+                  <p className="font-bold text-[14px]">{data.coin.name}</p>
                 </div>
               </CustomTableCell>
               <CustomTableCell isMobile={isMobile} align="center">
