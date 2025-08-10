@@ -40,7 +40,6 @@ export async function sendNotification(message: string, targetEndpoint?: string,
 
 // Simplified subscription status check
 export async function checkSubscriptionStatus(endpoint: string) {
-  s;
   try {
     // For now, assume subscription is active if endpoint exists
     return {
