@@ -42,7 +42,7 @@ const WalletBalanceChart = ({ accountId }: { accountId?: string }) => {
           />
 
           <YAxis
-            tickFormatter={v => `$${v / 1000}k`}
+            tickFormatter={(v: any) => `$${v / 1000}k`}
             tick={{
               fill: "#aaa",
               fontSize: isMobile ? 8 : 12,
@@ -61,7 +61,7 @@ const WalletBalanceChart = ({ accountId }: { accountId?: string }) => {
               fontSize: isMobile ? "12px" : "14px",
             }}
             labelStyle={{ color: "#ccc" }}
-            formatter={(value, name) => [`$${value}`, name === "amount" ? "Balance" : "Volume"]}
+            formatter={(value: any, name: any) => [`$${value}`, name === "amount" ? "Balance" : "Volume"]}
           />
 
           <Bar dataKey="volume" barSize={isMobile ? 2 : 4} fill="#444" radius={[2, 2, 0, 0]} />
