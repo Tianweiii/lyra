@@ -87,7 +87,6 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY = NEXT_PUBLIC_SUPABASE_ANON_KEY_EXAMPLE
 yarn start
 ```
 
-
 ## 🔗 Smart Contract Integration
 **Read Functions** 📖
 - `isMerchant(address merchant)` → Checks if the address is registered as a merchant.  
@@ -99,6 +98,12 @@ yarn start
 - `transfer(address to, uint256 amount)` → Transfers LYRA tokens.  
 - `merchantSwapLyraToUsdt(uint256 lyraAmount, uint256 minUsdt)` → Swaps LYRA for USDT.  
 - `merchantSwapLyraToNative(uint256 lyraAmount, uint256 minNative)` → Swaps LYRA for MATIC.
+
+**Deployed Smart Contract (LYRA TOKEN)** 📝
+[https://polygonscan.com/address/0xc11bd7b043736423dbc2d70ae5a0f642f9959257#events]
+
+**Deployed Smart Contract (LyraOtcSeller)** 📝
+[https://polygonscan.com/address/0x5265bccc8ab5a36a45abd2e574e6fa7f863e5c2e#writeContract]
 
 
 ## 🤝 Contributing
